@@ -55,7 +55,8 @@ nav.tabs button:focus-visible, .seg button:focus-visible, .chk input:focus-visib
 section.tab { display: grid; gap: 18px; padding-top: 18px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; min-width: 0; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; }
-.scroll { overflow-x: auto; }
+.scroll { overflow-x: auto; min-width: 0; max-width: 100%; }
+section.tab > *, .panel > *, .grid2 > * { min-width: 0; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
 th { font-weight: 500; color: var(--muted); font-size: 12px; background: var(--panel-2); position: sticky; top: 0; }
@@ -106,6 +107,7 @@ ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
     <button role="tab" data-tab="factory" aria-selected="false">策略工厂</button>
     <button role="tab" data-tab="core" aria-selected="false">核心策略</button>
     <button role="tab" data-tab="zdte" aria-selected="false">0DTE 诊断</button>
+    <button role="tab" data-tab="dip" aria-selected="false">抄底杠杆</button>
     <button role="tab" data-tab="method" aria-selected="false">方法与数据</button>
   </nav>
 
@@ -200,6 +202,34 @@ ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
       <h3>0DTE 开盘进场、持有到收盘（2023-04 → 2026-10，863 天）</h3>
       <div class="scroll" id="zcost"></div>
       <p class="note">毛收益为正的结构（铁鹰、Put 价差、铁蝶）被每笔约 1.5–6% 的风险成本吃掉。“打平所需隐波倍数”= 隐波水平要比校准值高多少才能盈利；单张快照的校准误差在这个量级，所以结论是“最好也就是打平”，不是可靠优势。</p>
+    </div>
+  </section>
+
+  <!-- ===================== dip ===================== -->
+  <section class="tab" id="tab-dip" hidden>
+    <div class="verdicts" id="dip-verdicts"></div>
+    <div class="panel">
+      <h2>此刻各周期离“底”有多远</h2>
+      <div id="dip-now"></div>
+      <p class="note">只有已验证的信号流可以用杠杆。RSI2 &lt; 10 且收盘在长期均线上方 = 日线 RSI2 抄底信号；布林 z &lt; −2 = 跌破下轨；距 20 根高点 ≤ −2 ATR 且下影线 ≥ 50% = 插针。</p>
+    </div>
+    <div class="panel">
+      <h2>每个周期 × 底部形态：能扛多少杠杆</h2>
+      <p class="muted" id="dip-intro"></p>
+      <div id="dip-streams"></div>
+      <p class="note">强平安全 = 强平跌幅 ≥ 1.5 × 历史最大不利波动时的最大杠杆；半凯利 = 0.5 × 平均净收益 ÷ 方差；每笔 2% = 每笔最多亏账户 2% 时的杠杆。验证期/留出期的 3x、10x 列是把该杠杆原样套上去的实际结果（最大回撤按持仓期间最低点计）。</p>
+    </div>
+    <div class="panel">
+      <div class="toolbar"><h3>现货打底 + 永续抄底加杠杆（1993–2026，对数坐标）</h3></div>
+      <div class="chart small" id="dipchart"><div class="legend" id="diplegend"></div></div>
+      <div id="dip-combos"></div>
+      <p class="note">探索性结果（组合方式在看过单个信号结果之后设计）。现货部分只计价格，不含约 1.3%/年的分红。永续 1 倍长期持有按资金费 0.01%/8h 计。</p>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>资金费敏感性（每笔平均净收益，未计杠杆）</h3><div id="dip-funding"></div>
+        <p class="note">持有越久，资金费越致命：跌 10–30% 抄底拿到新高平均要 2–3 年，0.01%/8h 就把每笔 +21% 吃成负数。</p></div>
+      <div class="panel"><h3>“总会涨回来”要等多久（标普 1871–2026 月线）</h3><div id="dip-crash"></div>
+        <p class="note" id="dip-crash-note"></p></div>
     </div>
   </section>
 
@@ -481,13 +511,63 @@ function buildMethod() {
   ].map(x => `<li>${x}</li>`).join("");
 }
 
-const builders = { plan: buildPlan, kline: buildKline, factory: buildFactory, core: buildCore, zdte: buildZ, method: buildMethod };
+
+/* ---------- dip ---------- */
+let dipchart = null;
+function buildDip() {
+  const D = S.dip, N = S.dip_now;
+  if (!D) { $("#tab-dip").innerHTML = '<div class="panel"><p>没有 dip_study.json，先运行 python scripts/run_dip_study.py。</p></div>'; return; }
+  const st = (k) => D.streams.find(s => s.key === k) || {};
+  const r2 = st("1d|rsi2|stop2.5"), c = D.combos;
+  $("#dip-verdicts").innerHTML = [
+    `<div class="v"><span class="k">唯一过关：日线 RSI2 抄底（−2.5ATR 止损）</span><span class="big">${pct(r2.ALL.win_rate, 0)} 胜率</span><span class="sub">每笔扣费后 ${spct(r2.ALL.mean_net)} · 样本内 ${spct(r2.IS.mean_net)} / 验证 ${spct(r2.VAL.mean_net)} / 留出 ${spct(r2.TEST.mean_net)}</span></div>`,
+    `<div class="v"><span class="k">它能扛的杠杆</span><span class="big">2x 标准 · 3x 上限</span><span class="sub">强平安全 ${num(r2.leverage.L_liq, 1)}x · 半凯利 ${num(r2.leverage.L_kelly, 1)}x · 每笔亏 2% ${num(r2.leverage.L_risk, 2)}x</span></div>`,
+    `<div class="v"><span class="k">永续合约 1x 长期持有（33 年）</span><span class="big neg">${spct(c["永续 1x 长期持有"].all.cagr, 1)}/年</span><span class="sub">现货同期 ${spct(c["SPY 现货 1x（基准）"].all.cagr, 1)}/年：资金费 ≈ 10.95%/年</span></div>`,
+    `<div class="v"><span class="k">现货 1x + 抄底时永续 +2x</span><span class="big pos">${spct(c["现货 1x + 抄底时永续 +2x"].all.cagr, 1)}/年</span><span class="sub">最大回撤 ${pct(c["现货 1x + 抄底时永续 +2x"].all.max_dd, 0)}（来自 2008 年现货部分）</span></div>`,
+  ].join("");
+  if (N) {
+    $("#dip-now").innerHTML = `<p class="muted">账户 $${N.equity.toLocaleString()} · ${N.as_of} UTC · ${N.tickets.length ? '<span class="pill good">有开仓单</span>' : '<span class="pill info">空仓等待</span>'}</p>` +
+      table([{ t: "周期" }, { t: "最新 K 线" }, { t: "收盘", n: 1 }, { t: "RSI2", n: 1 }, { t: "布林 z", n: 1 }, { t: "距 20 根高点", n: 1 }, { t: "趋势" }, { t: "距历史高点", n: 1 }, { t: "触发" }, { t: "状态" }],
+        N.timeframes.map(r => [r.tf, r.time, num(r.close), { v: num(r.rsi2, 1), c: r.rsi2 < 10 ? "pos" : "" }, { v: num(r.boll_z, 2), c: r.boll_z < -2 ? "pos" : "" }, num(r.dd_atr, 1) + " ATR", r.trend_up ? "上" : "下", pct(r.dd_ath, 1), r.fired.length ? r.fired.join(", ") : "—", r.validated.length ? '<span class="pill good">已验证</span>' : '<span class="pill warn">未验证 0x</span>']));
+  }
+  const fam = { rsi2: "RSI2 超卖", boll: "跌破布林下轨", wick: "插针长下影", panic: "VIX 恐慌反转", ath_dd: "距高点 −10/20/30%" };
+  $("#dip-intro").textContent = `数据：${Object.entries(D.datasets).map(([k, v]) => `${k} ${v.label}（${v.bars} 根）`).join("；")}。成本：吃单 ${(D.costs.taker * 100).toFixed(2)}%/边 + 滑点 ${(D.costs.slippage * 100).toFixed(2)}%，资金费 ${(D.costs.funding_8h * 100).toFixed(3)}%/8h，维持保证金 ${(D.costs.mmr * 100).toFixed(1)}%。关卡：样本内 ≥ ${D.gate.n_min} 笔、t ≥ ${D.gate.t_min}、盈亏比 ≥ ${D.gate.pf_min}，验证期和留出期每笔仍为正。3 分钟到 1 小时需要本地分钟数据才能验证。`;
+  const oos = (s, k) => { const o = s.oos && s.oos[k]; return o ? { v: `${spct(o.final - 1, 0)} / ${pct(o.max_dd, 0)}${o.liquidations ? " 爆" : ""}`, c: o.liquidations ? "neg" : cls(o.final - 1) } : "—"; };
+  $("#dip-streams").innerHTML = table([{ t: "周期" }, { t: "形态" }, { t: "止损" }, { t: "笔数", n: 1 }, { t: "胜率", n: 1 }, { t: "每笔净 IS", n: 1 }, { t: "VAL", n: 1 }, { t: "TEST", n: 1 }, { t: "平均持有天", n: 1 }, { t: "最大不利", n: 1 }, { t: "强平安全", n: 1 }, { t: "半凯利", n: 1 }, { t: "每笔 2%", n: 1 }, { t: "VAL 3x 收益/回撤", n: 1 }, { t: "TEST 3x", n: 1 }, { t: "TEST 10x", n: 1 }, { t: "关卡" }],
+    D.streams.filter(s => s.ALL.n >= 5).map(s => [s.tf, fam[s.family] || s.family, s.stop_atr ? s.stop_atr + " ATR" : "无", s.ALL.n, pct(s.ALL.win_rate, 0), { v: spct(s.IS.mean_net), c: cls(s.IS.mean_net) }, { v: spct(s.VAL.mean_net), c: cls(s.VAL.mean_net) }, { v: spct(s.TEST.mean_net), c: cls(s.TEST.mean_net) }, num(s.ALL.avg_days, 1), { v: pct(s.ALL.worst_mae, 1), c: "neg" },
+      s.leverage.L_liq ? num(s.leverage.L_liq, 1) + "x" : "—", s.leverage.L_kelly != null ? num(Math.max(0, s.leverage.L_kelly), 1) + "x" : "—", s.leverage.L_risk ? num(s.leverage.L_risk, 2) + "x" : "—", oos(s, "VAL_x3"), oos(s, "TEST_x3"), oos(s, "TEST_x10"),
+      s.G3 ? '<span class="pill good">全部通过</span>' : s.G1 ? '<span class="pill warn">止于验证</span>' : '<span class="pill bad">未过</span>']), { hl: (i) => false });
+  const order = ["SPY 现货 1x（基准）", "现货 1x + 抄底时永续 +1x", "现货 1x + 抄底时永续 +2x", "现货 1x + 抄底时永续 +3x", "只做抄底 永续 3x", "永续 1x 长期持有"];
+  $("#dip-combos").innerHTML = table([{ t: "方案" }, { t: "33 年年化", n: 1 }, { t: "最大回撤", n: 1 }, { t: "1993–2012", n: 1 }, { t: "2013–2019", n: 1 }, { t: "2020–2026", n: 1 }, { t: "2020–2026 回撤", n: 1 }],
+    order.filter(k => c[k]).map(k => [k, { v: spct(c[k].all.cagr, 1), c: cls(c[k].all.cagr) }, { v: pct(c[k].all.max_dd, 1), c: "neg" }, spct(c[k].IS.cagr, 1), spct(c[k].VAL.cagr, 1), spct(c[k].TEST.cagr, 1), pct(c[k].TEST.max_dd, 1)]));
+  drawDipChart(order.filter(k => c[k]));
+  const fs = D.funding_sensitivity, fk = Object.keys(fs[Object.keys(fs)[0]]);
+  const lab = { "1d|rsi2|stop2.5": "日线 RSI2（止损）", "1d|rsi2|stop-": "日线 RSI2（无止损）", "1w|rsi2|stop-": "周线 RSI2", "1d|ath_dd|stop-": "日线 距高点 −10/20/30%", "1w|ath_dd|stop-": "周线 距高点阶梯", "1M|ath_dd|stop-": "月线 距高点阶梯" };
+  $("#dip-funding").innerHTML = table([{ t: "信号" }].concat(fk.map(k => ({ t: k + "/8h", n: 1 }))),
+    Object.entries(fs).map(([k, v]) => [lab[k] || k].concat(fk.map(f => ({ v: spct(v[f], 2), c: cls(v[f]) })))));
+  const cr = D.crash;
+  $("#dip-crash").innerHTML = table([{ t: "从历史高点跌到" }, { t: "次数", n: 1 }, { t: "之后再跌（中位）", n: 1 }, { t: "之后再跌（最坏）", n: 1 }, { t: "最坏发生于" }, { t: "最长收复年数", n: 1 }, { t: "不爆仓最大杠杆", n: 1 }],
+    cr.spx_monthly_tiers.map(r => ["−" + pct(r.tier, 0), r.n, { v: pct(r.median_further, 1), c: "neg" }, { v: pct(r.worst_further, 1), c: "neg" }, r.worst_date.slice(0, 7), num(r.max_years, 1), num(r.max_safe_lev, 2) + "x"]));
+  $("#dip-crash-note").textContent = `1987-10-19 标普单日 ${pct(cr.spx_worst_day, 1)}：不带止损时，${Object.entries(cr.days_that_liquidate_without_stop).map(([k, v]) => `${k} 杠杆有 ${v} 天会被单日跌幅直接强平`).join("，")}（1980–2022 日线）。止损单在跳空时按开盘价成交，挡不住这种单日暴跌。`;
+}
+function drawDipChart(keys) {
+  if (dipchart) { dipchart.remove(); dipchart = null; }
+  if (!window.LightweightCharts) return;
+  const c = chartColors();
+  dipchart = LightweightCharts.createChart($("#dipchart"), { autoSize: true, layout: { background: { type: "solid", color: c.bg }, textColor: c.fg, fontFamily: css("--f-mono") }, grid: { vertLines: { color: c.line }, horzLines: { color: c.line } }, rightPriceScale: { borderColor: c.line, mode: 1 }, timeScale: { borderColor: c.line } });
+  const cols = [c.fg, c.acc, c.up, c.warn, c.down, css("--bad")];
+  keys.forEach((k, i) => { const ls = dipchart.addLineSeries({ color: cols[i % cols.length], lineWidth: i === 2 ? 2 : 1, priceLineVisible: false, lastValueVisible: false }); ls.setData(S.dip.combos[k].curve.map(p => ({ time: p[0], value: Math.max(p[1], 0.01) }))); });
+  dipchart.timeScale().fitContent();
+  const lg = $("#diplegend"); $("#dipchart").appendChild(lg);
+  lg.innerHTML = keys.map((k, i) => `<span style="color:${cols[i % cols.length]}">■ ${k}</span>`).join("  ");
+}
+const builders = { plan: buildPlan, kline: buildKline, factory: buildFactory, core: buildCore, zdte: buildZ, dip: buildDip, method: buildMethod };
 const valid = Object.keys(builders);
 let start = (location.hash || "").slice(1);
 if (!valid.includes(start)) { try { start = localStorage.getItem("spyq-tab") || "plan"; } catch (e) { start = "plan"; } }
 show(valid.includes(start) ? start : "plan");
 const mq = window.matchMedia("(prefers-color-scheme: dark)");
-const redraw = () => { if (built.kline && !$("#tab-kline").hidden) drawK(); if (built.core) renderCore(); };
+const redraw = () => { if (built.kline && !$("#tab-kline").hidden) drawK(); if (built.core) renderCore(); if (built.dip && S.dip) drawDipChart(Object.keys(S.dip.combos)); };
 mq.addEventListener && mq.addEventListener("change", redraw);
 new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>

@@ -33,6 +33,14 @@ def main(argv=None):
     ap.add_argument("--fragment", help="also write the body-only variant here")
     a = ap.parse_args(argv)
     study = json.loads(Path(a.study).read_text(encoding="utf-8"))
+    res = Path(a.study).parent
+    if (res / "dip_study.json").exists():
+        dip = json.loads((res / "dip_study.json").read_text(encoding="utf-8"))
+        for s_ in dip["streams"]:
+            s_.pop("trades", None)  # keep the page light; full trade lists stay in the JSON
+        study["dip"] = dip
+    if (res / "dip_now.json").exists():
+        study["dip_now"] = json.loads((res / "dip_now.json").read_text(encoding="utf-8"))
     frag = render(study)
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)

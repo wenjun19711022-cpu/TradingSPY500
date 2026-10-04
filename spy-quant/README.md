@@ -16,6 +16,27 @@
 
 一句话：短期权（0DTE）这条路被成本卡住，和上一轮“策略工厂”在正股上的结论一样；能留下来的是 2–4 周期限的波动率风险溢价，胜率高、单笔薄、尾部风险真实存在。不要把 20% 以上的账户放进最大亏损预算。
 
+## 抄底加杠杆（OKX 永续）
+
+问题：SPY 跌到 3 分钟、5 分钟……周线、月线的“底”时，各用多少倍杠杆做多，在哪里止盈止损。数据：SPY 1993–2026 日线 OHLC（8,477 天，与 IBKR 数据重叠 636 天逐日一致）、VIX 1990 起、标普 500 月线 1871 起和日线 1980 起。
+
+| 发现 | 数字 |
+|---|---|
+| 唯一通过三道关卡的杠杆信号 | **日线 RSI2 抄底**：收盘 > 200 日均线且 RSI(2) < 10，次日开盘买，−2.5×ATR 止损，收盘站上 5 日均线卖，最多 10 天。282 笔，胜率 67%，每笔扣费后 +0.24%（样本内 +0.31% / 验证 +0.11% / 留出 +0.20%） |
+| 它能扛的杠杆 | 强平安全 9.9 倍、半凯利 4.4 倍、每笔亏 2% 账户 0.68 倍 → 标准 2 倍、上限 3 倍。3 倍在留出期 +37%、最大回撤 −28%；10 倍回撤 −74% |
+| 永续不能长期拿 | 资金费 0.01%/8h ≈ 一年 10.95%，SPY 价格年化只有 8.9%：永续 1 倍拿 33 年年化 **−2.4%** |
+| “总会涨回来” | 都涨回来了，但 2000 年用了 7.2 年、2008 年 5.4 年、1929 年 25 年；1987 年单日 −20.5%。跌 20% 之后最坏还会再跌 77%（1929），超长线抄底能扛的杠杆 < 1 倍 |
+| 推荐组合（探索性） | 现货 1 倍长期持有（moomoo）+ 日线 RSI2 信号时永续加 2 倍：33 年年化 14.5%（现货单拿 8.9%） |
+| 3 分钟–4 小时 | 还没在完整数据上验证，杠杆为 0。本地爬完 1 分钟数据后运行 `scripts/run_dip_study.py` |
+
+```bash
+python -m spyq.data.history                    # 长历史（自动下载公开数据集）
+python scripts/run_dip_study.py                # 抄底研究 → results/dip_study.json
+python -m spyq.live.dip_now --equity 20000 --funding 0.0001   # 现在各周期离底多远 + 开仓单
+```
+
+交易员提示词：仓库根目录 `.claude/skills/spy-dip-trader/SKILL.md`（Claude Code 会自动加载），独立版 `agent/SPY_DIP_TRADER_PROMPT.md` 可粘贴给任何模型。
+
 ## 目录
 
 ```
@@ -30,9 +51,11 @@ spyq/
                metrics.py  胜率、盈亏比、Newey-West t、DSR    validation.py  因子工厂 + 关卡 + 敏感性
   strategies/  factory.py  预注册网格与关卡    composite.py  最终策略与开仓计划
   risk/        sizing.py  梯子资金曲线、回撤刹车、Kelly    stress.py  崩盘情景压力测试
-  live/        plan.py  今晚开哪一档    snapshot.py  采集期权链快照用于重新校准
+  dip/         signals.py  各周期底部形态    engine.py  抄底回测、强平、杠杆表    perp.py  OKX 手续费/资金费/强平价
+  live/        plan.py  今晚开哪一档    snapshot.py  采集期权链快照    dip_now.py  各周期抄底扫描与开仓单
   report/      dashboard.py + template.html  看板
-scripts/run_study.py   一键跑完全部研究，写 results/study.json
+scripts/run_study.py   一键跑完期权研究，写 results/study.json
+scripts/run_dip_study.py  抄底杠杆研究，写 results/dip_study.json
 tests/                 单元测试，含两个“零优势检验”
 docs/STRATEGY.md       策略说明书（规则、仓位、出场、到期日操作）
 docs/RESEARCH.md       GitHub 工具与策略调研，以及借鉴了什么
@@ -43,7 +66,7 @@ docs/RESEARCH.md       GitHub 工具与策略调研，以及借鉴了什么
 ```bash
 cd spy-quant
 pip install -e ".[dev]"          # numpy pandas scipy pyarrow pytest
-pytest -q                         # 17 个测试
+pytest -q                         # 25 个测试
 python scripts/run_study.py       # 用仓库自带的 IBKR 数据跑完整研究（约 2 分钟）
 python -m spyq.report.dashboard   # 生成 dashboard/index.html
 python -m spyq.live.plan --equity 100000

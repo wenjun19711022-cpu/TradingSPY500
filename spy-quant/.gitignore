@@ -7,3 +7,6 @@ build/
 data/bars/
 data/raw/cboe/
 data/raw/rates/
+# third-party long-history CSVs; fetched by python -m spyq.data.history
+data/raw/history/
+results/journal.csv
