@@ -85,6 +85,22 @@ select { max-width: 100%; min-width: 0; background: var(--surface); color: var(-
   @keyframes flash { 50% { filter: brightness(1.25) saturate(1.1); } }
 }
 
+/* playbook */
+.pb { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 16px; display: grid; gap: 12px; }
+.pb-grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .pb-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sleeve { background: var(--surface-2); border-radius: 12px; padding: 10px 12px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.sleeve h3 { margin: 0; font-size: 14.5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sleeve .sl-state { margin: 0; font-weight: 700; font-size: 15px; }
+.sleeve .sl-why { margin: 0; font-size: 12.5px; color: var(--muted); }
+.sleeve .odds dd { font-size: 16px; }
+.st { font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; color: var(--on); background: var(--lvl); white-space: nowrap; }
+.st.long, .st.buy { background: var(--buy); } .st.sell { background: var(--sell); } .st.wait { background: var(--ready); }
+.pb-foot { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; }
+.pb-foot label { display: grid; gap: 2px; font-size: 12.5px; color: var(--muted); }
+.pb-foot input { width: 150px; font: inherit; font-family: var(--font-num); font-size: 16px; font-weight: 700; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.pb-foot p { margin: 0; font-size: 13.5px; flex: 1 1 320px; min-width: 0; }
+
 /* range desk */
 .rng { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 16px; display: grid; gap: 12px; }
 .rng-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
@@ -227,6 +243,17 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       <button id="sold" class="btn" type="button" hidden>我已卖出</button>
       <span id="actnote" class="hint"></span>
     </div>
+  </section>
+
+  <section class="pb" id="pb" aria-live="polite">
+    <div class="rng-h"><h2>我的超短线组合</h2><span class="hint">三个都是做多；下单用 CME 微型标普期货 MES（IBKR 或 moomoo 期货账户）</span><span class="chip ok" id="pbverdict">有优势，但很薄</span></div>
+    <div class="pb-grid">
+      <article class="sleeve"><h3>① 噪声区突破（日内）<span class="st" id="sn-st">—</span></h3><p class="sl-state" id="sn-text"></p><dl class="odds" id="sn-nums"></dl><p class="sl-why">每 30 分钟（10:00–15:30）看一次：价格高于“噪声区上沿”就买；之后检查时跌回上沿或 VWAP 下方就卖；最晚收盘卖。</p></article>
+      <article class="sleeve"><h3>② 隔夜持有<span class="st" id="so-st">—</span></h3><p class="sl-state" id="so-text"></p><dl class="odds" id="so-nums"></dl><p class="sl-why">收盘前买，第二天开盘卖。SPY 长期的涨幅大部分发生在隔夜。</p></article>
+      <article class="sleeve"><h3>③ 日线 RSI2 抄底<span class="st" id="sr-st">—</span></h3><p class="sl-state" id="sr-text"></p><dl class="odds" id="sr-nums"></dl><p class="sl-why">收盘在 200 日均线上方且 RSI2 &lt; 10 才买；止损 2.5 个日线 ATR；站上 5 日线后卖。</p></article>
+    </div>
+    <div class="pb-foot"><label for="eq">账户资金（美元）<input id="eq" type="number" min="0" step="100" inputmode="decimal"></label><p id="pbsize"></p></div>
+    <p class="small" id="pbrec"></p>
   </section>
 
   <section class="rng" id="rng" aria-live="polite">
@@ -591,6 +618,70 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       (o.TEST_x3 ? `<dt>2020 年后 3x</dt><dd>${pct(o.TEST_x3.final - 1, 0)}，回撤 ${pct(o.TEST_x3.max_dd, 0)}</dd>` : "") +
       (o.TEST_x10 ? `<dt>2020 年后 10x</dt><dd>${pct(o.TEST_x10.final - 1, 0)}，回撤 <span class="bad">${pct(o.TEST_x10.max_dd, 0)}</span></dd>` : "") + `</dl>`;
   }
+  /* ---------------- playbook: noise-area breakout, overnight, RSI2 ---------------- */
+  let PBREC = null, lastPb = null;
+  let equity = store.get("equity", 10000);
+  $("eq").value = String(equity);
+  $("eq").addEventListener("input", () => { equity = Math.max(0, +$("eq").value || 0); store.set("equity", equity); if (S) renderPlaybook(); });
+  const ST = { long: "做多中", wait: "等 10:00", flat: "没有突破", done: "今天结束", nodata: "数据不够", buy: "买入", sell: "卖出", hold: "持有中", none: "不做" };
+  function contracts(levX, P) {
+    const notional = P.mes_notional || 0;
+    if (!notional) return "—";
+    const n = equity * levX / notional;
+    return n >= 1 ? `${Math.floor(n)} 张 MES（名义 $${Math.round(Math.floor(n) * notional).toLocaleString("en-US")}）` : `不够 1 张（要约 $${Math.ceil(notional / levX).toLocaleString("en-US")}）`;
+  }
+  function renderPlaybook() {
+    const P = S.playbook;
+    if (!P) { $("pb").hidden = true; return; }
+    $("pb").hidden = false;
+    const L = P.lev || {}, n = P.noise || {}, o = P.overnight || {}, d = S.daily || DAILY || {};
+    const nst = n.state === "long" ? "long" : n.state === "wait" ? "wait" : n.state || "none";
+    $("sn-st").className = "st " + nst; $("sn-st").textContent = ST[nst] || nst;
+    $("sn-text").textContent = n.text || "";
+    const tr = (n.trades || []).map((t) => `${t.in}→${t.out} ${pct(t.ret)}`).join("；");
+    $("sn-nums").innerHTML = numsHTML([["有效杠杆", lev(L.noise?.toFixed(1))], ["下次检查", n.next_check || "—"], ["上沿 / VWAP", n.ub_now ? `${f2(n.ub_now)} / ${f2(n.vwap)}` : "—"],
+      ...(n.state === "long" ? [["浮动", pct(n.pnl) + " = 账户 " + pct(n.pnl * L.noise)]] : []), ...(tr ? [["今天已平仓", tr]] : [])]);
+    const m = S.time ? minuteOf(tsOf(S.time)) : 0;
+    const ost = m >= 385 ? "buy" : m < 1 ? "sell" : "hold";
+    $("so-st").className = "st " + (ost === "buy" ? "buy" : ost === "sell" ? "sell" : "wait");
+    $("so-st").textContent = ost === "buy" ? "现在买" : ost === "sell" ? "开盘卖" : "收盘前买";
+    $("so-text").textContent = o.text || "";
+    $("so-nums").innerHTML = numsHTML([["有效杠杆", lev(L.overnight?.toFixed(1))], ["买入时间", "15:55–15:59"], ["卖出时间", "次日 9:30"]]);
+    const act = !!(P.rsi2 && P.rsi2.active);
+    $("sr-st").className = "st " + (act ? "buy" : "none"); $("sr-st").textContent = act ? "抄底日" : "不是抄底日";
+    $("sr-text").textContent = act ? "今天按上面的大色块执行" : `日线 RSI2 = ${f2(d.rsi2)}（要 < 10）`;
+    $("sr-nums").innerHTML = numsHTML([["有效杠杆", lev(L.rsi2?.toFixed(1))], ["历史胜率", "67%"], ["每次（1x）", "+0.24%"]]);
+    const parts = [];
+    if (n.state === "long" || (n.state !== "nodata" && n.state !== "done")) parts.push(`① ${contracts(L.noise, P)}`);
+    parts.push(`② ${contracts(L.overnight, P)}`);
+    if (act) parts.push(`③ ${contracts(L.rsi2, P)}`);
+    $("pbsize").textContent = `按账户 $${equity.toLocaleString("en-US")}：${parts.join("；")}。1 张 MES = 5 × 标普指数 ≈ $${Math.round(P.mes_notional || 0).toLocaleString("en-US")}。` +
+      ` 想在 OKX 用 20 倍：逐仓保证金 = 账户 × 有效杠杆 ÷ 20（例如 ${lev(L.noise?.toFixed(1))} 就放 ${pct0((L.noise || 0) / 20)} 的资金），但 OKX 的成本会把这三个优势全部吃掉。`;
+    const R = PBREC || P.record || {}, b = R.book || {}, bh = R.buy_and_hold || {}, sp = R.by_split || {};
+    $("pbrec").textContent = b.sharpe ? `回测（2011–2018 标普分钟线 + 2022–2024 SPY 分钟线，MES 成本，整组按 20% 年波动配置）：年化 ${pct(b.ann_return, 1)}，最大回撤 ${pct(b.max_dd, 0)}，夏普 ${b.sharpe.toFixed(2)}；同期买入持有夏普 ${bh.sharpe?.toFixed(2)}。` +
+      `分段夏普：2011–15 ${sp.IS?.toFixed(2)}，2016–18 ${sp.VAL?.toFixed(2)}，2022–24 ${sp.TEST?.toFixed(2)}。每笔优势：噪声区 ${(R.noise_mes_bp ?? 0).toFixed(1)} 个基点（OKX ${(R.noise_okx_bp ?? 0).toFixed(1)}），隔夜 ${(R.overnight_mes_bp ?? 0).toFixed(1)}（OKX ${(R.overnight_okx_bp ?? 0).toFixed(1)}）。` +
+      `已淘汰：开盘 5 分钟区间突破、两种“最后半小时动量”、1/3/5 分钟共振、区间挂单。` : "";
+  }
+  function pbEvent(silent) {
+    const n = (S.playbook || {}).noise || {};
+    const now = { day: dayKey(), long: n.state === "long", entry: n.entry_time || "", k: (n.trades || []).length };
+    const prev = lastPb;
+    lastPb = now;
+    if (!prev || silent || prev.day !== now.day) return;
+    const L = ((S.playbook || {}).lev || {}).noise || 0;
+    const buy = now.long && (!prev.long || prev.entry !== now.entry);
+    const sold = now.k > prev.k;
+    if (!buy && !sold) return;
+    const t = (n.trades || [])[now.k - 1];
+    const title = buy ? `噪声区突破：做多 ${lev(L.toFixed(1))} @ ${f2(n.entry)}` : `噪声区：卖出 @ ${f2(t.exit)}`;
+    const body = buy ? `价格突破上沿 ${f2(n.ub_now)}。之后每 30 分钟检查，低于上沿或 VWAP（现在 ${f2(n.stop_now)}）就卖，最晚收盘卖。`
+      : `这笔 ${pct(t.ret)}，${lev(L.toFixed(1))} 就是账户 ${pct(t.ret * L)}。`;
+    $("sheet").className = "sheet " + (buy ? "s-buy" : "s-sell"); $("mtime").textContent = (S.time || "") + " 美东 · 超短线组合";
+    $("mh").textContent = title; $("mb").textContent = body; $("mnums").innerHTML = "";
+    $("modal").hidden = false; $("mok").focus();
+    beep(buy ? "buy" : "sell"); say(title); notify(title, body);
+  }
+
   /* ---------------- range desk: forecast band, ticket, odds ---------------- */
   function erfc(x) {
     const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
@@ -772,7 +863,7 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
   function render() {
     if (!S) return;
-    renderLamp(); renderRange(); renderCharts(); renderChecks(); renderDaily(); renderSide(); renderTrack();
+    renderLamp(); renderPlaybook(); renderRange(); renderCharts(); renderChecks(); renderDaily(); renderSide(); renderTrack();
     $("src").textContent = DEMO ? "回放演示（历史数据）" : (S.source || "");
     $("src2").textContent = DEMO ? "2022-10 至 2024-12 公开分钟数据" : (S.source || "—");
     $("upd").textContent = S.time || "—";
@@ -829,6 +920,7 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     const key = last ? last.time + "|" + last.text : null;
     if (key && key !== lastAlert && !silent && ["buy", "sell", "watch"].includes(S.status)) popup();
     lastAlert = key;
+    if ($("modal").hidden || silent) pbEvent(silent);
     if ($("modal").hidden || silent) rangeEvent(silent);
   }
   $("mok").addEventListener("click", () => { $("modal").hidden = true; });
@@ -889,7 +981,7 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   /* ---------------- demo mode: replay baked days ---------------- */
   function demo() {
     $("demo").hidden = false;
-    TRACK = DEMO.track; RREC = DEMO.range_record;
+    TRACK = DEMO.track; RREC = DEMO.range_record; PBREC = DEMO.playbook_record;
     const days = DEMO.days, sel = $("day");
     sel.innerHTML = days.map((d, i) => `<option value="${i}">${d.date} · ${esc(d.label)}</option>`).join("");
     let day = days[0], idx = 0, timer = null, fresh = true;
@@ -909,8 +1001,9 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       timer = setInterval(() => { if (idx >= day.states.length - 1) { stop(); return; } show(idx + 1, false); if (!$("modal").hidden) stop(); }, 1000 / +$("spd").value);
     }
     function load(i) {
-      stop(); day = days[i]; $("scrub").max = String(day.states.length - 1); PRESET = day.ticket || null; lastRange = null;
-      $("dnote").textContent = "当天每一分钟都按实盘同样的程序算过一遍。现在停在" + (day.ticket ? "你的单子成交的那一分钟" : day.range && day.start >= day.range.t0 - 1 && !day.states[day.start].alerts.length ? "区间单子成交（或 10:00 预测）那一分钟" : "第一次提醒那一分钟") +
+      stop(); day = days[i]; $("scrub").max = String(day.states.length - 1); PRESET = day.ticket || null; lastRange = null; lastPb = null;
+      const where = { playbook: "噪声区突破第一次做多的那一分钟", ticket: "你的单子成交的那一分钟", range: "区间自动单子成交（或 10:00 预测）的那一分钟", alert: "第一次提醒的那一分钟" };
+      $("dnote").textContent = "当天每一分钟都按实盘同样的程序算过一遍。现在停在" + (where[day.focus] || "这一分钟") +
         "；点“从开盘播放”看全天，提醒和成交会弹窗（先点“开启声音和弹窗”可以听到声音）。也可以在“今日区间”里填你自己的单子。";
       show(day.start, true); fresh = true; $("play").textContent = "▶ 从开盘播放";
     }

@@ -5,6 +5,7 @@ spylev.ta        TradingView-style indicators, support/resistance levels, candle
 spylev.dip       daily/weekly/monthly dip-buying study (OKX perp costs, liquidation, leverage)
 spylev.scalp     1m/3m/5m confluence bottom -> top scalps: signals, backtest, alert engine
 spylev.range     10:00 rest-of-day range forecast, bracket odds, bracket backtest, live range desk
+spylev.edge      published intraday long rules (noise-area breakout, ORB, intraday momentum, overnight), costs, leverage, live playbook
 spylev.live      moomoo OpenD feed (bars, options, VIX), replay feed, alert server and the one-screen UI
 """
 

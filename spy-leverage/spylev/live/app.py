@@ -26,6 +26,7 @@ from spylev.data import store
 from spylev.data.history import spy_daily
 from spylev.data.sources import load_ibkr_json
 from spylev.live.engine import LiveEngine, screen_levels
+from spylev.edge.live import Playbook
 from spylev.range.desk import RangeDesk, daily_rv
 from spylev.scalp.signals import build
 from spylev.ta import daily_levels
@@ -77,6 +78,7 @@ class Monitor:
             vix = pd.concat([vix[vix.index < fv.index[0]], fv])
         self.vix = vix
         self.rv_extra = getattr(feed, "rv_extra", pd.Series(dtype=float))  # realized variance of days missing from the 1m history
+        self.playbook = Playbook.from_results()  # noise-area breakout + overnight + daily RSI2 (results/edge_study.json)
 
     def on_bar(self, ts, row):
         with self.lock:
@@ -106,9 +108,18 @@ class Monitor:
         s["user_leverage"] = self.engine.user_leverage
         s["track"] = self.track
         s["range"] = self.range_state(ts)
+        s["playbook"] = self.playbook_state(ts, setup)
         self.state = s
         if self.log_dir is not None:
             self._log(s)
+
+    def playbook_state(self, ts, setup: dict) -> dict:
+        day = ts.normalize()
+        if self.playbook.day != day:
+            hist = self.bars[(self.bars.index.normalize() < day) & (self.bars.index >= day - pd.Timedelta(days=45))]
+            self.playbook.prepare(hist, day)
+        today = self.bars[self.bars.index.normalize() == day]
+        return self.playbook.update(today, rsi2_active=bool(setup.get("active")))
 
     def range_state(self, ts) -> dict | None:
         if self.desk is None:

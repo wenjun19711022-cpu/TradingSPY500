@@ -41,7 +41,7 @@ class FutuFeed:
       last price / bid / ask (QUOTE), the nearest-expiry option chain (expected move, open-interest
       walls, dealer gamma; spylev.live.options) and daily VIX closes."""
 
-    def __init__(self, host="127.0.0.1", port=11111, code="US.SPY", days=14):
+    def __init__(self, host="127.0.0.1", port=11111, code="US.SPY", days=40):
         from futu import OpenQuoteContext  # noqa: F401
         self.host, self.port, self.code, self.days = host, port, code, days
         self.name = f"moomoo OpenD {host}:{port}"

@@ -19,6 +19,21 @@
 
 所以屏幕的规则是：**只有日线抄底日才会变绿；1/3/5 分钟共振单独出现时是黄色，告诉你历史上照做的真实结果，不下单；“今日区间”面板每天 10:00 出预测，并给你的单子实时算赔率，标着“只看不买”。**
 
+## 超短线做多：最后的答案（`results/edge_study.json`）
+
+把论文里有记录的超短线做多方法，加上我们自己的想法，全部按原规则在 2011–2018 标普分钟线（1,913 天）和 2022–2024 SPY 分钟线（558 天）上测了一遍，分别按 OKX 永续和 CME 微型标普期货（MES）的成本算：
+
+| 做法 | 扣费前每次 | MES 扣费后 | OKX 市价扣费后 |
+|---|---|---|---|
+| 噪声区突破做多（Zarattini, Aziz & Barbon 2024） | +2.5bp | +1.5bp | −9.8bp |
+| 隔夜持有 | +3.3bp | +2.5bp | −12.0bp |
+| 5 分钟开盘区间突破、两种最后半小时动量 | −0.3 到 +0.8bp | 负 | 负 |
+
+- **OKX 上没有一个超短线做多能赚钱**，因为成本（12bp）比最大的优势（2–5bp）还大。
+- **期货上有两个薄的优势。** 把噪声区突破、隔夜持有和日线 RSI2 组合起来，整组放大到年化波动 20%：年化 +19.4%，最大回撤 −34%，夏普 0.97；同期买入持有夏普 0.76。但 2016–18 这段比买入持有差。
+- **20 倍：** 整个账户开 20 倍，隔夜那条腿会被一次 −5.6% 的跳空打爆。正确做法是用张数控制有效杠杆（噪声区约 4x、隔夜约 1.4x、RSI2 约 2.9x）；在 OKX 逐仓 20 倍时，保证金 = 账户 × 有效杠杆 ÷ 20。
+- 监控屏的“我的超短线组合”面板按这套规则实时提示，并按账户资金算出 MES 张数。交易员提示词在 `agent/SPY_20X_TRADER_PROMPT.md`。
+
 ## 三步开始（Windows）
 
 1. **装 moomoo OpenD 并登录**：https://www.moomoo.com/download/OpenAPI （富途牛牛用户：https://www.futunn.com/download/OpenAPI ）。打开后用 moomoo 账号登录，窗口保持开着。需要美股行情权限（moomoo 里能看到 SPY 实时报价就行）。
@@ -72,6 +87,8 @@ python -m spylev.data.crawl --source futu --years 3                             
 python scripts/run_scalp_study.py                                                # 日内共振回测
 python scripts/run_dip_study.py                                                  # 日线抄底回测
 python scripts/run_range_study.py                                                # 10:00 区间预测和区间挂单回测
+python -m spylev.data.histdata                                                   # 2011–2018 标普 500 分钟线（GitHub，约 140MB）
+python scripts/run_edge_study.py                                                 # 论文超短线策略 × 三种成本 × 杠杆 → results/edge_study.json
 python -m spylev.live.app --source replay --date 2026-10-02 --speed 30 --open    # 回放 2026-10-02（IBKR 数据）
 python -m spylev.live.dip_now --equity 10000 --funding 0.0001                    # 今天的日线抄底计划
 python -m pytest -q
@@ -85,12 +102,13 @@ spylev/scalp/signals.py    每个周期的 6 个见底 / 见顶条件，1/3/5 �
 spylev/scalp/engine.py     1 分钟逐笔回测（OKX 成本、资金费）
 spylev/dip/                日线到月线的抄底研究、永续合约成本与强平
 spylev/range/              10:00 区间预测（波动模型）、先碰止盈还是止损的概率、区间挂单回测、实时赔率
+spylev/edge/               论文里的超短线规则（噪声区突破、开盘区间突破、日内动量、隔夜）、成本、杠杆、实时组合
 spylev/live/options.py     moomoo 期权链：平值跨式预期波动、持仓墙、做市商 gamma（参考）
 spylev/live/engine.py      把行情变成一句话指令（屏幕用的同一个程序）
 spylev/live/feeds.py       moomoo OpenD 实时 K 线、资金流、盘口；历史回放
 spylev/live/app.py         本地网页服务（标准库，无需额外框架）
 web/index.html             监控屏    web/demo.html  离线回放演示
-agent/                     给 AI 交易员的提示词（日线抄底、日内共振、日内区间）
+agent/                     给 AI 交易员的提示词（日线抄底、日内共振、日内区间、超短线组合）
 ```
 
 ## 说明
