@@ -1,0 +1,49 @@
+name: spy-quant
+
+on:
+  push:
+    paths: ["spy-quant/**", ".github/workflows/spy-quant.yml"]
+  pull_request:
+    paths: ["spy-quant/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: spy-quant
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Rebuild dashboard from results/study.json
+        run: python -m spyq.report.dashboard
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spy-dashboard
+          path: spy-quant/dashboard/index.html
+
+  # Publishes the dashboard to GitHub Pages after merging to main. Requires
+  # Settings -> Pages -> Source: "GitHub Actions". The repo is public, so the page will be too.
+  pages:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: spy-quant/dashboard
+      - id: deploy
+        uses: actions/deploy-pages@v4

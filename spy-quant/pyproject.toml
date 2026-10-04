@@ -1,0 +1,19 @@
+[project]
+name = "spyq"
+version = "0.1.0"
+description = "SPY multi-timeframe data, options pricing and strategy research toolkit"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10", "pyarrow>=12"]
+
+[project.optional-dependencies]
+futu = ["futu-api"]
+ibkr = ["ib_async"]
+web = ["requests", "yfinance"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["spyq*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+# local minute-bar store (5y of 1m bars is ~100MB+); rebuild with python -m spyq.data.crawl
+data/bars/
+data/raw/cboe/
+data/raw/rates/
