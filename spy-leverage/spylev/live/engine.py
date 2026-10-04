@@ -226,10 +226,10 @@ def levels_for_screen(lv_row: pd.Series, price: float, n=6) -> list:
 
 
 def day_states(m1: pd.DataFrame, daily: pd.DataFrame, date: str, premarket: pd.DataFrame | None = None,
-               user_leverage: float = 10.0, auto_follow: bool = True) -> list:
+               user_leverage: float = 10.0, auto_follow: bool = True, levels: pd.DataFrame | None = None) -> list:
     """Replay a whole session through the engine (what the screen would have shown minute by
     minute). With auto_follow, a validated buy is assumed taken at the alert price."""
-    lv = daily_levels(m1)
+    lv = daily_levels(m1) if levels is None else levels
     if premarket is not None and not premarket.empty:
         lv = lv.join(premarket)
     d0 = pd.Timestamp(date)

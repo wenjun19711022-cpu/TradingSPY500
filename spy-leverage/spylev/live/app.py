@@ -24,7 +24,9 @@ import pandas as pd
 
 from spylev.data import store
 from spylev.data.history import spy_daily
+from spylev.data.sources import load_ibkr_json
 from spylev.live.engine import LiveEngine, screen_levels
+from spylev.range.desk import RangeDesk, daily_rv
 from spylev.scalp.signals import build
 from spylev.ta import daily_levels
 
@@ -64,6 +66,17 @@ class Monitor:
         self.subscribers: list = []
         self.lock = threading.Lock()
         self.tv_alerts: list = []
+        # range desk: 10:00 forecast of the rest of the day + odds of a limit-buy ticket
+        try:
+            self.desk = RangeDesk.from_results(leverage)
+        except FileNotFoundError:
+            self.desk = None
+        vix = load_ibkr_json(ROOT / "data" / "raw" / "ibkr" / "VIX_1d.json")["close"]
+        fv = getattr(feed, "vix", None)
+        if fv is not None and len(fv):
+            vix = pd.concat([vix[vix.index < fv.index[0]], fv])
+        self.vix = vix
+        self.rv_extra = getattr(feed, "rv_extra", pd.Series(dtype=float))  # realized variance of days missing from the 1m history
 
     def on_bar(self, ts, row):
         with self.lock:
@@ -92,9 +105,27 @@ class Monitor:
         s["extra"] = dict(getattr(self.feed, "extra", {}))
         s["user_leverage"] = self.engine.user_leverage
         s["track"] = self.track
+        s["range"] = self.range_state(ts)
         self.state = s
         if self.log_dir is not None:
             self._log(s)
+
+    def range_state(self, ts) -> dict | None:
+        if self.desk is None:
+            return None
+        day = ts.normalize()
+        today = self.bars[self.bars.index.normalize() == day]
+        hist = self.bars[(self.bars.index.normalize() < day) & (self.bars.index >= day - pd.Timedelta(days=14))]
+        rv = daily_rv(hist) if len(hist) else pd.Series(dtype=float)
+        if len(self.rv_extra):
+            rv = pd.concat([self.rv_extra[~self.rv_extra.index.isin(rv.index)], rv]).sort_index()
+        d0 = day.tz_localize(None)
+        prev = self.vix[self.vix.index < d0]
+        vix_prev = float(prev.iloc[-1]) if len(prev) else float("nan")
+        u = self.desk.update(today, rv, vix_prev)
+        scr = self.desk.screen()
+        return {"phase": u.get("phase"), "minutes_to_forecast": u.get("minutes_to_forecast"), "decision": u.get("decision"),
+                "vix_stale_days": int((d0 - prev.index[-1]).days) if len(prev) else None, **(scr or {})}
 
     def _log(self, s: dict):
         """Keep the live record (capital flow and order-book imbalance have no history to backtest
@@ -109,10 +140,15 @@ class Monitor:
                    *(str(int(c.get(k, {}).get("score", 0))) for k in ("m5", "m3", "m1")),
                    *(str(int(bool(ok.get(k)))) for k in ("m5", "m3", "m1")),
                    str(ex.get("capital_flow_today", "")), str(ex.get("book_imbalance", ""))]
+            op = ex.get("options") or {}
+            rf = ((s.get("range") or {}).get("forecast") or {}).get("bands", {}).get("0.8", {})
+            row += [str(op.get(k, "")) for k in ("expected_move", "call_wall", "put_wall", "gex_total", "flip", "pc_volume")]
+            row += [str(rf.get("low", "")), str(rf.get("high", ""))]
             new_file = not f.exists()
             with f.open("a", encoding="utf-8") as fh:
                 if new_file:
-                    fh.write("time,price,status,quality,m5_score,m3_score,m1_score,m5_ok,m3_ok,m1_ok,capital_flow,book_imbalance\n")
+                    fh.write("time,price,status,quality,m5_score,m3_score,m1_score,m5_ok,m3_ok,m1_ok,capital_flow,book_imbalance,"
+                             "opt_expected_move,call_wall,put_wall,gex_total,gamma_flip,pc_volume,range80_low,range80_high\n")
                 fh.write(",".join(row) + "\n")
         except Exception as e:  # logging must never stop the monitor
             print("log error:", e)
@@ -242,7 +278,11 @@ def main(argv=None):
             bars = store.load("SPY", "1m")
         premarket = premarket_levels()
         from spylev.live.feeds import ReplayFeed
+        if pd.Timestamp(a.date) > bars.index[-1].tz_localize(None):  # recent days: the IBKR files
+            bars = load_ibkr_json(ROOT / "data" / "raw" / "ibkr" / "SPY_1m_recent.json")
         feed = ReplayFeed(bars, a.date, a.speed)
+        b5 = load_ibkr_json(ROOT / "data" / "raw" / "ibkr" / "SPY_5m_recent.json")
+        feed.rv_extra = daily_rv(b5[b5.index.tz_localize(None) < pd.Timestamp(a.date)])
     else:
         if not opend_reachable(a.host, a.port):
             print(OPEND_HELP.format(host=a.host, port=a.port))

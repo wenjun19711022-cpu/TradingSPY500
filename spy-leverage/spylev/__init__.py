@@ -4,7 +4,8 @@ spylev.data      crawl / store / resample SPY bars, long daily history (1993-)
 spylev.ta        TradingView-style indicators, support/resistance levels, candle patterns
 spylev.dip       daily/weekly/monthly dip-buying study (OKX perp costs, liquidation, leverage)
 spylev.scalp     1m/3m/5m confluence bottom -> top scalps: signals, backtest, alert engine
-spylev.live      moomoo OpenD feed, replay feed, alert server and the one-screen UI
+spylev.range     10:00 rest-of-day range forecast, bracket odds, bracket backtest, live range desk
+spylev.live      moomoo OpenD feed (bars, options, VIX), replay feed, alert server and the one-screen UI
 """
 
 __version__ = "0.2.0"

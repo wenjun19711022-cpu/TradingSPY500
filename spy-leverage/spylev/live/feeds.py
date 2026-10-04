@@ -38,9 +38,10 @@ class FutuFeed:
 
     Extra data it collects when available (shown on screen as "参考", not used for orders):
       capital flow (get_capital_flow: net inflow today), order-book imbalance (ORDER_BOOK),
-      last price / bid / ask (QUOTE)."""
+      last price / bid / ask (QUOTE), the nearest-expiry option chain (expected move, open-interest
+      walls, dealer gamma; spylev.live.options) and daily VIX closes."""
 
-    def __init__(self, host="127.0.0.1", port=11111, code="US.SPY", days=12):
+    def __init__(self, host="127.0.0.1", port=11111, code="US.SPY", days=14):
         from futu import OpenQuoteContext  # noqa: F401
         self.host, self.port, self.code, self.days = host, port, code, days
         self.name = f"moomoo OpenD {host}:{port}"
@@ -86,6 +87,23 @@ class FutuFeed:
         self.ctx = OpenQuoteContext(host=self.host, port=self.port)
         self.history = self._history(self.ctx)
         self.daily = self._daily(self.ctx)
+        self.vix = self._vix(self.ctx)
+
+    def _vix(self, ctx):
+        """Daily VIX closes (index code US..VIX). Needs US index quotes; None if not available,
+        and the monitor then falls back to data/raw/ibkr/VIX_1d.json."""
+        try:
+            from futu import AuType, KLType, RET_OK
+            end = pd.Timestamp.now(tz="America/New_York")
+            ret, data, _ = ctx.request_history_kline("US..VIX", start=str((end - pd.Timedelta(days=20)).date()), end=str(end.date()),
+                                                     ktype=KLType.K_DAY, autype=AuType.NONE, max_count=100)
+            if ret != RET_OK or data.empty:
+                self.extra["vix_note"] = "moomoo 没有 VIX 行情权限，用本地 VIX 文件"
+                return None
+            return pd.Series(data["close"].astype(float).values, index=pd.DatetimeIndex(pd.to_datetime(data["time_key"]).dt.normalize()))
+        except Exception as e:  # optional
+            self.extra["vix_note"] = str(e)[:120]
+            return None
 
     @staticmethod
     def _norm(df):
@@ -118,7 +136,15 @@ class FutuFeed:
             raise RuntimeError(err)
 
         def extras():
+            n = 0
             while True:
+                if n % 15 == 0:  # option chain every ~5 minutes
+                    try:
+                        from spylev.live.options import fetch_futu
+                        self.extra["options"] = fetch_futu(ctx, self.code)
+                    except Exception as e:
+                        self.extra["options"] = {"error": str(e)[:120]}
+                n += 1
                 try:
                     ret, cf = ctx.get_capital_flow(self.code)
                     if ret == RET_OK and not cf.empty:

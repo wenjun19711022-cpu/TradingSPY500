@@ -85,6 +85,39 @@ select { max-width: 100%; min-width: 0; background: var(--surface); color: var(-
   @keyframes flash { 50% { filter: brightness(1.25) saturate(1.1); } }
 }
 
+/* range desk */
+.rng { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 16px; display: grid; gap: 12px; }
+.rng-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.rng-h h2 { margin: 0; font-size: 18px; font-weight: 900; }
+.rng-h .hint { color: var(--muted); font-size: 12.5px; }
+.chip { font-size: 12.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; color: var(--on); background: var(--watch); white-space: nowrap; }
+.chip.ok { background: var(--buy); }
+.chip.ghost { background: var(--surface-2); color: var(--muted); }
+.rng-body { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) { .rng-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.rng-col { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.edges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.edge { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+.edge dt { font-size: 12px; color: var(--muted); }
+.edge dd { margin: 0; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 22px; line-height: 1.25; }
+.edge.lo dd { color: var(--up); } .edge.hi dd { color: var(--down); }
+#ruler { width: 100%; height: 104px; display: block; }
+.rng .small { margin: 0; }
+.ticket { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ticket label { display: grid; gap: 2px; font-size: 12.5px; color: var(--muted); min-width: 0; }
+.ticket input { width: 100%; min-width: 0; font: inherit; font-family: var(--font-num); font-size: 18px; font-weight: 700; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.ticket-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ticket-actions .src { color: var(--muted); font-size: 12.5px; }
+.probbar { display: flex; height: 26px; border-radius: 8px; overflow: hidden; background: var(--surface-2); font-size: 12px; font-weight: 700; color: var(--on); }
+.probbar span { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; min-width: 0; }
+.probbar .pu { background: var(--buy); } .probbar .pd { background: var(--sell); } .probbar .pn { background: var(--lvl); }
+.odds { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px 14px; margin: 0; }
+.odds dt { font-size: 12px; color: var(--muted); }
+.odds dd { margin: 0; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 18px; }
+.odds dd.bad { color: var(--down); } .odds dd.good { color: var(--up); }
+.rng-state { font-weight: 700; font-size: 15px; margin: 0; }
+.rng-why { margin: 0; font-size: 13.5px; }
+
 /* grid */
 .grid { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 1100px) { .grid { grid-template-columns: minmax(0, 1fr) 360px; } }
@@ -196,6 +229,35 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     </div>
   </section>
 
+  <section class="rng" id="rng" aria-live="polite">
+    <div class="rng-h"><h2>今日区间</h2><span class="hint" id="rhint">10:00 根据开盘 30 分钟、最近 5 天波动和 VIX 预测今天剩下时间的高低点</span><span class="chip" id="rverdict">只看不买</span></div>
+    <p class="rng-state" id="rpre" hidden></p>
+    <div class="rng-body" id="rbody">
+      <div class="rng-col">
+        <dl class="edges">
+          <div class="edge lo"><dt id="rlo-l">80% 不会跌破</dt><dd id="rlo">—</dd></div>
+          <div class="edge hi"><dt id="rhi-l">80% 不会涨破</dt><dd id="rhi">—</dd></div>
+          <div class="edge"><dt>两边都不破</dt><dd id="rboth">—</dd></div>
+        </dl>
+        <canvas id="ruler" aria-label="区间刻度"></canvas>
+        <p class="small" id="rnote"></p>
+      </div>
+      <div class="rng-col">
+        <div class="ticket">
+          <label for="tk-e">挂单买入价<input id="tk-e" type="number" step="0.01" inputmode="decimal"></label>
+          <label for="tk-s">止损<input id="tk-s" type="number" step="0.01" inputmode="decimal"></label>
+          <label for="tk-t">止盈<input id="tk-t" type="number" step="0.01" inputmode="decimal"></label>
+        </div>
+        <div class="ticket-actions"><button id="tk-use" class="btn primary" type="button">算我的单子</button><button id="tk-auto" class="btn" type="button">用自动计划</button><span class="src" id="tk-src"></span></div>
+        <p class="rng-state" id="rstate"></p>
+        <div class="probbar" id="rbar" aria-label="概率条"></div>
+        <dl class="odds" id="rodds"></dl>
+        <p class="rng-why" id="rwhy"></p>
+        <p class="small" id="rrec"></p>
+      </div>
+    </div>
+  </section>
+
   <main class="grid">
     <div class="col-main">
       <section class="panel">
@@ -278,9 +340,10 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     get(k, d) { try { const v = localStorage.getItem("spylamp." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem("spylamp." + k, JSON.stringify(v)); } catch (e) { /* storage off */ } },
   };
-  let userLev = store.get("lev", 10);
+  let userLev = store.get("lev", DEMO ? DEMO.leverage || 20 : 10);
   let redUp = store.get("redUp", false);
   let S = null, BARS = [], TRACK = null, DAILY = null, lastAlert = null, soundOn = false, wake = null;
+  let RANGE = null, RREC = null, PRESET = null, ODDS = null, TK = null, lastRange = null;
 
   const f2 = (v) => (v == null || isNaN(v) ? "—" : Number(v).toFixed(2));
   const pct = (v, d = 2) => (v == null || isNaN(v) ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(d) + "%");
@@ -444,6 +507,13 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   }
   function chartLines() {
     const out = [], lv = S.levels || [], a = S.action || {};
+    if (RANGE && TK && !S.position) {  // range desk: 80% band and the ticket
+      const b = RANGE.forecast.bands["0.8"];
+      out.push({ price: b.low, label: "80% 下沿 " + f2(b.low), color: cssv("--accent") }, { price: b.high, label: "80% 上沿 " + f2(b.high), color: cssv("--accent") });
+      out.push({ price: TK.entry, label: "挂单 " + f2(TK.entry), color: cssv("--accent"), solid: true },
+        { price: TK.stop, label: "止损 " + f2(TK.stop), color: cssv("--sell"), solid: true }, { price: TK.tp, label: "止盈 " + f2(TK.tp), color: cssv("--buy"), solid: true });
+      return out;
+    }
     lv.filter((l) => l.dist_pct < 0).slice(0, 2).forEach((l) => out.push({ price: l.price, label: l.name, color: cssv(redUp ? "--down" : "--up") }));
     lv.filter((l) => l.dist_pct > 0).slice(0, 1).forEach((l) => out.push({ price: l.price, label: l.name, color: cssv(redUp ? "--up" : "--down") }));
     const p = S.position || S.paper;
@@ -521,9 +591,188 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       (o.TEST_x3 ? `<dt>2020 年后 3x</dt><dd>${pct(o.TEST_x3.final - 1, 0)}，回撤 ${pct(o.TEST_x3.max_dd, 0)}</dd>` : "") +
       (o.TEST_x10 ? `<dt>2020 年后 10x</dt><dd>${pct(o.TEST_x10.final - 1, 0)}，回撤 <span class="bad">${pct(o.TEST_x10.max_dd, 0)}</span></dd>` : "") + `</dl>`;
   }
+  /* ---------------- range desk: forecast band, ticket, odds ---------------- */
+  function erfc(x) {
+    const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+    const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
+      t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? r : 2 - r;
+  }
+  const normSf = (z) => 0.5 * erfc(z / Math.SQRT2);
+  function pTouchBelow(s, lvl, v) { if (lvl >= s) return 1; if (v <= 0) return 0; return Math.min(1, 2 * normSf(Math.log(s / lvl) / Math.sqrt(v))); }
+  function pBracket(s, lo, hi, v) {  // driftless log-Brownian motion: [P(hi first), P(lo first), P(neither)]
+    if (s >= hi) return [1, 0, 0]; if (s <= lo) return [0, 1, 0]; if (v <= 0) return [0, 0, 1];
+    const w = Math.log(hi / lo), y = Math.log(s / lo);
+    const need = Math.ceil(Math.sqrt(80 / v) * w / Math.PI);
+    if (need > 20000) { const u = pTouchBelow(1 / s, 1 / hi, v), d = pTouchBelow(s, lo, v); return [u, d, Math.max(0, 1 - u - d)]; }
+    let up = y / w, dn = (w - y) / w;
+    for (let n = 1; n <= Math.max(80, need); n++) {
+      const e = Math.exp(-Math.pow(n * Math.PI / w, 2) * v / 2);
+      if (e < 1e-12) break;
+      const c = (2 * (n % 2 ? -1 : 1)) / (n * Math.PI);
+      up += c * Math.sin(n * Math.PI * y / w) * e; dn += c * Math.sin(n * Math.PI * (w - y) / w) * e;
+    }
+    up = Math.min(Math.max(up, 0), 1); dn = Math.min(Math.max(dn, 0), 1);
+    return [up, dn, Math.max(0, 1 - up - dn)];
+  }
+  const minuteOf = (t) => Math.floor((t % 86400) / 60) - 570;
+  function share(R, a, b) {
+    const f = (m) => { m = Math.min(Math.max(m, 0), 390); const i = Math.min(Math.floor(m / 5), 77), fr = (m - i * 5) / 5; return R.cum[i] + (R.cum[i + 1] - R.cum[i]) * fr; };
+    return Math.max(f(b) - f(a), 0);
+  }
+  function varLeft(R, mos) { const w = share(R, R.t0, 390); return w > 0 ? R.forecast.sigma ** 2 * share(R, mos, R.flat) / w : 0; }
+  const liqDrop = (L, mmr) => (L <= 1 ? 1 : 1 - (1 - 1 / L) / (1 - mmr));
+  function rangeOdds(R, tk, bars) {
+    const c = R.costs;
+    let fill = null, done = null;
+    for (const b of bars) {  // replay the ticket on today's bars (same fill rules as the backtest)
+      const m = minuteOf(b[0]);
+      if (m < R.t0) continue;
+      if (!fill) {
+        if (m > R.last_fill) break;
+        if (b[1] <= tk.entry || b[3] <= tk.entry - 0.01) {
+          fill = { t: b[0], px: b[1] <= tk.entry ? b[1] : tk.entry };
+          if (b[3] <= tk.stop) { done = { t: b[0], px: Math.min(tk.stop, fill.px), why: "stop" }; break; }
+        }
+        continue;
+      }
+      if (b[1] <= tk.stop) { done = { t: b[0], px: b[1], why: "stop" }; break; }
+      if (b[3] <= tk.stop) { done = { t: b[0], px: tk.stop, why: "stop" }; break; }
+      if (b[2] >= tk.tp + 0.01) { done = { t: b[0], px: Math.max(b[1], tk.tp), why: "tp" }; break; }
+      if (m >= R.flat) { done = { t: b[0], px: b[4], why: "eod" }; break; }
+    }
+    const last = bars[bars.length - 1], mos = minuteOf(last[0]), price = last[4], v = varLeft(R, mos + 1);
+    const win = tk.tp / tk.entry - 1, loss = tk.stop / tk.entry - 1;
+    const winNet = win - 2 * c.maker, lossNet = loss - c.maker - c.taker - c.slippage;
+    const o = { price, fill, done, win, loss, winNet, lossNet, need: -lossNet / (winNet - lossNet),
+      fair: Math.log(tk.entry / tk.stop) / Math.log(tk.tp / tk.stop), liq: tk.entry * (1 - liqDrop(userLev, c.mmr)) };
+    if (done) { const fee = c.maker + (done.why === "tp" ? c.maker : c.taker + c.slippage); o.state = "done"; o.result = done.px / fill.px - 1 - fee; }
+    else if (fill) { const [u, d, n] = pBracket(price, tk.stop, tk.tp, v); Object.assign(o, { state: "in", pUp: u, pDn: d, pNone: n, pnl: price / fill.px - 1 }); }
+    else if (mos > R.last_fill) o.state = "expired";
+    else {
+      const pf = pTouchBelow(price, tk.entry, v), [u, d, n] = pBracket(tk.entry, tk.stop, tk.tp, v);
+      Object.assign(o, { state: "waiting", pFill: pf, pUp: u, pDn: d, pNone: n });
+    }
+    o.ev = -(c.maker + (o.pUp ?? o.fair) * c.maker + (1 - (o.pUp ?? o.fair)) * (c.taker + c.slippage));  // no edge: minus the fees
+    return o;
+  }
+  const dayKey = () => (S && S.time ? S.time.slice(0, 10) : "");
+  function pickTicket() {
+    const saved = store.get("ticket." + dayKey(), null);
+    const auto = RANGE && RANGE.forecast.auto;
+    if (saved && saved.entry) return { ...saved, src: "你的单子" };
+    if (!(saved && saved.auto) && PRESET) return { ...PRESET, src: "你截图那天的单子" };
+    return auto ? { entry: auto.entry, stop: auto.stop, tp: auto.tp, src: "自动计划：10:00 价格下方半个波动单位挂单，止损在 80% 下沿下面" } : null;
+  }
+  function drawRuler(R, tk, o) {
+    const cv = $("ruler"), w = cv.clientWidth, h = cv.clientHeight, dpr = window.devicePixelRatio || 1;
+    if (!w) return;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    const B = R.forecast.bands, hi = Math.max(...BARS.map((b) => b[2])), lo = Math.min(...BARS.map((b) => b[3]));
+    let a = Math.min(B["0.9"].low, lo, tk ? tk.stop : Infinity), z = Math.max(B["0.9"].high, hi, tk ? tk.tp : -Infinity);
+    const pad = (z - a) * 0.04; a -= pad; z += pad;
+    const x = (p) => 8 + ((p - a) / (z - a)) * (w - 16);
+    const C = { acc: cssv("--accent"), fg: cssv("--fg"), mut: cssv("--muted"), s2: cssv("--surface-2"), buy: cssv("--buy"), sell: cssv("--sell"), num: cssv("--font-num") || "monospace", bg: cssv("--surface") };
+    const band = (k, alpha, y0, y1) => { ctx.globalAlpha = alpha; ctx.fillStyle = C.acc; ctx.fillRect(x(B[k].low), y0, x(B[k].high) - x(B[k].low), y1 - y0); ctx.globalAlpha = 1; };
+    band("0.9", 0.12, 28, 52); band("0.8", 0.22, 28, 52); band("0.5", 0.38, 28, 52);
+    ctx.fillStyle = C.fg; ctx.fillRect(x(lo), 58, Math.max(2, x(hi) - x(lo)), 4);  // today so far
+    ctx.font = `10.5px ${C.num}`; ctx.fillStyle = C.mut; ctx.textBaseline = "middle";
+    const tl = "今天到现在", tlw = ctx.measureText(tl).width;
+    ctx.fillText(tl, x(hi) + 6 + tlw < w ? x(hi) + 6 : Math.max(x(lo) - tlw - 6, 0), 60);
+    const p = o.price, px = x(p);
+    ctx.fillStyle = C.fg; ctx.fillRect(Math.round(px) - 1, 18, 2, 46);
+    ctx.font = `bold 11px ${C.num}`; ctx.textBaseline = "alphabetic";
+    const lbl = "现价 " + f2(p), tw = ctx.measureText(lbl).width; ctx.fillText(lbl, Math.min(Math.max(px - tw / 2, 0), w - tw), 13);
+    if (tk) {
+      const mark = (q, col, txt) => {
+        const qx = x(q); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(qx, 72); ctx.lineTo(qx - 5, 80); ctx.lineTo(qx + 5, 80); ctx.closePath(); ctx.fill();
+        ctx.font = `10.5px ${C.num}`; const t2 = ctx.measureText(txt).width; ctx.textBaseline = "top";
+        ctx.fillText(txt, Math.min(Math.max(qx - t2 / 2, 0), w - t2), 84); ctx.textBaseline = "alphabetic";
+      };
+      mark(tk.stop, C.sell, "止损"); mark(tk.entry, C.acc, "买"); mark(tk.tp, C.buy, "止盈");
+    }
+  }
+  function renderRange() {
+    const R = RANGE;
+    if (!R || !R.forecast) {
+      $("rbody").hidden = true; $("rpre").hidden = false;
+      const ph = S && S.range && S.range.phase, m = S && S.time ? minuteOf(tsOf(S.time)) : -1;
+      $("rpre").textContent = ph === "nodata" ? "数据不够：需要最近 5 个交易日的分钟线和昨天的 VIX 收盘。" :
+        "10:00 出今天的区间预测" + (m >= 0 && m < 29 ? `（还有 ${29 - m} 分钟）` : "") + "。开盘前 30 分钟波动最大，等它走完再判断。";
+      $("rverdict").className = "chip ghost"; $("rverdict").textContent = "等 10:00";
+      TK = null; ODDS = null; return;
+    }
+    $("rbody").hidden = false; $("rpre").hidden = true;
+    const F = R.forecast, B = F.bands, rec = RREC || R.record || {};
+    const passed = (rec.passed || 0) > 0;
+    $("rverdict").className = "chip" + (passed ? " ok" : ""); $("rverdict").textContent = passed ? "通过检验" : "回测没有优势：只看不买";
+    $("rlo").textContent = f2(B["0.8"].low); $("rhi").textContent = f2(B["0.8"].high); $("rboth").textContent = pct0(B["0.8"].both);
+    const hi = Math.max(...BARS.map((b) => b[2])), lo = Math.min(...BARS.map((b) => b[3]));
+    $("rnote").textContent = `中位预测（一半的日子会超出）${f2(B["0.5"].low)} – ${f2(B["0.5"].high)}；90%：${f2(B["0.9"].low)} – ${f2(B["0.9"].high)}。` +
+      `10:00 价格 ${f2(F.s0)}，剩下时间 1 个标准差约 ±${f2(F.sigma_usd)}（昨天 VIX ${f2(F.vix_prev)}）。今天到现在：最高 ${f2(hi)}，最低 ${f2(lo)}。`;
+    TK = pickTicket();
+    if (!TK) { $("rstate").textContent = "今天的区间太窄或太宽，没有自动计划。可以自己填一张单子。"; $("rbar").innerHTML = ""; $("rodds").innerHTML = ""; return; }
+    for (const [id, k] of [["tk-e", "entry"], ["tk-s", "stop"], ["tk-t", "tp"]]) if (document.activeElement !== $(id)) $(id).value = TK[k].toFixed(2);
+    $("tk-src").textContent = TK.src;
+    const o = rangeOdds(R, TK, BARS); ODDS = o;
+    const L = userLev, acct = (x) => pct(x * L);
+    let st = "", bar = [], items = [];
+    if (o.state === "waiting") {
+      st = `挂单等成交：现价 ${f2(o.price)}，离买入价还差 ${pct(TK.entry / o.price - 1)}`;
+      bar = [["pu", o.pFill * o.pUp, "止盈"], ["pd", o.pFill * o.pDn, "止损"], ["pn", o.pFill * o.pNone + (1 - o.pFill), "没成交或到收盘"]];
+      items = [["成交概率", pct0(o.pFill)], ["成交后止盈", pct0(o.pUp)], ["成交后止损", pct0(o.pDn)], ["合计止盈", pct0(o.pFill * o.pUp)]];
+    } else if (o.state === "in") {
+      st = `已成交 @ ${f2(o.fill.px)}（${hm(o.fill.t)}）· 现在 ${pct(o.pnl)} = 账户 ${acct(o.pnl)}（${lev(L)}）`;
+      bar = [["pu", o.pUp, "止盈"], ["pd", o.pDn, "止损"], ["pn", o.pNone, "到收盘"]];
+      items = [["现在止盈概率", pct0(o.pUp)], ["现在止损概率", pct0(o.pDn)], ["到收盘都没碰", pct0(o.pNone)]];
+    } else if (o.state === "done") {
+      const nm = { tp: "止盈", stop: "止损", eod: "收盘前平仓" }[o.done.why];
+      st = `${nm} @ ${f2(o.done.px)}（${hm(o.done.t)}）· 扣费后 ${pct(o.result)} = 账户 ${acct(o.result)}（${lev(L)}）`;
+    } else st = "15:00 前没有成交，今天这张单子作废。";
+    $("rstate").textContent = st;
+    $("rbar").innerHTML = bar.map(([c, v, t]) => `<span class="${c}" style="width:${(v * 100).toFixed(1)}%">${v >= 0.12 ? t + " " + pct0(v) : ""}</span>`).join("");
+    $("rbar").hidden = !bar.length;
+    items.push(["扣费后每单期望", acct(o.ev) + " 账户", "bad"], ["要赚钱需要胜率", pct0(o.need)], ["公平胜率", pct0(o.fair)],
+      ["止盈时账户", acct(o.winNet), "good"], ["止损时账户", acct(o.lossNet), "bad"], ["爆仓价", f2(o.liq)]);
+    $("rodds").innerHTML = items.map(([k, v, c]) => `<div><dt>${esc(k)}</dt><dd class="${c || ""}">${esc(v)}</dd></div>`).join("");
+    $("rwhy").textContent = `这张单子：赚 ${(o.win * 1e4).toFixed(1)} 个基点或亏 ${(-o.loss * 1e4).toFixed(1)} 个基点。没有额外信息时，下单那一刻碰到止盈的公平概率是 ${pct0(o.fair)}，扣掉 OKX 手续费后要 ${pct0(o.need)} 才能赚钱，` +
+      `所以平均每单 ${(o.ev * 1e4).toFixed(1)} 个基点，${lev(L)} 就是账户 ${acct(o.ev)}。概率随价格和剩余时间每分钟更新，跟 moomoo 期权的“盈利概率”是同一个道理。`;
+    const A = rec.ALL || {};
+    $("rrec").textContent = A.n ? `回测（${(rec.period || {}).start || ""} 至 ${(rec.period || {}).end || ""}，自动计划 ${A.n} 单）：胜率 ${pct0(A.win_rate)}，公平胜率 ${pct0(A.fair_win_rate)}，` +
+      `每单扣费后 ${(A.mean_net_bp ?? 0).toFixed(1)} 个基点；20x 账户最后剩 ${((A.lev20_final ?? 0) * 100).toFixed(1)}%。${rec.configs || 0} 种区间做法，${rec.passed || 0} 种通过检验。` : "";
+    drawRuler(R, TK, o);
+  }
+  function useTicket() {
+    const e = +$("tk-e").value, st = +$("tk-s").value, t = +$("tk-t").value;
+    if (!(st > 0 && e > st && t > e)) { $("tk-src").textContent = "要满足：止损 < 买入价 < 止盈"; return; }
+    store.set("ticket." + dayKey(), { entry: e, stop: st, tp: t }); lastRange = null; render();
+  }
+  $("tk-use").addEventListener("click", useTicket);
+  for (const id of ["tk-e", "tk-s", "tk-t"]) $(id).addEventListener("keydown", (ev) => { if (ev.key === "Enter") useTicket(); });
+  $("tk-auto").addEventListener("click", () => { store.set("ticket." + dayKey(), { auto: true }); lastRange = null; render(); });
+  function rangeEvent(silent) {
+    const o = ODDS;
+    const key = o && TK ? [dayKey(), TK.entry, TK.stop, TK.tp, o.fill ? o.fill.t : "", o.done ? o.done.why : ""].join("|") : null;
+    if (key && lastRange && key !== lastRange && !silent && (o.fill || o.done)) {
+      const L = userLev;
+      let cls = "s-watch", title = `单子成交 @ ${f2(o.fill.px)}`, body = `现在止盈概率 ${pct0(o.pUp)}，止损概率 ${pct0(o.pDn)}。止损 ${f2(TK.stop)}，止盈 ${f2(TK.tp)}。`;
+      if (o.done) {
+        const nm = { tp: "止盈", stop: "止损", eod: "收盘前平仓" }[o.done.why];
+        cls = o.done.why === "tp" ? "s-buy" : o.done.why === "stop" ? "s-sell" : "s-hold";
+        title = `${nm} @ ${f2(o.done.px)}`; body = `扣费后 ${pct(o.result)}，${lev(L)} 账户 ${pct(o.result * L)}。`;
+      }
+      $("sheet").className = "sheet " + cls; $("mtime").textContent = (S.time || "") + " 美东 · 今日区间";
+      $("mh").textContent = title; $("mb").textContent = body; $("mnums").innerHTML = "";
+      $("modal").hidden = false; $("mok").focus();
+      beep(cls === "s-sell" ? "sell" : cls === "s-buy" ? "buy" : "watch"); say(title); notify(title, body);
+    }
+    lastRange = key;
+  }
+
   function render() {
     if (!S) return;
-    renderLamp(); renderCharts(); renderChecks(); renderDaily(); renderSide(); renderTrack();
+    renderLamp(); renderRange(); renderCharts(); renderChecks(); renderDaily(); renderSide(); renderTrack();
     $("src").textContent = DEMO ? "回放演示（历史数据）" : (S.source || "");
     $("src2").textContent = DEMO ? "2022-10 至 2024-12 公开分钟数据" : (S.source || "—");
     $("upd").textContent = S.time || "—";
@@ -580,6 +829,7 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     const key = last ? last.time + "|" + last.text : null;
     if (key && key !== lastAlert && !silent && ["buy", "sell", "watch"].includes(S.status)) popup();
     lastAlert = key;
+    if ($("modal").hidden || silent) rangeEvent(silent);
   }
   $("mok").addEventListener("click", () => { $("modal").hidden = true; });
   $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").hidden = true; });
@@ -613,11 +863,15 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   /* ---------------- live mode: the local server ---------------- */
   async function getJSON(u) { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error(r.status); return r.json(); }
   async function live() {
-    try { S = await getJSON("/state"); BARS = await getJSON("/bars"); TRACK = S.track; render(); checkAlert(true); }
+    try {
+      S = await getJSON("/state"); BARS = await getJSON("/bars"); TRACK = S.track;
+      RANGE = S.range && S.range.forecast ? S.range : null; RREC = S.range && S.range.record; render(); checkAlert(true);
+    }
     catch (e) { $("headline").textContent = "连不上本机监控程序"; $("sub").textContent = "先双击“启动监控”，再刷新这个页面。"; }
     const es = new EventSource("/events");
     es.onmessage = async (ev) => {
       S = JSON.parse(ev.data); TRACK = S.track || TRACK;
+      RANGE = S.range && S.range.forecast ? S.range : null; RREC = (S.range && S.range.record) || RREC;
       try { BARS = await getJSON("/bars"); } catch (e) { /* keep old bars */ }
       render(); checkAlert(false);
     };
@@ -635,32 +889,35 @@ table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   /* ---------------- demo mode: replay baked days ---------------- */
   function demo() {
     $("demo").hidden = false;
-    TRACK = DEMO.track;
+    TRACK = DEMO.track; RREC = DEMO.range_record;
     const days = DEMO.days, sel = $("day");
     sel.innerHTML = days.map((d, i) => `<option value="${i}">${d.date} · ${esc(d.label)}</option>`).join("");
-    let day = days[0], idx = 0, timer = null;
+    let day = days[0], idx = 0, timer = null, fresh = true;
     function show(i, silent) {
       idx = Math.max(0, Math.min(day.states.length - 1, i));
       S = day.states[idx]; DAILY = day.daily; S.daily = day.daily; BARS = day.bars.slice(0, idx + 1);
+      RANGE = day.range && minuteOf(BARS[BARS.length - 1][0]) >= day.range.t0 - 1 ? day.range : null;
       $("scrub").value = String(idx); $("dtime").textContent = S.time.slice(11) + " 美东";
       render(); checkAlert(silent);
     }
     function stop() { clearInterval(timer); timer = null; $("play").textContent = idx >= day.states.length - 1 ? "▶ 从开盘播放" : "▶ 继续播放"; }
     function play() {
       if (timer) { stop(); return; }
-      if (idx >= day.states.length - 1 || idx === day.start) show(0, true);
+      if (idx >= day.states.length - 1 || fresh) show(0, true);
+      fresh = false;
       $("play").textContent = "❚❚ 暂停";
       timer = setInterval(() => { if (idx >= day.states.length - 1) { stop(); return; } show(idx + 1, false); if (!$("modal").hidden) stop(); }, 1000 / +$("spd").value);
     }
     function load(i) {
-      stop(); day = days[i]; $("scrub").max = String(day.states.length - 1);
-      $("dnote").textContent = "当天每一分钟都按实盘同样的程序算过一遍。现在停在第一次提醒那一分钟；点“从开盘播放”看全天，提醒出现时会弹窗（先点“开启声音和弹窗”可以听到声音）。";
-      show(day.start, true); $("play").textContent = "▶ 从开盘播放";
+      stop(); day = days[i]; $("scrub").max = String(day.states.length - 1); PRESET = day.ticket || null; lastRange = null;
+      $("dnote").textContent = "当天每一分钟都按实盘同样的程序算过一遍。现在停在" + (day.ticket ? "你的单子成交的那一分钟" : day.range && day.start >= day.range.t0 - 1 && !day.states[day.start].alerts.length ? "区间单子成交（或 10:00 预测）那一分钟" : "第一次提醒那一分钟") +
+        "；点“从开盘播放”看全天，提醒和成交会弹窗（先点“开启声音和弹窗”可以听到声音）。也可以在“今日区间”里填你自己的单子。";
+      show(day.start, true); fresh = true; $("play").textContent = "▶ 从开盘播放";
     }
     sel.addEventListener("change", () => load(+sel.value));
     $("play").addEventListener("click", play);
     $("spd").addEventListener("change", () => { if (timer) { stop(); play(); } });
-    $("scrub").addEventListener("input", () => { stop(); show(+$("scrub").value, true); });
+    $("scrub").addEventListener("input", () => { stop(); fresh = false; show(+$("scrub").value, true); });
     const note = () => { $("actnote").textContent = "回放里会自动当作已经照做；实盘时点这个按钮告诉监控程序。"; };
     $("bought").addEventListener("click", note); $("sold").addEventListener("click", note);
     load(0);
