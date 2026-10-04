@@ -1,0 +1,671 @@
+<title>SPY 杠杆抄底灯</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one signal lamp across the top says what to do; under it the 5m / 3m / 1m charts and the
+   bottom checklist; a side rail carries the daily setup, price levels, alert log and the backtest. */
+:root {
+  --bg: #eef1f4; --surface: #ffffff; --surface-2: #e4e9ee; --line: #d3dae2;
+  --fg: #142230; --muted: #5a6876; --accent: #2c5a86; --scrim: rgba(12, 20, 28, .55);
+  --up: #138a55; --down: #cf3b3f; --grid: rgba(20, 34, 48, .07); --lvl: #6b7a89;
+  --buy: #0d7f49; --watch: #94600f; --hold: #0c727c; --sell: #bd2f2a; --ready: #2c5a86;
+  --wait: #e4e9ee; --on: #ffffff;
+  --font-ui: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, sans-serif;
+  --font-num: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1318; --surface: #141c23; --surface-2: #1b252e; --line: #27333e;
+    --fg: #e3e9ef; --muted: #8b99a6; --accent: #79a9d8; --scrim: rgba(0, 0, 0, .65);
+    --up: #2bb673; --down: #ef5a5e; --grid: rgba(227, 233, 239, .07); --lvl: #8b99a6;
+    --buy: #127c4a; --watch: #8a5a0e; --hold: #0e6a73; --sell: #ad2e2a; --ready: #2a5680;
+    --wait: #1b252e; --on: #ffffff; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1318; --surface: #141c23; --surface-2: #1b252e; --line: #27333e;
+  --fg: #e3e9ef; --muted: #8b99a6; --accent: #79a9d8; --scrim: rgba(0, 0, 0, .65);
+  --up: #2bb673; --down: #ef5a5e; --grid: rgba(227, 233, 239, .07); --lvl: #8b99a6;
+  --buy: #127c4a; --watch: #8a5a0e; --hold: #0e6a73; --sell: #ad2e2a; --ready: #2a5680;
+  --wait: #1b252e; --on: #ffffff; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 14px; line-height: 1.55; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.app { max-width: 1440px; margin: 0 auto; padding: 14px 16px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+
+/* header */
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.brand { display: flex; align-items: baseline; gap: 8px; font-weight: 900; font-size: 18px; letter-spacing: .02em; }
+.brand .tick { font-family: var(--font-num); font-weight: 700; font-size: 13px; padding: 1px 7px; border: 1.5px solid var(--fg); border-radius: 4px; letter-spacing: .06em; }
+.meta { display: flex; gap: 14px; color: var(--muted); font-size: 13px; flex: 1 1 260px; min-width: 0; flex-wrap: wrap; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.controls label { color: var(--muted); font-size: 13px; }
+select, .btn, input[type="range"] { font: inherit; }
+select { max-width: 100%; min-width: 0; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 7px; padding: 5px 8px; }
+.btn { cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 7px; padding: 6px 12px; font-weight: 500; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on); }
+.btn.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* demo bar */
+.demo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r); padding: 8px 12px; }
+.demo .tag { font-weight: 700; font-size: 12px; letter-spacing: .08em; color: var(--accent); }
+.demo input[type="range"] { flex: 1 1 200px; min-width: 120px; accent-color: var(--accent); }
+.demo .note { color: var(--muted); font-size: 12.5px; flex-basis: 100%; }
+
+/* the lamp */
+.lamp { border-radius: 14px; padding: 18px 22px 20px; display: grid; gap: 10px; background: var(--wait); color: var(--fg); transition: background-color .3s ease; }
+.lamp.s-buy { background: var(--buy); color: var(--on); }
+.lamp.s-watch { background: var(--watch); color: var(--on); }
+.lamp.s-hold { background: var(--hold); color: var(--on); }
+.lamp.s-sell { background: var(--sell); color: var(--on); }
+.lamp.s-ready { background: var(--ready); color: var(--on); }
+.lamp-eyebrow { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 13.5px; opacity: .92; }
+.lchip { font-weight: 900; font-size: 13px; letter-spacing: .1em; padding: 2px 10px; border-radius: 999px; border: 1.5px solid currentColor; }
+.lamp h1 { margin: 0; font-weight: 900; font-size: clamp(28px, 4.6vw, 54px); line-height: 1.12; letter-spacing: .01em; text-wrap: balance; }
+.lamp .sub { margin: 0; font-size: clamp(15px, 1.6vw, 18px); max-width: 70ch; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px 18px; margin: 4px 0 0; }
+.nums div { min-width: 0; }
+.nums dt { font-size: 12.5px; opacity: .85; }
+.nums dd { margin: 0; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 20px; line-height: 1.25; overflow-wrap: anywhere; }
+.nums dd.big { font-size: 28px; }
+.lamp .rule { margin: 0; font-size: 14px; opacity: .95; max-width: 90ch; }
+.lamp-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.lamp-actions .btn { background: var(--on); color: #102030; border-color: transparent; font-weight: 700; font-size: 16px; padding: 9px 20px; }
+.lamp.s-wait .lamp-actions .btn { background: var(--fg); color: var(--bg); }
+.lamp-actions .hint { font-size: 13px; opacity: .9; }
+@media (prefers-reduced-motion: no-preference) {
+  .lamp.flash { animation: flash 1.2s ease 3; }
+  @keyframes flash { 50% { filter: brightness(1.25) saturate(1.1); } }
+}
+
+/* grid */
+.grid { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) { .grid { grid-template-columns: minmax(0, 1fr) 360px; } }
+.col-main, .col-side { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px 14px; min-width: 0; }
+.panel-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 8px; }
+.panel h2 { margin: 0; font-size: 15px; font-weight: 700; }
+.panel .hint { color: var(--muted); font-size: 12.5px; }
+
+/* timeframe charts */
+.tfs { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) { .tfs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tf { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.tf figcaption { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tf figcaption b { font-size: 14px; }
+.tf canvas { width: 100%; height: 210px; display: block; background: var(--surface); }
+.tf .need { color: var(--muted); font-size: 12px; }
+.pill { white-space: nowrap; font-size: 12px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.pill.ok { background: var(--buy); color: var(--on); }
+.score { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+
+/* checklist */
+.tablewrap { overflow-x: auto; }
+table.checks { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.checks th, .checks td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: center; }
+.checks th:first-child { text-align: left; font-weight: 500; }
+.checks thead th { color: var(--muted); font-weight: 500; font-size: 12.5px; }
+.checks .what { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; }
+.dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); vertical-align: middle; }
+.dot.on { background: var(--up); border-color: var(--up); }
+.checks tr.sum th, .checks tr.sum td { font-weight: 700; }
+.checks tr:last-child th, .checks tr:last-child td { border-bottom: 0; }
+
+/* side rail */
+.gauge { position: relative; height: 12px; border-radius: 6px; background: var(--surface-2); margin: 8px 0 18px; }
+.gauge .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--muted); }
+.gauge .fill.ok { background: var(--buy); }
+.gauge .mark { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--fg); }
+.gauge .mark span { position: absolute; top: 18px; left: -10px; font-size: 11px; color: var(--muted); font-family: var(--font-num); }
+.verdict { font-weight: 700; font-size: 16px; margin: 2px 0 4px; }
+.verdict.ok { color: var(--buy); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 13.5px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.small { color: var(--muted); font-size: 12.5px; margin: 8px 0 0; }
+.levels { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.levels li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: baseline; padding: 4px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+.levels li:last-child { border-bottom: 0; }
+.levels .p { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.levels .d { font-family: var(--font-num); font-size: 12px; width: 62px; text-align: right; }
+.levels .below .d { color: var(--up); }
+.levels .above .d { color: var(--down); }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 260px; overflow-y: auto; }
+.log li { display: grid; grid-template-columns: 44px auto 1fr; gap: 8px; align-items: baseline; font-size: 13px; }
+.log .t { font-family: var(--font-num); color: var(--muted); font-size: 12px; }
+.log .k { font-size: 11.5px; font-weight: 700; padding: 0 7px; border-radius: 999px; color: var(--on); background: var(--muted); white-space: nowrap; }
+.log .k.buy { background: var(--buy); } .log .k.sell { background: var(--sell); }
+.log .k.watch { background: var(--watch); } .log .k.paper_exit { background: var(--lvl); } .log .k.tv { background: var(--accent); }
+.empty { color: var(--muted); font-size: 13px; margin: 0; }
+.track h3 { margin: 10px 0 2px; font-size: 13.5px; }
+.track h3:first-of-type { margin-top: 0; }
+.track .verdict-line { margin: 0 0 4px; font-size: 13px; }
+.bad { color: var(--down); } .good { color: var(--up); }
+.foot { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+
+/* pop-up */
+.modal { position: fixed; inset: 0; background: var(--scrim); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.sheet { width: min(560px, 100%); border-radius: 16px; padding: 22px 24px; display: grid; gap: 10px; background: var(--surface); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .35); }
+.sheet.s-buy { background: var(--buy); color: var(--on); } .sheet.s-watch { background: var(--watch); color: var(--on); }
+.sheet.s-sell { background: var(--sell); color: var(--on); } .sheet.s-hold { background: var(--hold); color: var(--on); }
+.sheet h2 { margin: 0; font-size: clamp(24px, 5vw, 36px); font-weight: 900; line-height: 1.15; text-wrap: balance; }
+.sheet p { margin: 0; }
+.sheet .m-eyebrow { font-size: 13px; opacity: .9; }
+.sheet .btn { justify-self: start; background: var(--on); color: #102030; border-color: transparent; font-weight: 700; font-size: 16px; padding: 9px 22px; }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="tick">SPY</span><span>杠杆抄底灯</span></div>
+    <div class="meta"><span id="src">正在连接…</span><span id="clock" class="num"></span></div>
+    <div class="controls">
+      <label for="lev">你想用的杠杆</label>
+      <select id="lev"><option>1</option><option>2</option><option>3</option><option>5</option><option>10</option><option>20</option></select>
+      <button id="snd" class="btn" type="button">开启声音和弹窗</button>
+      <button id="colors" class="btn" type="button" title="切换K线涨跌颜色">绿涨红跌</button>
+    </div>
+  </header>
+
+  <section id="demo" class="demo" hidden aria-label="回放演示">
+    <span class="tag">回放演示</span>
+    <select id="day" aria-label="选择回放日"></select>
+    <button id="play" class="btn primary" type="button">▶ 从开盘播放</button>
+    <select id="spd" aria-label="播放速度"><option value="2">每秒 2 分钟</option><option value="8" selected>每秒 8 分钟</option><option value="30">每秒 30 分钟</option></select>
+    <input id="scrub" type="range" min="0" max="389" value="0" aria-label="拖动到某一分钟">
+    <span id="dtime" class="num"></span>
+    <span id="dnote" class="note"></span>
+  </section>
+
+  <section id="lamp" class="lamp s-wait" aria-live="polite">
+    <div class="lamp-eyebrow"><span id="lchip" class="lchip">等待</span><span id="ltime" class="num"></span><span id="lprice" class="num"></span></div>
+    <h1 id="headline">正在连接…</h1>
+    <p id="sub" class="sub"></p>
+    <dl id="nums" class="nums"></dl>
+    <p id="rule" class="rule"></p>
+    <div class="lamp-actions">
+      <button id="bought" class="btn" type="button" hidden>我已买入</button>
+      <button id="sold" class="btn" type="button" hidden>我已卖出</button>
+      <span id="actnote" class="hint"></span>
+    </div>
+  </section>
+
+  <main class="grid">
+    <div class="col-main">
+      <section class="panel">
+        <div class="panel-h"><h2>三个周期</h2><span class="hint">先看 5 分钟到底，再看 3 分钟，最后 1 分钟收回确认。虚线是支撑和压力。</span></div>
+        <div class="tfs">
+          <figure class="tf" id="tf-m5"><figcaption><b>5 分钟</b><span class="pill" id="ok-m5">未到底</span><span class="score num" id="sc-m5"></span></figcaption><canvas aria-label="5分钟K线"></canvas><span class="need">要求：见底分≥4，含超卖和支撑插针收回</span></figure>
+          <figure class="tf" id="tf-m3"><figcaption><b>3 分钟</b><span class="pill" id="ok-m3">未到底</span><span class="score num" id="sc-m3"></span></figcaption><canvas aria-label="3分钟K线"></canvas><span class="need">要求：见底分≥3，含超卖</span></figure>
+          <figure class="tf" id="tf-m1"><figcaption><b>1 分钟</b><span class="pill" id="ok-m1">未到底</span><span class="score num" id="sc-m1"></span></figcaption><canvas aria-label="1分钟K线"></canvas><span class="need">要求：近 3 分钟见底分≥2，这一分钟收回</span></figure>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>见底清单</h2><span class="hint">实心 = 成立。3 分钟和 5 分钟看的是最近一根已收盘的K线。</span></div>
+        <div class="tablewrap"><table class="checks" id="checks"></table></div>
+      </section>
+    </div>
+
+    <aside class="col-side">
+      <section class="panel" id="daily">
+        <div class="panel-h"><h2>今天是不是抄底日</h2><span class="hint">日线，开盘前就定了</span></div>
+        <p class="verdict" id="dverdict">—</p>
+        <div class="gauge" id="dgauge"><div class="fill"></div><div class="mark" style="left:10%"><span>10</span></div></div>
+        <dl class="kv" id="dkv"></dl>
+        <p class="small">抄底日的做法：1/3/5 分钟共振时买，没有共振就在 15:45 前买。2 倍杠杆，止损 2.5 个日线 ATR，收盘站上 5 日均线后的下一个开盘卖出。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>附近价位</h2><span class="hint">绿 = 下方支撑，红 = 上方压力</span></div>
+        <ul class="levels" id="levels"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><h2>提醒记录</h2></div>
+        <ul class="log" id="log"></ul>
+      </section>
+
+      <section class="panel track" id="track">
+        <div class="panel-h"><h2>回测结果</h2><span class="hint">OKX 手续费、滑点、资金费已扣</span></div>
+        <div id="trackbody"></div>
+      </section>
+
+      <section class="panel" id="extrap">
+        <div class="panel-h"><h2>moomoo 资金面</h2><span class="hint">参考，不参与信号</span></div>
+        <dl class="kv" id="extra"></dl>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="foot"><span>只提示，不下单。所有价格是 SPY 现货价；OKX 永续合约价格会有小偏差。</span><span>数据源：<span id="src2">—</span></span><span>更新：<span id="upd" class="num">—</span></span></footer>
+</div>
+
+<div id="modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mh">
+  <div class="sheet" id="sheet">
+    <p class="m-eyebrow" id="mtime"></p>
+    <h2 id="mh"></h2>
+    <p id="mb"></p>
+    <dl class="nums" id="mnums"></dl>
+    <button id="mok" class="btn" type="button">知道了</button>
+  </div>
+</div>
+
+<script>window.SPY_DEMO = /*__DEMO__*/null;</script>
+<script>
+(() => {
+  "use strict";
+  const DEMO = window.SPY_DEMO;
+  const $ = (id) => document.getElementById(id);
+  const FACTS = [
+    ["osc", "超卖指标 ≥2 个", "RSI14≤32、随机K≤20、威廉≤−80、CCI≤−100、KDJ J≤0、MFI≤20"],
+    ["band", "跌破布林下轨或 VWAP−2σ", ""],
+    ["support", "支撑位插针收回", "下影线碰到支撑，收盘收回"],
+    ["candle", "锤子线或看涨吞没", ""],
+    ["climax", "放量", "成交量比平时高 1.5 个标准差"],
+    ["turn", "MACD 拐头或底背离", ""],
+  ];
+  const TFS = [["m5", "5 分钟", 5, 78], ["m3", "3 分钟", 3, 90], ["m1", "1 分钟", 1, 120]];
+  const STATUS = { wait: "等待", ready: "今天可抄底", buy: "买入", watch: "只看不买", hold: "持有中", sell: "卖出" };
+  const KIND = { buy: "买入", sell: "卖出", watch: "只看", paper_exit: "模拟", tv: "TV" };
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("spylamp." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("spylamp." + k, JSON.stringify(v)); } catch (e) { /* storage off */ } },
+  };
+  let userLev = store.get("lev", 10);
+  let redUp = store.get("redUp", false);
+  let S = null, BARS = [], TRACK = null, DAILY = null, lastAlert = null, soundOn = false, wake = null;
+
+  const f2 = (v) => (v == null || isNaN(v) ? "—" : Number(v).toFixed(2));
+  const pct = (v, d = 2) => (v == null || isNaN(v) ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(d) + "%");
+  const pct0 = (v) => (v == null || isNaN(v) ? "—" : Math.round(v * 100) + "%");
+  const lev = (v) => (v == null ? "—" : (+v).toString().replace(/\.0+$/, "") + "x");
+  const hm = (t) => { const d = new Date(t * 1000); return String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0"); };
+  const tsOf = (s) => { const m = /(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/.exec(s || ""); return m ? Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5]) / 1000 : null; };
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const numsHTML = (items) => items.map(([k, v, c]) => `<div><dt>${esc(k)}</dt><dd class="${c || ""}">${esc(v)}</dd></div>`).join("");
+
+  /* ---------------- the lamp ---------------- */
+  function lev10note() {
+    const o = (TRACK && TRACK.daily_oos) || {};
+    const x10 = o.TEST_x10, x3 = o.TEST_x3;
+    if (!x10) return "";
+    return `2020 年以来的测试期里，10x 最大回撤 ${pct(x10.max_dd, 0)}，3x 是 ${pct(x3 ? x3.max_dd : null, 0)}。`;
+  }
+  function renderLamp() {
+    const st = S.status || "wait", a = S.action || {}, d = S.daily || DAILY || {};
+    const lamp = $("lamp");
+    lamp.className = "lamp s-" + st;
+    $("lchip").textContent = STATUS[st] || st;
+    $("ltime").textContent = S.time ? S.time.slice(5) + " 美东" : "";
+    $("lprice").textContent = S.price ? "SPY " + f2(S.price) : "";
+    let head = S.headline || "", sub = S.sub || "", items = [], rule = "";
+    if (st === "buy") {
+      const lr = a.leverage_range || {};
+      items = [["杠杆", lev(a.leverage), "big"], ["买入价", f2(a.price), "big"], ["止损价", f2(a.stop)], ["爆仓价", f2(a.liquidation)],
+        ["每笔预期", pct(a.expected_pct)], ["历史胜率", pct0(a.win_rate)], ["平均持有", (a.hold_days || 0).toFixed(1) + " 天"]];
+      rule = "卖出：" + (a.exit_rule || "") + "。杠杆可选 " + Object.entries(lr).map(([k, v]) => k + " " + lev(v)).join(" · ") + "。";
+      if (userLev > (lr["上限"] || 3)) rule += ` 你选的 ${lev(userLev)} 超过上限：` + lev10note();
+    } else if (st === "watch") {
+      const per = a.leverage ? a.expected_pct / a.leverage : 0;
+      head = `1/3/5 分钟共振见底 @ ${f2(a.price)}，不下单`;
+      sub = "这就是“5 分钟、3 分钟、1 分钟一起到底”的信号。回测里照做是亏钱的，所以这里只提醒、只做模拟跟踪。";
+      items = [["你的杠杆", lev(userLev)], ["现价", f2(a.price), "big"], ["止损价", f2(a.stop)], ["历史次数", a.n_hist ?? "—"],
+        ["历史胜率", pct0(a.win_rate)], ["照做每次平均", pct(per * userLev) + " 账户"]];
+      rule = "若照做：" + (a.exit_rule || "") + "。" + (a.bucket ? `这次信号强度「${a.bucket}」。` : "");
+    } else if (st === "hold" && S.position) {
+      const p = S.position;
+      items = [["杠杆", lev(p.leverage)], ["买入价", f2(p.entry)], ["现价", f2(S.price), "big"], ["浮动盈亏", pct(p.pnl_pct), "big"], ["止损价", f2(p.stop)], ["买入时间", (p.entry_time || "").slice(5)]];
+      rule = "卖出规则：" + ((a && a.exit_rule) || "");
+      sub = sub.startsWith("收盘价") ? "按规则拿着，不用盯盘。" + (sub.includes("5分钟见顶") ? " 5 分钟见顶信号出现：如果今天就是卖出日，可以现在卖。" : "") : sub;
+    } else if (st === "sell") {
+      items = [["卖出价", f2(a.price), "big"]];
+    } else if (st === "ready") {
+      items = [["日线 RSI2", f2(d.rsi2), "big"], ["计划杠杆", "2x"], ["计划止损", f2(S.price - 2.5 * (d.atr || 0))], ["最晚买入", "15:45"]];
+      rule = "什么都不用做，等这里变绿。";
+    } else {
+      const below = (S.levels || []).filter((l) => l.dist_pct < 0)[0];
+      items = [["日线 RSI2", f2(d.rsi2) + (d.rsi2 != null ? " / 要 <10" : "")], ["比 200 日均线", d.close ? pct(d.close / d.sma200 - 1, 1) : "—"],
+        ["最近支撑", below ? below.name + " " + f2(below.price) : "—"]];
+      rule = "今天没有验证过的买点。不用操作，开着就行，有信号会响。";
+    }
+    if (S.paper && st !== "watch") rule += ` 模拟单：${(S.paper.entry_time || "").slice(11)} 买在 ${f2(S.paper.entry)}，现在 ${pct(S.paper.pnl_pct)}（${lev(S.paper.leverage)}）。`;
+    $("headline").textContent = head;
+    $("sub").textContent = sub;
+    $("nums").innerHTML = numsHTML(items);
+    $("rule").textContent = rule;
+    $("bought").hidden = st !== "buy";
+    $("sold").hidden = st !== "hold";
+    $("actnote").textContent = st === "buy" ? "在 OKX 买完后点一下，屏幕会切到“持有中”。" : "";
+  }
+
+  /* ---------------- charts ---------------- */
+  function cssv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function agg(bars, n) {
+    if (n === 1) return bars.map((b) => [b[0], b[1], b[2], b[3], b[4], b[5], true]);
+    const out = []; let cur = null, key = null;
+    for (const b of bars) {
+      const t = b[0], mod = Math.floor((t % 86400) / 60), k = Math.floor((mod - 570) / n), kt = t - (t % 86400) + (570 + k * n) * 60;
+      if (kt !== key) { if (cur) out.push(cur); key = kt; cur = [kt, b[1], b[2], b[3], b[4], b[5], false]; }
+      else { cur[2] = Math.max(cur[2], b[2]); cur[3] = Math.min(cur[3], b[3]); cur[4] = b[4]; cur[5] += b[5]; }
+      cur[6] = (mod - 570) % n === n - 1;
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+  function niceTicks(lo, hi, n) {
+    const raw = (hi - lo) / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const s = [1, 2, 2.5, 5, 10].map((k) => k * p).find((k) => k >= raw) || raw;
+    const out = []; for (let v = Math.ceil(lo / s) * s; v <= hi + 1e-9; v += s) out.push(+v.toFixed(6));
+    return out;
+  }
+  function draw(cv, bars, n, slots, lines, markers) {
+    const w = cv.clientWidth, h = cv.clientHeight, dpr = window.devicePixelRatio || 1;
+    if (!w || !h) return;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const ctx = cv.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const C = { up: cssv(redUp ? "--down" : "--up"), down: cssv(redUp ? "--up" : "--down"), grid: cssv("--grid"), muted: cssv("--muted"),
+      fg: cssv("--fg"), bg: cssv("--surface"), lvl: cssv("--lvl"), num: cssv("--font-num") || "monospace", buy: cssv("--buy"), watch: cssv("--watch"), sell: cssv("--sell") };
+    const padR = 50, padB = 18, padT = 8, pw = w - padR, ph = h - padB - padT;
+    const vis = bars.slice(-slots);
+    ctx.font = `11px ${C.num}`;
+    if (!vis.length) { ctx.fillStyle = C.muted; ctx.fillText("等待开盘后的K线", 10, h / 2); return; }
+    let lo = Math.min(...vis.map((b) => b[3])), hi = Math.max(...vis.map((b) => b[2]));
+    const ext = Math.max(hi - lo, 0.4) * 0.35;
+    const shown = lines.filter((l) => l.price >= lo - ext && l.price <= hi + ext);
+    for (const l of shown) { lo = Math.min(lo, l.price); hi = Math.max(hi, l.price); }
+    const pad = Math.max((hi - lo) * 0.07, 0.05); lo -= pad; hi += pad;
+    const y = (p) => padT + ((hi - p) / (hi - lo)) * ph;
+    const sw = pw / slots, x = (i) => i * sw + sw / 2;
+    ctx.textBaseline = "middle"; ctx.lineWidth = 1;
+    for (const t of niceTicks(lo, hi, 4)) {
+      const yy = Math.round(y(t)) + 0.5;
+      ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(pw, yy); ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.fillText(t.toFixed(2), pw + 5, yy);
+    }
+    ctx.textBaseline = "alphabetic";
+    const every = [15, 30, 60, 90, 120, 195].find((m) => (m / n) * sw >= 52) || 390;
+    vis.forEach((b, i) => {
+      const mod = Math.floor((b[0] % 86400) / 60) - 570;
+      if (mod % every === 0) {
+        ctx.fillStyle = C.muted; const s = hm(b[0]), tw = ctx.measureText(s).width;
+        ctx.fillText(s, Math.min(Math.max(x(i) - tw / 2, 0), pw - tw), h - 4);
+        ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.moveTo(Math.round(x(i)) + 0.5, padT); ctx.lineTo(Math.round(x(i)) + 0.5, padT + ph); ctx.stroke();
+      }
+    });
+    shown.sort((a, b) => b.price - a.price);
+    const labels = [];  // lines closer than 13px share one label
+    for (const l of shown) {
+      const yy = Math.round(y(l.price)) + 0.5;
+      ctx.setLineDash(l.solid ? [] : [4, 4]); ctx.strokeStyle = l.color || C.lvl; ctx.lineWidth = l.solid ? 1.5 : 1;
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(pw, yy); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+      const prev = labels[labels.length - 1];
+      if (prev && yy - prev.y < 13) prev.text += " / " + l.label; else labels.push({ y: yy, text: l.label, color: l.color || C.lvl });
+    }
+    ctx.font = `10.5px ${C.num}`;
+    for (const lb of labels) {
+      const tw = ctx.measureText(lb.text).width;
+      ctx.fillStyle = C.bg; ctx.globalAlpha = 0.85; ctx.fillRect(2, lb.y - 13, tw + 6, 12); ctx.globalAlpha = 1;
+      ctx.fillStyle = lb.color; ctx.fillText(lb.text, 5, lb.y - 3);
+    }
+    const bw = Math.max(1, Math.min(sw * 0.66, 9));
+    vis.forEach((b, i) => {
+      const col = b[4] >= b[1] ? C.up : C.down, xx = Math.round(x(i));
+      ctx.globalAlpha = b[6] ? 1 : 0.45;
+      ctx.strokeStyle = col; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.moveTo(xx + 0.5, y(b[2])); ctx.lineTo(xx + 0.5, y(b[3])); ctx.stroke();
+      const top = y(Math.max(b[1], b[4])), bot = y(Math.min(b[1], b[4]));
+      ctx.fillRect(xx - bw / 2 + 0.5, top, bw, Math.max(1, bot - top));
+    });
+    ctx.globalAlpha = 1;
+    for (const m of markers) {
+      const i = vis.findIndex((b) => b[0] <= m.t && m.t < b[0] + n * 60);
+      if (i < 0) continue;
+      const b = vis[i], xx = x(i), upward = m.type === "buy" || m.type === "watch";
+      const yy = upward ? y(b[3]) + 6 : y(b[2]) - 6, s = 6;
+      ctx.fillStyle = m.type === "buy" ? C.buy : m.type === "watch" ? C.watch : C.sell;
+      ctx.beginPath();
+      if (upward) { ctx.moveTo(xx, yy); ctx.lineTo(xx - s, yy + s * 1.6); ctx.lineTo(xx + s, yy + s * 1.6); }
+      else { ctx.moveTo(xx, yy); ctx.lineTo(xx - s, yy - s * 1.6); ctx.lineTo(xx + s, yy - s * 1.6); }
+      ctx.closePath(); ctx.fill();
+    }
+    const last = vis[vis.length - 1][4], ly = y(last);
+    ctx.fillStyle = C.fg; ctx.fillRect(pw + 1, ly - 8, padR - 1, 16);
+    ctx.fillStyle = C.bg; ctx.font = `bold 11px ${C.num}`; ctx.textBaseline = "middle"; ctx.fillText(last.toFixed(2), pw + 4, ly);
+    ctx.textBaseline = "alphabetic";
+  }
+  function chartLines() {
+    const out = [], lv = S.levels || [], a = S.action || {};
+    lv.filter((l) => l.dist_pct < 0).slice(0, 2).forEach((l) => out.push({ price: l.price, label: l.name, color: cssv(redUp ? "--down" : "--up") }));
+    lv.filter((l) => l.dist_pct > 0).slice(0, 1).forEach((l) => out.push({ price: l.price, label: l.name, color: cssv(redUp ? "--up" : "--down") }));
+    const p = S.position || S.paper;
+    if (p) { out.push({ price: p.entry, label: "买入 " + f2(p.entry), color: cssv("--accent"), solid: true }); out.push({ price: p.stop, label: "止损 " + f2(p.stop), color: cssv("--sell"), solid: true }); }
+    else if (a.stop && (S.status === "buy" || S.status === "watch")) out.push({ price: a.stop, label: "止损 " + f2(a.stop), color: cssv("--sell"), solid: true });
+    return out;
+  }
+  function renderCharts() {
+    const lines = chartLines();
+    const markers = (S.alerts || []).filter((a) => a.type !== "tv").map((a) => ({ t: tsOf(a.time), type: a.type === "paper_exit" ? "sell" : a.type }));
+    const c = S.checks || {}, ok = S.tf_ok || {};
+    for (const [k, , n, slots] of TFS) {
+      const fig = $("tf-" + k);
+      draw(fig.querySelector("canvas"), agg(BARS, n), n, slots, lines, markers);
+      const pill = $("ok-" + k);
+      pill.textContent = ok[k] ? "到底 ✓" : "未到底"; pill.className = "pill" + (ok[k] ? " ok" : "");
+      const cc = c[k] || {};
+      $("sc-" + k).textContent = `见底 ${cc.score ?? 0}/6 · 见顶 ${cc.top ?? 0}/6`;
+    }
+  }
+
+  /* ---------------- checklist and side rail ---------------- */
+  function renderChecks() {
+    const c = S.checks || {}, ok = S.tf_ok || {};
+    let html = "<thead><tr><th>条件</th><th>5 分钟</th><th>3 分钟</th><th>1 分钟</th></tr></thead><tbody>";
+    for (const [k, name, what] of FACTS) {
+      html += `<tr><th>${name}${what ? `<span class="what">${what}</span>` : ""}</th>` +
+        TFS.map(([tf]) => `<td><span class="dot${(c[tf] || {})[k] ? " on" : ""}" aria-label="${(c[tf] || {})[k] ? "成立" : "不成立"}"></span></td>`).join("") + "</tr>";
+    }
+    html += `<tr class="sum"><th>见底分</th>${TFS.map(([tf]) => `<td class="num">${(c[tf] || {}).score ?? 0}/6</td>`).join("")}</tr>`;
+    html += `<tr class="sum"><th>这个周期到底了吗</th>${TFS.map(([tf]) => `<td><span class="pill${ok[tf] ? " ok" : ""}">${ok[tf] ? "到底" : "没有"}</span></td>`).join("")}</tr>`;
+    html += `<tr><th>见顶分<span class="what">卖出参考：超买且见顶分≥3</span></th>${TFS.map(([tf]) => `<td class="num">${(c[tf] || {}).top ?? 0}/6</td>`).join("")}</tr></tbody>`;
+    $("checks").innerHTML = html;
+  }
+  function renderDaily() {
+    const d = S.daily || DAILY;
+    if (!d) return;
+    const v = $("dverdict");
+    v.textContent = d.active ? "是。今天是验证过的抄底日" : "不是。" + (d.trend_ok ? "日线 RSI2 还没跌到 10 以下" : "价格在 200 日均线下方");
+    v.className = "verdict" + (d.active ? " ok" : "");
+    const g = $("dgauge").querySelector(".fill");
+    g.style.width = Math.max(1, Math.min(100, d.rsi2)) + "%"; g.className = "fill" + (d.rsi2 < 10 ? " ok" : "");
+    $("dkv").innerHTML = `<dt>日线 RSI2</dt><dd>${f2(d.rsi2)}（要 &lt;10）</dd><dt>昨收</dt><dd>${f2(d.close)}</dd>` +
+      `<dt>200 日均线</dt><dd>${f2(d.sma200)}（${pct(d.close / d.sma200 - 1, 1)}）</dd><dt>5 日均线（卖出线）</dt><dd>${f2(d.sma5)}</dd><dt>日线 ATR</dt><dd>${f2(d.atr)}</dd>`;
+  }
+  function renderSide() {
+    const lv = S.levels || [];
+    $("levels").innerHTML = lv.length ? lv.slice().sort((a, b) => b.price - a.price).map((l) =>
+      `<li class="${l.dist_pct < 0 ? "below" : "above"}"><span>${esc(l.name)}</span><span class="p">${f2(l.price)}</span><span class="d">${pct(l.dist_pct)}</span></li>`).join("")
+      : `<li><span class="empty">开盘后显示</span></li>`;
+    const al = (S.alerts || []).slice().reverse();
+    $("log").innerHTML = al.length ? al.map((a) => `<li><span class="t">${esc((a.time || "").slice(11))}</span><span class="k ${esc(a.type)}">${KIND[a.type] || esc(a.type)}</span><span>${esc(a.text)}</span></li>`).join("")
+      : `<li><span></span><span></span><span class="empty">今天还没有提醒</span></li>`;
+    const ex = S.extra || {};
+    const rows = [];
+    if (ex.capital_flow_today != null) rows.push(["今日资金净流入", (ex.capital_flow_today / 1e6).toFixed(1) + " 百万美元"]);
+    if (ex.book_imbalance != null) rows.push(["买卖盘不平衡（10 档）", pct(ex.book_imbalance, 0)]);
+    if (ex.error) rows.push(["错误", ex.error]);
+    $("extra").innerHTML = rows.length ? rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")
+      : `<dt>${DEMO ? "回放没有这部分数据" : "等待 OpenD 数据"}</dt><dd></dd>`;
+  }
+  function renderTrack() {
+    const t = TRACK;
+    if (!t || !t.scalp) { $("trackbody").innerHTML = `<p class="empty">没有找到回测文件（results/*.json）</p>`; return; }
+    const s = t.scalp, d = t.daily || {}, o = t.daily_oos || {}, per = t.scalp_period || [];
+    $("trackbody").innerHTML =
+      `<h3>1/3/5 分钟共振见底 → 5 分钟见顶卖出</h3><p class="verdict-line bad">没有优势，10 倍会把账户亏光。</p>` +
+      `<dl class="kv"><dt>样本</dt><dd>${per[0] || ""} 至 ${per[1] || ""}，${s.n} 次</dd><dt>胜率</dt><dd>${pct0(s.win_rate)}</dd>` +
+      `<dt>扣费前每次</dt><dd>${(s.mean_gross_bp ?? 0).toFixed(1)} bp</dd><dt>随机时间买入对照</dt><dd>${(t.scalp_random_gross_bp ?? 0).toFixed(1)} bp</dd>` +
+      `<dt>一买一卖成本</dt><dd>${(t.scalp_cost_bp ?? 12).toFixed(0)} bp</dd><dt>扣费后每次</dt><dd class="bad">${(s.mean_net_bp ?? 0).toFixed(1)} bp</dd>` +
+      `<dt>10x 最后剩下</dt><dd class="bad">${pct0(s.lev10_final)}</dd></dl>` +
+      `<h3>日线 RSI2&lt;10 抄底 → 站上 5 日线卖出</h3><p class="verdict-line good">唯一通过检验的买点，用 2 倍。</p>` +
+      `<dl class="kv"><dt>样本</dt><dd>${esc(t.daily_label || "")}，${d.n} 次</dd><dt>胜率</dt><dd>${pct0(d.win_rate)}</dd>` +
+      `<dt>扣费后每次（1x）</dt><dd class="good">${pct(d.mean_net)}</dd><dt>平均持有</dt><dd>${(d.avg_days || 0).toFixed(1)} 天</dd>` +
+      (o.TEST_x3 ? `<dt>2020 年后 3x</dt><dd>${pct(o.TEST_x3.final - 1, 0)}，回撤 ${pct(o.TEST_x3.max_dd, 0)}</dd>` : "") +
+      (o.TEST_x10 ? `<dt>2020 年后 10x</dt><dd>${pct(o.TEST_x10.final - 1, 0)}，回撤 <span class="bad">${pct(o.TEST_x10.max_dd, 0)}</span></dd>` : "") + `</dl>`;
+  }
+  function render() {
+    if (!S) return;
+    renderLamp(); renderCharts(); renderChecks(); renderDaily(); renderSide(); renderTrack();
+    $("src").textContent = DEMO ? "回放演示（历史数据）" : (S.source || "");
+    $("src2").textContent = DEMO ? "2022-10 至 2024-12 公开分钟数据" : (S.source || "—");
+    $("upd").textContent = S.time || "—";
+    document.title = (S.status === "buy" || S.status === "sell" ? "● " : "") + (S.headline ? S.headline.slice(0, 24) + " · " : "") + "SPY 杠杆抄底灯";
+  }
+
+  /* ---------------- alerts: pop-up, sound, voice, notification ---------------- */
+  let audio = null;
+  function beep(kind) {
+    if (!soundOn) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      const seq = kind === "buy" ? [660, 880, 1100] : kind === "sell" ? [880, 660, 440] : [740, 740];
+      seq.forEach((f, i) => {
+        const o = audio.createOscillator(), g = audio.createGain(), t0 = audio.currentTime + i * 0.22;
+        o.frequency.value = f; o.type = "sine"; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.3, t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2); o.connect(g).connect(audio.destination); o.start(t0); o.stop(t0 + 0.21);
+      });
+    } catch (e) { /* no audio */ }
+  }
+  function say(text) {
+    if (!soundOn || !("speechSynthesis" in window)) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text.replace(/(\d)x/g, "$1倍").replace(/@/g, "价格").replace(/—/g, "，"));
+      u.lang = "zh-CN"; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch (e) { /* no voice */ }
+  }
+  function notify(title, body) {
+    if (!soundOn) return;
+    try { if ("Notification" in window && Notification.permission === "granted") new Notification(title, { body }); } catch (e) { /* not allowed here */ }
+  }
+  function popup() {
+    const st = S.status, a = S.action || {};
+    let title = S.headline, body = S.sub, items = [];
+    if (st === "buy") {
+      items = [["杠杆", lev(a.leverage)], ["买入价", f2(a.price)], ["止损价", f2(a.stop)], ["每笔预期", pct(a.expected_pct)], ["胜率", pct0(a.win_rate)]];
+      body = "今天是抄底日，1/3/5 分钟刚刚共振。卖出：" + (a.exit_rule || "");
+    } else if (st === "watch") {
+      const per = a.leverage ? a.expected_pct / a.leverage : 0;
+      title = `共振见底 @ ${f2(a.price)}，不下单`;
+      body = `5/3/1 分钟一起到底了。回测里这样做胜率 ${pct0(a.win_rate)}，${lev(userLev)} 每次平均 ${pct(per * userLev)} 账户。只做模拟跟踪。`;
+    } else if (st === "sell") {
+      items = [["卖出价", f2(a.price)]];
+    }
+    $("sheet").className = "sheet s-" + st;
+    $("mtime").textContent = (S.time || "") + " 美东";
+    $("mh").textContent = title; $("mb").textContent = body; $("mnums").innerHTML = numsHTML(items);
+    $("modal").hidden = false; $("mok").focus();
+    beep(st); say(title); notify(title, body);
+    const lamp = $("lamp"); lamp.classList.remove("flash"); void lamp.offsetWidth; lamp.classList.add("flash");
+  }
+  function checkAlert(silent) {
+    const al = S.alerts || [], last = al[al.length - 1];
+    const key = last ? last.time + "|" + last.text : null;
+    if (key && key !== lastAlert && !silent && ["buy", "sell", "watch"].includes(S.status)) popup();
+    lastAlert = key;
+  }
+  $("mok").addEventListener("click", () => { $("modal").hidden = true; });
+  $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").hidden = true; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("modal").hidden = true; });
+  async function keepAwake() { try { if ("wakeLock" in navigator) wake = await navigator.wakeLock.request("screen"); } catch (e) { wake = null; } }
+  document.addEventListener("visibilitychange", () => { if (soundOn && document.visibilityState === "visible") keepAwake(); });
+  $("snd").addEventListener("click", async () => {
+    soundOn = !soundOn;
+    $("snd").textContent = soundOn ? "声音和弹窗：开" : "开启声音和弹窗";
+    $("snd").classList.toggle("on", soundOn);
+    if (soundOn) {
+      try { if ("Notification" in window && Notification.permission === "default") await Notification.requestPermission(); } catch (e) { /* ignore */ }
+      keepAwake(); beep("watch");
+    }
+  });
+
+  /* ---------------- settings ---------------- */
+  $("lev").value = String(userLev);
+  $("lev").addEventListener("change", () => {
+    userLev = +$("lev").value; store.set("lev", userLev); render();
+    if (!DEMO) fetch("/settings", { method: "POST", body: JSON.stringify({ leverage: userLev }) }).catch(() => {});
+  });
+  function colorLabel() { $("colors").textContent = redUp ? "红涨绿跌" : "绿涨红跌"; }
+  colorLabel();
+  $("colors").addEventListener("click", () => { redUp = !redUp; store.set("redUp", redUp); colorLabel(); render(); });
+  let rz = null;
+  window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => S && renderCharts(), 120); });
+  try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => S && renderCharts()); } catch (e) { /* old browser */ }
+  new MutationObserver(() => S && renderCharts()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* ---------------- live mode: the local server ---------------- */
+  async function getJSON(u) { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error(r.status); return r.json(); }
+  async function live() {
+    try { S = await getJSON("/state"); BARS = await getJSON("/bars"); TRACK = S.track; render(); checkAlert(true); }
+    catch (e) { $("headline").textContent = "连不上本机监控程序"; $("sub").textContent = "先双击“启动监控”，再刷新这个页面。"; }
+    const es = new EventSource("/events");
+    es.onmessage = async (ev) => {
+      S = JSON.parse(ev.data); TRACK = S.track || TRACK;
+      try { BARS = await getJSON("/bars"); } catch (e) { /* keep old bars */ }
+      render(); checkAlert(false);
+    };
+    es.onerror = () => { $("src").textContent = "连接断开，正在重连…"; };
+    $("bought").addEventListener("click", async () => {
+      const a = S.action || {};
+      await fetch("/confirm", { method: "POST", body: JSON.stringify({ price: a.price, leverage: a.leverage, stop: a.stop, time: S.time }) });
+    });
+    $("sold").addEventListener("click", async () => { await fetch("/close", { method: "POST", body: "{}" }); });
+    setInterval(() => {
+      try { $("clock").textContent = "纽约 " + new Date().toLocaleTimeString("zh-CN", { timeZone: "America/New_York", hour12: false }); } catch (e) { /* no tz data */ }
+    }, 1000);
+  }
+
+  /* ---------------- demo mode: replay baked days ---------------- */
+  function demo() {
+    $("demo").hidden = false;
+    TRACK = DEMO.track;
+    const days = DEMO.days, sel = $("day");
+    sel.innerHTML = days.map((d, i) => `<option value="${i}">${d.date} · ${esc(d.label)}</option>`).join("");
+    let day = days[0], idx = 0, timer = null;
+    function show(i, silent) {
+      idx = Math.max(0, Math.min(day.states.length - 1, i));
+      S = day.states[idx]; DAILY = day.daily; S.daily = day.daily; BARS = day.bars.slice(0, idx + 1);
+      $("scrub").value = String(idx); $("dtime").textContent = S.time.slice(11) + " 美东";
+      render(); checkAlert(silent);
+    }
+    function stop() { clearInterval(timer); timer = null; $("play").textContent = idx >= day.states.length - 1 ? "▶ 从开盘播放" : "▶ 继续播放"; }
+    function play() {
+      if (timer) { stop(); return; }
+      if (idx >= day.states.length - 1 || idx === day.start) show(0, true);
+      $("play").textContent = "❚❚ 暂停";
+      timer = setInterval(() => { if (idx >= day.states.length - 1) { stop(); return; } show(idx + 1, false); if (!$("modal").hidden) stop(); }, 1000 / +$("spd").value);
+    }
+    function load(i) {
+      stop(); day = days[i]; $("scrub").max = String(day.states.length - 1);
+      $("dnote").textContent = "当天每一分钟都按实盘同样的程序算过一遍。现在停在第一次提醒那一分钟；点“从开盘播放”看全天，提醒出现时会弹窗（先点“开启声音和弹窗”可以听到声音）。";
+      show(day.start, true); $("play").textContent = "▶ 从开盘播放";
+    }
+    sel.addEventListener("change", () => load(+sel.value));
+    $("play").addEventListener("click", play);
+    $("spd").addEventListener("change", () => { if (timer) { stop(); play(); } });
+    $("scrub").addEventListener("input", () => { stop(); show(+$("scrub").value, true); });
+    const note = () => { $("actnote").textContent = "回放里会自动当作已经照做；实盘时点这个按钮告诉监控程序。"; };
+    $("bought").addEventListener("click", note); $("sold").addEventListener("click", note);
+    load(0);
+  }
+
+  if (DEMO) demo(); else live();
+})();
+</script>

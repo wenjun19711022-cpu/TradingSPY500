@@ -10,3 +10,6 @@ data/raw/rates/
 # third-party long-history CSVs; fetched by python -m spylev.data.history
 data/raw/history/
 results/journal.csv
+.venv/
+# live monitor minute logs (python -m spylev.live.app --source futu)
+data/live/
