@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+# local minute-bar store (5y of 1m bars is ~100MB+); rebuild with python -m spyopt.data.crawl
+data/bars/
+data/raw/cboe/
+data/raw/rates/
+# third-party long-history CSVs; fetched by python -m spyopt.data.history
+data/raw/history/
+results/journal.csv

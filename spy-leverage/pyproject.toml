@@ -1,0 +1,17 @@
+[project]
+name = "spylev"
+version = "0.2.0"
+description = "SPY long-only leverage research, multi-timeframe bottom alerts and live monitor"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10", "pyarrow>=12", "requests"]
+
+[project.optional-dependencies]
+futu = ["futu-api"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["spylev*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
