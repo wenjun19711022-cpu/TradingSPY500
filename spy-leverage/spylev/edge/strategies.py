@@ -148,8 +148,11 @@ def noise_sigma(p: Panel, lookback: int = 14) -> np.ndarray:
     return sig
 
 
-def noise(p: Panel, lookback: int = 14) -> pd.DataFrame:
-    sig = noise_sigma(p, lookback)
+def noise(p: Panel, lookback: int = 14, mult: float = 1.0, every: int = 30) -> pd.DataFrame:
+    """Published parameters: 14-day lookback, band = 1 x sigma, checks every 30 minutes from 10:00.
+    The other values exist only for the robustness table (scripts/run_review.py)."""
+    sig = noise_sigma(p, lookback) * mult
+    checks = CHECKS if every == 30 else np.arange(29, 360, every)
     tp = (p.H + p.L + p.C) / 3
     vwap = np.cumsum(tp * p.V, axis=1) / np.cumsum(p.V, axis=1)
     rows = []
@@ -159,7 +162,7 @@ def noise(p: Panel, lookback: int = 14) -> pd.DataFrame:
         base = max(p.O[d, 0], p.prev_close[d])
         ub = base * (1 + sig[d])
         pos, t_in, px_in, lo = False, None, None, None
-        for t in CHECKS:
+        for t in checks:
             c = p.C[d, t]
             if not pos and c > ub[t]:
                 pos, t_in, px_in = True, t + 1, p.O[d, t + 1]

@@ -34,6 +34,17 @@
 - **20 倍：** 整个账户开 20 倍，隔夜那条腿会被一次 −5.6% 的跳空打爆。正确做法是用张数控制有效杠杆（噪声区约 4x、隔夜约 1.4x、RSI2 约 2.9x）；在 OKX 逐仓 20 倍时，保证金 = 账户 × 有效杠杆 ÷ 20。
 - 监控屏的“我的超短线组合”面板按这套规则实时提示，并按账户资金算出 MES 张数。交易员提示词在 `agent/SPY_20X_TRADER_PROMPT.md`。
 
+## 持续复盘和优化
+
+- **研究登记簿：** `research/REGISTRY.md`。每个想法先写规则和通过标准，再回测，结果只追加。至今约 2,950 种配置。
+- **最近一轮（`python scripts/run_review.py` → `results/review.json`）：**
+  - 噪声区参数稳健（45 格样本内全部为正）；
+  - 隔夜在从没用过的 2025–26 日线上仍为正；
+  - RSI2 在 2025 年后胜率 76%；
+  - 换参数、隔夜按波动缩放、风险平价都没通过，组合不变。
+- **实盘检查：** `python -m spylev.edge.review --since 2025-01-01`。拉进 moomoo 数据后，它重放组合并和回测比，满 50 笔后差 2 个标准误以上就标为“衰退”。
+- **总负责人提示词：** `agent/SPY_QUANT_LAB_PROMPT.md`（技能 `spy-quant-lab`），写了复盘节奏、研究纪律、研究清单和周报格式。
+
 ## 三步开始（Windows）
 
 1. **装 moomoo OpenD 并登录**：https://www.moomoo.com/download/OpenAPI （富途牛牛用户：https://www.futunn.com/download/OpenAPI ）。打开后用 moomoo 账号登录，窗口保持开着。需要美股行情权限（moomoo 里能看到 SPY 实时报价就行）。
@@ -89,6 +100,8 @@ python scripts/run_dip_study.py                                                 
 python scripts/run_range_study.py                                                # 10:00 区间预测和区间挂单回测
 python -m spylev.data.histdata                                                   # 2011–2018 标普 500 分钟线（GitHub，约 140MB）
 python scripts/run_edge_study.py                                                 # 论文超短线策略 × 三种成本 × 杠杆 → results/edge_study.json
+python scripts/run_review.py                                                     # 本轮登记的 H43–H48 → results/review.json
+python -m spylev.edge.review --since 2025-01-01                                  # 实盘期 vs 回测：有没有衰退
 python -m spylev.live.app --source replay --date 2026-10-02 --speed 30 --open    # 回放 2026-10-02（IBKR 数据）
 python -m spylev.live.dip_now --equity 10000 --funding 0.0001                    # 今天的日线抄底计划
 python -m pytest -q
@@ -108,7 +121,8 @@ spylev/live/engine.py      把行情变成一句话指令（屏幕用的同一�
 spylev/live/feeds.py       moomoo OpenD 实时 K 线、资金流、盘口；历史回放
 spylev/live/app.py         本地网页服务（标准库，无需额外框架）
 web/index.html             监控屏    web/demo.html  离线回放演示
-agent/                     给 AI 交易员的提示词（日线抄底、日内共振、日内区间、超短线组合）
+agent/                     给 AI 的提示词（日线抄底、日内共振、日内区间、超短线组合、总负责人）
+research/REGISTRY.md       研究登记簿：先登记后回测，所有试过的想法和结果
 ```
 
 ## 说明

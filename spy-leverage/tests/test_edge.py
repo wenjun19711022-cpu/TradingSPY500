@@ -120,3 +120,14 @@ def test_cost_regimes_and_funding():
     mes = net_returns(t, "mes")
     assert mes[0] == pytest.approx(0.001 - 0.0001)
     assert mes[2] < 0.001 - 0.0001  # three nights of futures carry in 2024 (rates above the dividend yield)
+
+
+def test_review_flags_decay(walk):
+    from spylev.edge.review import review
+    since = str(walk.index.normalize().unique()[30].date())
+    stub = lambda bp: {"strategies": {k: {"regimes": {"mes": {"ALL": {"net_bp": bp}}}} for k in ("noise", "overnight")}}  # noqa: E731
+    bad = review(walk, since, stub(50.0))
+    assert bad["sleeves"]["overnight"]["n"] >= 50 and bad["sleeves"]["overnight"]["status"] == "decaying"
+    fine = review(walk, since, stub(0.0))
+    assert fine["sleeves"]["overnight"]["status"] == "ok"
+    assert abs(fine["sleeves"]["overnight"]["vs_zero"]) < 3.5

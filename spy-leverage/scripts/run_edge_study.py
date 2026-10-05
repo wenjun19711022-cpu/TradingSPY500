@@ -31,7 +31,8 @@ from spylev.edge.evaluate import LABELS, REGIMES, daily, kelly, leverage_table, 
 from spylev.edge.strategies import N, NAMES, STRATEGIES, Panel, noise, panel  # noqa: E402
 
 OUT = ROOT / "results"
-SPLITS = {"IS": ("2011-01-01", "2015-12-31"), "VAL": ("2016-01-01", "2018-12-31"), "TEST": ("2022-10-01", "2024-12-31")}
+SPLITS = {"IS": ("2011-01-01", "2015-12-31"), "VAL": ("2016-01-01", "2018-12-31"), "TEST": ("2022-10-01", "2024-12-31"),
+          "HOLDOUT": ("2025-01-01", "2100-01-01")}  # empty until your moomoo minute bars are in the store
 NAMES = {**NAMES, "noise_trend": "噪声区突破，只在日线 200 日均线上方做（预先定的组合）",
          "noise_overnight": "噪声区突破，收盘仍持有就拿到次日开盘（预先定的组合）"}
 
@@ -68,6 +69,8 @@ def _summ(d: pd.Series) -> dict:
     out["by_split"] = {}
     for k, (a, b) in SPLITS.items():
         x = d[(d.index >= a) & (d.index <= b)]
+        if len(x) < 2:
+            continue
         out["by_split"][k] = {"ann_return": float(x.mean() * 252), "sharpe": float(x.mean() / x.std() * np.sqrt(252)) if x.std() > 0 else 0.0}
     out["by_year"] = {str(y): float((1 + x).prod() - 1) for y, x in d.groupby(d.index.year)}
     return out
@@ -147,7 +150,8 @@ def main():
             per_split_sharpe = {}
             for k, (a, b) in SPLITS.items():
                 dd = d[(d.index >= a) & (d.index <= b)]
-                per_split_sharpe[k] = float(dd.mean() / dd.std() * np.sqrt(252)) if dd.std() > 0 else 0.0
+                if len(dd) > 1:
+                    per_split_sharpe[k] = float(dd.mean() / dd.std() * np.sqrt(252)) if dd.std() > 0 else 0.0
             r["sharpe_by_split"] = per_split_sharpe
             rec["regimes"][rg] = r
         rec["avg_hold_min"] = float(np.where(t["t_in"] >= 0, t["t_out"] - t["t_in"], np.nan).mean()) if len(t) else None
