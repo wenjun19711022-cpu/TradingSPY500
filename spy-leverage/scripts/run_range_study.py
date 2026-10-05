@@ -220,7 +220,7 @@ def main():
     out["regimes_ref"] = regimes(ref_trades, fcs[30])
     out["recent"] = recent_days(models[30], vix)
     out["examples"] = {"user_10_02_20x": bracket_math(768.5, 767.0, 769.5)}
-    (OUT / "range_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None if not isinstance(v, (pd.Timestamp,)) else str(v)))
+    (OUT / "range_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None if not isinstance(v, (pd.Timestamp,)) else str(v)), encoding="utf-8")
     c = out["coverage"][30]
     print("coverage 80% one-sided (high/low/both):", {k: (round(v["bands"]["0.8"]["high_holds"], 2), round(v["bands"]["0.8"]["low_holds"], 2),
                                                           round(v["bands"]["0.8"]["both_hold"], 2)) for k, v in c.items()})

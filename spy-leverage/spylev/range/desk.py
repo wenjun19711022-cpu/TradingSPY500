@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def _load(name):
     p = ROOT / "results" / name
-    return json.loads(p.read_text()) if p.exists() else {}
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
 def daily_rv(bars: pd.DataFrame) -> pd.Series:

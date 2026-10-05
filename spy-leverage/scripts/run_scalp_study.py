@@ -175,7 +175,7 @@ def main():
         cnt = trades_best.groupby(trades_best.index.normalize()).size()
         days = [str(d.date()) for d in cnt.sort_values(ascending=False).index[:3]]
         out["replay"] = [replay_day(x, trades_best, d) for d in days]
-    (OUT / "scalp_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None))
+    (OUT / "scalp_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None), encoding="utf-8")
     print("random baseline:", {k: round(v, 3) if isinstance(v, float) else v for k, v in out["random_baseline"].items() if k in ("n", "win_rate", "mean_gross_bp", "mean_net_bp")})
     print("daily timing:", {k: v for k, v in out["daily_timing"].items() if k != "rows"})
     print("wrote", OUT / "scalp_study.json")

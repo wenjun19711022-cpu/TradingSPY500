@@ -50,7 +50,7 @@ def frames() -> dict:
 
 
 def scan(equity: float, costs: PerpCosts, lev_override: float | None = None) -> dict:
-    study = json.loads((ROOT / "results" / "dip_study.json").read_text())
+    study = json.loads((ROOT / "results" / "dip_study.json").read_text(encoding="utf-8"))
     validated = {s["key"]: s for s in study["streams"] if s.get("G3")}
     vix = vix_daily()["close"]
     rows, tickets = [], []
@@ -112,7 +112,7 @@ def main(argv=None):
         print(f"\n开仓单 {t['stream']}: 杠杆 {t['leverage_used']}x（建议 {t['leverage_recommended']}x，上限 {t['leverage_max']}x）"
               f" 名义 ${t['notional']:,.0f}  止损 {t['stop']}  强平 {t['liquidation_price']}  {t['exit']}")
     if a.json:
-        Path(a.json).write_text(json.dumps(res, ensure_ascii=False, indent=1, default=float))
+        Path(a.json).write_text(json.dumps(res, ensure_ascii=False, indent=1, default=float), encoding="utf-8")
     return res
 
 

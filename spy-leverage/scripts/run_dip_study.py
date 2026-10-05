@@ -230,7 +230,7 @@ def main():
     yrs = (spy.index[-1] - spy.index[0]).days / 365.25
     out["funding_vs_drift"] = {"spy_price_cagr": float((spy.iloc[-1] / spy.iloc[0]) ** (1 / yrs) - 1),
                                "funding_per_year_1x": costs.funding(365.0)}
-    (OUT / "dip_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda x: None if x is None else float(x)))
+    (OUT / "dip_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda x: None if x is None else float(x)), encoding="utf-8")
     print("wrote", OUT / "dip_study.json")
 
 

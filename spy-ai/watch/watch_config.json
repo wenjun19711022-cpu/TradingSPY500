@@ -1,0 +1,44 @@
+{
+  "code": "US.SPY",
+  "opend_host": "127.0.0.1",
+  "opend_port": 11111,
+  "push": {
+    "provider": "desktop",
+    "token": "",
+    "说明": "desktop=电脑右下角弹窗+提示音；想改回微信：provider 填 pushplus 并填 token"
+  },
+  "timeframes": [
+    "1m",
+    "3m",
+    "5m",
+    "15m",
+    "1h"
+  ],
+  "push_timeframes": [
+    "5m",
+    "15m"
+  ],
+  "push_confirm": false,
+  "threshold": 55,
+  "poll_sec": 5,
+  "options": {
+    "enabled": true,
+    "max_days": 7,
+    "strike_range_pct": 5,
+    "refresh_sec": 120
+  },
+  "flows_refresh_sec": 60,
+  "model": "v6",
+  "model_说明": "v6 = 全部 moomoo 指标 + 真实成交量 + 日内/VIX（model6 文件夹，2026-10-01 回放一致性 100%）；填 v5 = 退回旧模型",
+  "keep_awake": "display",
+  "keep_awake_说明": "display=盯盘期间屏幕和电脑都不休眠（最可靠）；system=只防系统休眠，屏幕可关；off=不干预。合上笔记本盖子仍会休眠",
+  "push_until_et": "15:55",
+  "swing": {
+    "enabled": true,
+    "margin_cny": 280,
+    "leverage": 50,
+    "stop_pct": 2.5,
+    "max_days": 10,
+    "说明": "波段模式：抄底日（昨收 RSI2<20 且在 200 日线上）的第一个 15m/1h 底进场，止损 2.5%，涨满 1 个日线 ATR 后第一个 15m 顶离场。只提醒不下单；状态在 data/swing_state.json"
+  }
+}

@@ -4,3 +4,5 @@ __pycache__/
 *.egg-info/
 .venv/
 .DS_Store
+crawl.log
+_merge_docs.py

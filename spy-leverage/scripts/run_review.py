@@ -120,7 +120,7 @@ def h46(spy) -> dict:
 
 
 def h47() -> dict:
-    d = json.loads((OUT / "dip_study.json").read_text())
+    d = json.loads((OUT / "dip_study.json").read_text(encoding="utf-8"))
     s = next(x for x in d["streams"] if x["key"] == "1d|rsi2|stop2.5")
     tr = pd.DataFrame(s["trades"], columns=["date", "net", "mae", "days", "reason"])
     tr["date"] = pd.to_datetime(tr["date"])
@@ -140,7 +140,7 @@ def h48(panels, days, spy) -> dict:
     legs["noise"] = daily(t, net_returns(t, "mes"), days) * lev_vt
     t = pd.concat([overnight(p) for p in panels.values()], ignore_index=True)
     legs["overnight"] = daily(t, net_returns(t, "mes"), days)
-    d = json.loads((OUT / "dip_study.json").read_text())
+    d = json.loads((OUT / "dip_study.json").read_text(encoding="utf-8"))
     s = next(x for x in d["streams"] if x["key"] == "1d|rsi2|stop2.5")
     rs = pd.Series(0.0, index=spy.index)
     for r in pd.DataFrame(s["trades"], columns=["date", "net", "mae", "days", "reason"]).itertuples():
@@ -174,7 +174,7 @@ def main():
     out["H46"] = h46(spy)
     out["H47"] = h47()
     out["H48"] = h48(panels, days, spy)
-    (OUT / "review.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None))
+    (OUT / "review.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None), encoding="utf-8")
     h = out["H43"]
     print("H43 published", {k: (h["published"][k]["net_bp"], round(h["published"][k]["sharpe"], 2)) for k in SPLITS},
           "| neighbour median IS bp", round(h["neighbour_median_is_bp"], 2), "| cells + in IS", round(h["share_cells_positive_is"], 2),

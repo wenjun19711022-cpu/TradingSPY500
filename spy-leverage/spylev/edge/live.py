@@ -46,7 +46,7 @@ class Playbook:
         p = ROOT / "results" / "edge_study.json"
         if not p.exists():
             return cls()
-        s = json.loads(p.read_text())
+        s = json.loads(p.read_text(encoding="utf-8"))
         pf = s.get("portfolio", {})
         st = s.get("strategies", {})
         rec = {"book": {k: pf.get("book_scaled", {}).get(k) for k in ("ann_return", "ann_vol", "sharpe", "max_dd")},

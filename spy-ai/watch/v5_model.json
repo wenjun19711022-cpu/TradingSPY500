@@ -1,0 +1,554 @@
+{
+ "validation": {
+  "1m_bottom": {
+   "confirmed_per_day": 24.79,
+   "confirm_lag_bars": 3.4,
+   "稳健": {
+    "precision": 0.751,
+    "recall": 0.582,
+    "per_day": 19.2,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.56
+   },
+   "均衡": {
+    "precision": 0.678,
+    "recall": 0.723,
+    "per_day": 26.43,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.43
+   },
+   "激进": {
+    "precision": 0.612,
+    "recall": 0.825,
+    "per_day": 33.41,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.29
+   }
+  },
+  "3m_bottom": {
+   "confirmed_per_day": 7.87,
+   "confirm_lag_bars": 3.4,
+   "稳健": {
+    "precision": 0.744,
+    "recall": 0.584,
+    "per_day": 6.17,
+    "lead_bars": 2.2,
+    "bounce_at_mark": 1.55
+   },
+   "均衡": {
+    "precision": 0.677,
+    "recall": 0.73,
+    "per_day": 8.49,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.42
+   },
+   "激进": {
+    "precision": 0.606,
+    "recall": 0.824,
+    "per_day": 10.71,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.3
+   }
+  },
+  "5m_bottom": {
+   "confirmed_per_day": 4.62,
+   "confirm_lag_bars": 3.5,
+   "稳健": {
+    "precision": 0.745,
+    "recall": 0.6,
+    "per_day": 3.73,
+    "lead_bars": 2.3,
+    "bounce_at_mark": 1.56
+   },
+   "均衡": {
+    "precision": 0.662,
+    "recall": 0.728,
+    "per_day": 5.09,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.43
+   },
+   "激进": {
+    "precision": 0.588,
+    "recall": 0.817,
+    "per_day": 6.42,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.3
+   }
+  },
+  "15m_bottom": {
+   "confirmed_per_day": 1.61,
+   "confirm_lag_bars": 3.3,
+   "稳健": {
+    "precision": 0.766,
+    "recall": 0.573,
+    "per_day": 1.21,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.54
+   },
+   "均衡": {
+    "precision": 0.676,
+    "recall": 0.707,
+    "per_day": 1.69,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.42
+   },
+   "激进": {
+    "precision": 0.609,
+    "recall": 0.794,
+    "per_day": 2.1,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.3
+   }
+  },
+  "1h_bottom": {
+   "confirmed_per_day": 0.67,
+   "confirm_lag_bars": 3.2,
+   "稳健": {
+    "precision": 0.743,
+    "recall": 0.544,
+    "per_day": 0.49,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.59
+   },
+   "均衡": {
+    "precision": 0.677,
+    "recall": 0.672,
+    "per_day": 0.66,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.47
+   },
+   "激进": {
+    "precision": 0.623,
+    "recall": 0.772,
+    "per_day": 0.83,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.32
+   }
+  },
+  "1m_top": {
+   "confirmed_per_day": 23.65,
+   "confirm_lag_bars": 3.7,
+   "稳健": {
+    "precision": 0.741,
+    "recall": 0.502,
+    "per_day": 16.01,
+    "lead_bars": 2.2,
+    "bounce_at_mark": 1.54
+   },
+   "均衡": {
+    "precision": 0.672,
+    "recall": 0.655,
+    "per_day": 23.05,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.41
+   },
+   "激进": {
+    "precision": 0.606,
+    "recall": 0.771,
+    "per_day": 30.11,
+    "lead_bars": 2.8,
+    "bounce_at_mark": 1.28
+   }
+  },
+  "3m_top": {
+   "confirmed_per_day": 7.47,
+   "confirm_lag_bars": 3.8,
+   "稳健": {
+    "precision": 0.742,
+    "recall": 0.484,
+    "per_day": 4.87,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.55
+   },
+   "均衡": {
+    "precision": 0.68,
+    "recall": 0.64,
+    "per_day": 7.03,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.41
+   },
+   "激进": {
+    "precision": 0.606,
+    "recall": 0.76,
+    "per_day": 9.36,
+    "lead_bars": 2.8,
+    "bounce_at_mark": 1.28
+   }
+  },
+  "5m_top": {
+   "confirmed_per_day": 4.34,
+   "confirm_lag_bars": 3.9,
+   "稳健": {
+    "precision": 0.729,
+    "recall": 0.468,
+    "per_day": 2.78,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.56
+   },
+   "均衡": {
+    "precision": 0.657,
+    "recall": 0.621,
+    "per_day": 4.11,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.42
+   },
+   "激进": {
+    "precision": 0.598,
+    "recall": 0.747,
+    "per_day": 5.42,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.28
+   }
+  },
+  "15m_top": {
+   "confirmed_per_day": 1.45,
+   "confirm_lag_bars": 3.6,
+   "稳健": {
+    "precision": 0.713,
+    "recall": 0.424,
+    "per_day": 0.86,
+    "lead_bars": 2.2,
+    "bounce_at_mark": 1.57
+   },
+   "均衡": {
+    "precision": 0.632,
+    "recall": 0.557,
+    "per_day": 1.28,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.58,
+    "recall": 0.68,
+    "per_day": 1.7,
+    "lead_bars": 2.8,
+    "bounce_at_mark": 1.31
+   }
+  },
+  "1h_top": {
+   "confirmed_per_day": 0.51,
+   "confirm_lag_bars": 3.0,
+   "稳健": {
+    "precision": 0.77,
+    "recall": 0.428,
+    "per_day": 0.28,
+    "lead_bars": 1.7,
+    "bounce_at_mark": 1.69
+   },
+   "均衡": {
+    "precision": 0.73,
+    "recall": 0.523,
+    "per_day": 0.37,
+    "lead_bars": 2.0,
+    "bounce_at_mark": 1.56
+   },
+   "激进": {
+    "precision": 0.657,
+    "recall": 0.638,
+    "per_day": 0.5,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.42
+   }
+  }
+ },
+ "holdout_second_look": {
+  "1m_bottom": {
+   "confirmed_per_day": 24.72,
+   "confirm_lag_bars": 3.5,
+   "稳健": {
+    "precision": 0.766,
+    "recall": 0.574,
+    "per_day": 18.53,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.56
+   },
+   "均衡": {
+    "precision": 0.697,
+    "recall": 0.72,
+    "per_day": 25.5,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.43
+   },
+   "激进": {
+    "precision": 0.62,
+    "recall": 0.819,
+    "per_day": 32.68,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.29
+   }
+  },
+  "3m_bottom": {
+   "confirmed_per_day": 7.51,
+   "confirm_lag_bars": 3.6,
+   "稳健": {
+    "precision": 0.735,
+    "recall": 0.589,
+    "per_day": 6.02,
+    "lead_bars": 2.3,
+    "bounce_at_mark": 1.56
+   },
+   "均衡": {
+    "precision": 0.66,
+    "recall": 0.725,
+    "per_day": 8.26,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.585,
+    "recall": 0.823,
+    "per_day": 10.57,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.31
+   }
+  },
+  "5m_bottom": {
+   "confirmed_per_day": 4.47,
+   "confirm_lag_bars": 3.8,
+   "稳健": {
+    "precision": 0.747,
+    "recall": 0.583,
+    "per_day": 3.49,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.57
+   },
+   "均衡": {
+    "precision": 0.677,
+    "recall": 0.731,
+    "per_day": 4.83,
+    "lead_bars": 2.8,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.599,
+    "recall": 0.827,
+    "per_day": 6.18,
+    "lead_bars": 3.1,
+    "bounce_at_mark": 1.3
+   }
+  },
+  "15m_bottom": {
+   "confirmed_per_day": 1.57,
+   "confirm_lag_bars": 4.0,
+   "稳健": {
+    "precision": 0.697,
+    "recall": 0.532,
+    "per_day": 1.2,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.59
+   },
+   "均衡": {
+    "precision": 0.639,
+    "recall": 0.679,
+    "per_day": 1.67,
+    "lead_bars": 3.1,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.563,
+    "recall": 0.747,
+    "per_day": 2.08,
+    "lead_bars": 3.6,
+    "bounce_at_mark": 1.33
+   }
+  },
+  "1h_bottom": {
+   "confirmed_per_day": 0.78,
+   "confirm_lag_bars": 2.7,
+   "稳健": {
+    "precision": 0.8,
+    "recall": 0.444,
+    "per_day": 0.43,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.63
+   },
+   "均衡": {
+    "precision": 0.723,
+    "recall": 0.54,
+    "per_day": 0.58,
+    "lead_bars": 2.4,
+    "bounce_at_mark": 1.51
+   },
+   "激进": {
+    "precision": 0.667,
+    "recall": 0.603,
+    "per_day": 0.7,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.4
+   }
+  },
+  "1m_top": {
+   "confirmed_per_day": 24.48,
+   "confirm_lag_bars": 3.7,
+   "稳健": {
+    "precision": 0.76,
+    "recall": 0.543,
+    "per_day": 17.47,
+    "lead_bars": 2.1,
+    "bounce_at_mark": 1.55
+   },
+   "均衡": {
+    "precision": 0.694,
+    "recall": 0.699,
+    "per_day": 24.65,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.41
+   },
+   "激进": {
+    "precision": 0.62,
+    "recall": 0.804,
+    "per_day": 31.73,
+    "lead_bars": 2.7,
+    "bounce_at_mark": 1.29
+   }
+  },
+  "3m_top": {
+   "confirmed_per_day": 7.6,
+   "confirm_lag_bars": 4.2,
+   "稳健": {
+    "precision": 0.758,
+    "recall": 0.532,
+    "per_day": 5.33,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.55
+   },
+   "均衡": {
+    "precision": 0.683,
+    "recall": 0.682,
+    "per_day": 7.59,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.42
+   },
+   "激进": {
+    "precision": 0.598,
+    "recall": 0.801,
+    "per_day": 10.17,
+    "lead_bars": 3.1,
+    "bounce_at_mark": 1.3
+   }
+  },
+  "5m_top": {
+   "confirmed_per_day": 4.09,
+   "confirm_lag_bars": 4.2,
+   "稳健": {
+    "precision": 0.7,
+    "recall": 0.482,
+    "per_day": 2.81,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.58
+   },
+   "均衡": {
+    "precision": 0.648,
+    "recall": 0.634,
+    "per_day": 4.0,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.587,
+    "recall": 0.763,
+    "per_day": 5.31,
+    "lead_bars": 3.2,
+    "bounce_at_mark": 1.29
+   }
+  },
+  "15m_top": {
+   "confirmed_per_day": 1.51,
+   "confirm_lag_bars": 3.8,
+   "稳健": {
+    "precision": 0.692,
+    "recall": 0.426,
+    "per_day": 0.93,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.6
+   },
+   "均衡": {
+    "precision": 0.681,
+    "recall": 0.595,
+    "per_day": 1.32,
+    "lead_bars": 2.9,
+    "bounce_at_mark": 1.44
+   },
+   "激进": {
+    "precision": 0.616,
+    "recall": 0.684,
+    "per_day": 1.67,
+    "lead_bars": 3.0,
+    "bounce_at_mark": 1.33
+   }
+  },
+  "1h_top": {
+   "confirmed_per_day": 0.53,
+   "confirm_lag_bars": 3.5,
+   "稳健": {
+    "precision": 0.667,
+    "recall": 0.333,
+    "per_day": 0.26,
+    "lead_bars": 2.5,
+    "bounce_at_mark": 1.54
+   },
+   "均衡": {
+    "precision": 0.675,
+    "recall": 0.5,
+    "per_day": 0.39,
+    "lead_bars": 2.6,
+    "bounce_at_mark": 1.4
+   },
+   "激进": {
+    "precision": 0.604,
+    "recall": 0.593,
+    "per_day": 0.52,
+    "lead_bars": 2.8,
+    "bounce_at_mark": 1.28
+   }
+  }
+ },
+ "model": {
+  "bottom": {
+   "w": {
+    "drop_atr": -0.021320826030372997,
+    "mom10": 0.0019287174370374116,
+    "rng_atr": -0.019893234462809835,
+    "clv": 0.3009728780557811,
+    "lwick": -0.045290454990344904,
+    "body": -0.08896984755852652,
+    "rsi14": -0.27566145880375187,
+    "rsi3": -0.09438279885418466,
+    "ndown": -0.041018962424596205,
+    "ema50d": 0.004825562819673666,
+    "ema200d": 0.004016073399893401,
+    "atr_ratio": -0.002248409130219852,
+    "c1": 0.057561287556644164,
+    "c2": 0.06422620633789794,
+    "c3": 0.07726003341100289,
+    "bounce": 2.2916507843606686,
+    "reclaim": -0.13282927674734502,
+    "clv_now": 0.10355174498168558
+   },
+   "b0": -2.2433797212496875
+  },
+  "top": {
+   "w": {
+    "drop_atr": -0.012590142688055708,
+    "mom10": 0.02605761155438685,
+    "rng_atr": 0.09344565437695863,
+    "clv": 0.36750640864427875,
+    "lwick": -0.03559078603199197,
+    "body": -0.051919986840465546,
+    "rsi14": -0.8517870263784711,
+    "rsi3": -0.20993363627619605,
+    "ndown": -0.05107849958800919,
+    "ema50d": 0.034595727030840254,
+    "ema200d": 3.649264670400506e-05,
+    "atr_ratio": -0.0362888279239275,
+    "c1": 0.08834027936767974,
+    "c2": 0.09972038653039705,
+    "c3": 0.11788795548570524,
+    "bounce": 2.3031983856415286,
+    "reclaim": -0.09377231102391907,
+    "clv_now": 0.15574903436845414
+   },
+   "b0": -2.147608846474174
+  }
+ }
+}

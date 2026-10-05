@@ -205,7 +205,7 @@ class CSVSource(Source):
 
 def load_ibkr_json(path) -> pd.DataFrame:
     """Bars saved from the IBKR connector: arrays `time` (UTC start), open/high/low/close[/volume]."""
-    d = json.loads(Path(path).read_text())
+    d = json.loads(Path(path).read_text(encoding="utf-8"))
     df = pd.DataFrame({k: d[k] for k in ("open", "high", "low", "close", "volume") if k in d},
                       index=pd.to_datetime(d["time"], utc=True))
     df.index = to_et(df.index)

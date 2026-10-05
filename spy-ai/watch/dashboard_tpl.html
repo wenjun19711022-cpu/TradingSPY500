@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPY 复盘看板</title>
+<style>
+:root{color-scheme:light;--page:#f9f9f7;--card:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--mute:#898781;--grid:#e1e0d9;--base:#c3c2b7;--ring:rgba(11,11,11,.10);
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s7:#4a3aa7;--s8:#e34948;--v5:#b4b2ab;--wash:#eef3fb;
+--good:#0ca30c;--warn:#fab219;--serious:#ec835a;--bad:#d03b3b;--goodtxt:#006300}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--page:#0d0d0d;--card:#1a1a19;--ink:#fff;--ink2:#c3c2b7;--mute:#898781;
+--grid:#2c2c2a;--base:#383835;--ring:rgba(255,255,255,.10);--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s7:#9085e9;--s8:#e66767;--v5:#5d5c57;--wash:#16202e;--goodtxt:#0ca30c}}
+:root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--card:#1a1a19;--ink:#fff;--ink2:#c3c2b7;--mute:#898781;--grid:#2c2c2a;--base:#383835;--ring:rgba(255,255,255,.10);
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s7:#9085e9;--s8:#e66767;--v5:#5d5c57;--wash:#16202e;--goodtxt:#0ca30c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);box-shadow:0 1px 0 var(--ring)}
+.hwrap{max-width:1240px;margin:0 auto;padding:12px 16px 0}
+h1{font-size:18px;margin:0 0 2px;font-weight:650}.sub{color:var(--ink2);font-size:12px}
+nav{display:flex;gap:2px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+nav button{border:0;background:none;color:var(--ink2);padding:9px 13px;font:inherit;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+nav button:hover{color:var(--ink)}nav button.on{color:var(--ink);border-bottom-color:var(--s1);font-weight:600}
+main{max-width:1240px;margin:0 auto;padding:16px}
+section{display:none}section.on{display:block}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(12,minmax(0,1fr))}
+.card{background:var(--card);box-shadow:0 0 0 1px var(--ring);border-radius:10px;padding:14px 16px;min-width:0}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s7{grid-column:span 7}.s6{grid-column:span 6}.s5{grid-column:span 5}.s4{grid-column:span 4}.s3{grid-column:span 3}
+@media (max-width:900px){.s8,.s7,.s6,.s5,.s4{grid-column:span 12}.s3{grid-column:span 6}}
+@media (max-width:520px){.s3{grid-column:span 12}}
+.card h3{margin:0 0 2px;font-size:14px;font-weight:600}.note{color:var(--ink2);font-size:12px;margin:0 0 10px}
+.kpi .l{color:var(--ink2);font-size:12px}.kpi .v{font-size:26px;font-weight:650;letter-spacing:-.4px;line-height:1.25;margin-top:2px}
+.kpi .v small{font-size:13px;font-weight:400;color:var(--ink2)}.kpi .d{font-size:12px;color:var(--mute);margin-top:2px}
+.chart{width:100%;position:relative}
+svg text{fill:var(--mute);font-size:11px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2);margin:8px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.legend i.ln{height:2px;width:14px;vertical-align:3px;border-radius:1px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink2);font-weight:500;position:sticky;top:0;background:var(--card)}
+.tw{overflow:auto;max-height:520px}
+.pos{color:var(--goodtxt)}.neg{color:var(--bad)}.dim{color:var(--mute)}
+.chip{display:inline-block;padding:2px 9px;border-radius:99px;background:var(--wash);color:var(--ink);font-size:12px;margin:0 6px 6px 0}
+select{font:inherit;padding:5px 8px;border-radius:6px;border:0;box-shadow:0 0 0 1px var(--ring);background:var(--card);color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+.empty{color:var(--mute);padding:28px 0;text-align:center}
+#tip{position:fixed;pointer-events:none;z-index:9;background:var(--card);box-shadow:0 0 0 1px var(--ring),0 6px 18px rgba(0,0,0,.14);border-radius:8px;padding:7px 9px;font-size:12px;display:none;max-width:300px;color:var(--ink)}
+#tip b{font-weight:600}
+.headline{font-size:17px;line-height:1.6;font-weight:550;margin:0}
+.verd{display:flex;gap:10px;align-items:flex-start}.verd .ic{flex:0 0 26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px}
+.verd h4{margin:0 0 3px;font-size:14px}.verd p{margin:0;color:var(--ink2);font-size:13px}
+.st-good{background:var(--good)}.st-warn{background:var(--warn);color:#0b0b0b!important}.st-bad{background:var(--bad)}.st-wait{background:var(--mute)}
+.plan h4{margin:16px 0 6px;font-size:15px}.plan p{margin:5px 0}.plan .ev{color:var(--mute);font-size:12px}
+.tag{font-size:11px;padding:1px 7px;border-radius:4px;margin-left:8px;background:var(--wash);color:var(--s1);font-weight:500;vertical-align:2px}
+.box{box-shadow:inset 3px 0 0 var(--warn);background:var(--card);padding:9px 13px;margin-bottom:12px;border-radius:0 8px 8px 0;color:var(--ink2);font-size:13px}
+ol.steps{margin:0;padding-left:20px}ol.steps li{margin:4px 0}
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <h1>SPY 底顶 AI · 复盘看板</h1>
+  <div class="sub" id="sub"></div>
+  <nav id="nav">
+    <button data-t="home" class="on">总览</button><button data-t="swing">波段（抄底到顶）</button><button data-t="live">实盘复盘</button><button data-t="day">单日回看</button>
+    <button data-t="model">模型：v6 vs v5</button><button data-t="trade">交易回测</button><button data-t="lab">策略工厂</button><button data-t="plan">优化路线</button>
+  </nav>
+</div></header>
+<main>
+<section id="home" class="on"><div id="home_body"></div></section>
+<section id="swing"><div id="swing_body"></div></section>
+<section id="live">
+  <div class="grid" id="kpis"></div>
+  <div class="grid" style="margin-top:12px">
+    <div class="card s8"><h3>每日早报信号</h3><p class="note">按事后结果分段；悬停看当天证实率</p><div class="chart" id="c_daily"></div></div>
+    <div class="card s4"><h3>分周期证实率：实盘 vs 回测</h3><p class="note">柱 = 实盘；◆ = 回测验证集同门槛准确率。差距大就要警惕</p><div class="chart" id="c_tf"></div></div>
+    <div class="card s6"><h3>概率越高越准吗？</h3><p class="note">按信号概率分档的实盘证实率；◆ = 回测同档实际成功率</p><div class="chart" id="c_cal"></div></div>
+    <div class="card s6"><h3>实时数据有没有用？</h3><p class="note">同一批信号按当时的期权 / 资金状态分组。n &lt; 30 的组只是参考</p><div class="chart" id="c_ctx"></div></div>
+    <div class="card s6"><h3>信号之后 30 根 K 线的最大顺向 / 逆向波动</h3><p class="note">横轴 = 最大逆向（bp），纵轴 = 最大顺向（bp）</p><div class="chart" id="c_sc"></div></div>
+    <div class="card s6"><h3>按周期 × 方向汇总</h3><div class="tw" id="t_sum"></div></div>
+    <div class="card s12"><h3>全部早报信号</h3>
+      <div class="row"><select id="f_tf"><option value="">全部周期</option></select><select id="f_side"><option value="">底 + 顶</option><option value="bottom">底</option><option value="top">顶</option></select>
+      <select id="f_res"><option value="">全部结果</option><option value="ok">证实</option><option value="bad">失败</option><option value="open">未判定</option></select></div>
+      <div class="tw" id="t_ev"></div></div>
+  </div>
+</section>
+<section id="day">
+  <div class="row"><select id="daysel"></select><span id="daysum" class="sub"></span></div>
+  <div class="grid">
+    <div class="card s12"><h3>SPY 1 分钟 · 信号 · 期权位</h3><p class="note">▲ 底 / ▼ 顶（实心 = 证实，空心 = 失败或未判定）；紫线 = 零 Gamma；虚线 = 看涨墙 / 看跌墙</p><div class="chart" id="c_intra"></div></div>
+    <div class="card s6"><h3>当日到期净 Gamma（十亿美元）</h3><p class="note">&gt; 0 做市商压波动（易震荡），&lt; 0 放大波动（易单边）</p><div class="chart" id="c_gex"></div></div>
+    <div class="card s6"><h3>资金分布净流入（亿美元，盘中累计）</h3><p class="note">moomoo 资金分布</p><div class="chart" id="c_flow"></div></div>
+    <div class="card s12"><h3>当天信号</h3><div class="tw" id="t_day"></div></div>
+  </div>
+</section>
+<section id="model"><div id="model_body"></div></section>
+<section id="trade"><div id="trade_body"></div></section>
+<section id="lab"><div id="lab_body"></div></section>
+<section id="plan"><div id="plan_body"></div></section>
+</main>
+<div id="tip"></div>
+<script>
+const D = /*__DATA__*/null;
+const TF=["1m","3m","5m","15m","1h"],TFN={"1m":"1分钟","3m":"3分钟","5m":"5分钟","15m":"15分钟","1h":"1小时"},SIDEN={bottom:"底",top:"顶"};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS="http://www.w3.org/2000/svg",$=id=>document.getElementById(id);
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(p,x,y,s,a){const t=E("text",Object.assign({x,y},a||{}),p);t.textContent=s;return t;}
+const pct=(x,d=0)=>x==null||isNaN(x)?"–":(x*100).toFixed(d)+"%";
+const num=(x,d=1)=>x==null||isNaN(x)?"–":(+x).toFixed(d);
+const sgn=(x,d=1)=>x==null||isNaN(x)?"–":(x>0?"+":"")+(+x).toFixed(d);
+const cls=x=>x==null?"":x>0?"pos":"neg";
+function ticks(a,b,n){if(!isFinite(a)||!isFinite(b))return[0];if(a===b){a-=1;b+=1;}const s=Math.pow(10,Math.floor(Math.log10((b-a)/n)));const m=[1,2,2.5,5,10].find(k=>(b-a)/(s*k)<=n)*s;const r=[];for(let v=Math.ceil(a/m-1e-9)*m;v<=b+1e-9;v+=m)r.push(+v.toFixed(10));return r;}
+const tip=$("tip");
+function showTip(ev,html){tip.innerHTML=html;tip.style.display="block";const x=ev.clientX+14,y=ev.clientY+14;tip.style.left=Math.min(x,innerWidth-tip.offsetWidth-8)+"px";tip.style.top=Math.min(y,innerHeight-tip.offsetHeight-8)+"px";}
+function hideTip(){tip.style.display="none";}
+function frame(host,h){host.innerHTML="";const w=Math.max(host.clientWidth,280);const s=E("svg",{width:w,height:h,viewBox:`0 0 ${w} ${h}`,role:"img"},host);return{s,w,h};}
+function legend(host,items){const d=document.createElement("div");d.className="legend";d.innerHTML=items.map(([n,c,line])=>`<span><i class="${line?"ln":""}" style="background:${c}"></i>${n}</span>`).join("");host.appendChild(d);}
+function empty(host,msg){host.innerHTML=`<div class="empty">${msg}</div>`;}
+/* bar with rounded DATA end only (r<=4), anchored at baseline yb */
+function bar(s,x,w,yb,yv,fill,round=true){const h=Math.abs(yb-yv);if(h<.5)return null;const up=yv<yb,r=round?Math.min(4,w/2,h):0,y0=Math.min(yb,yv);
+  let d;if(up)d=`M${x},${yb}V${yv+r}Q${x},${yv} ${x+r},${yv}H${x+w-r}Q${x+w},${yv} ${x+w},${yv+r}V${yb}Z`;else d=`M${x},${yb}V${yv-r}Q${x},${yv} ${x+r},${yv}H${x+w-r}Q${x+w},${yv} ${x+w},${yv-r}V${yb}Z`;
+  return E("path",{d,fill},s);}
+
+/* one-axis chart: categorical (cats) or numeric x; bars (grouped / stacked), lines, diamond marks */
+function axisChart(host,o){
+  const {s,w,h}=frame(host,o.h||240);const L=o.left||44,R=o.right||12,Tp=12,B=o.bottom||26;
+  const n=o.cats?o.cats.length:0;const xs=o.cats?(i=>L+(i+.5)*(w-L-R)/n):(v=>L+(v-o.x0)/((o.x1-o.x0)||1)*(w-L-R));
+  let ymin=o.ymin,ymax=o.ymax;if(ymin==null||ymax==null){const all=[];(o.series||[]).forEach(sr=>(sr.values||sr.pts.map(p=>p[1])).forEach(v=>v!=null&&all.push(v)));
+    if(o.stack)for(let i=0;i<n;i++){let t=0;o.series.filter(x=>x.type==="bar").forEach(x=>t+=x.values[i]||0);all.push(t);}
+    (o.refs||[]).forEach(r=>all.push(r.y));
+    const hasBar=(o.series||[]).some(x=>x.type==="bar");      // bars must start at zero; lines fit their data
+    if(hasBar){const lo=Math.min(0,...all),hi=Math.max(0,...all),pad=(hi-lo)*.1;ymin=ymin??(lo<0?lo-pad:0);ymax=ymax??(hi>0?hi+pad:0);}
+    else{const lo=Math.min(...all),hi=Math.max(...all),pad=Math.max((hi-lo)*.15,Math.abs(hi)*.002,1e-6);ymin=ymin??lo-pad;ymax=ymax??hi+pad;}}
+  const ys=v=>Tp+(ymax-v)/((ymax-ymin)||1)*(h-Tp-B);
+  ticks(ymin,ymax,5).forEach(v=>{E("line",{x1:L,x2:w-R,y1:ys(v),y2:ys(v),stroke:v===0?css("--base"):css("--grid"),"stroke-width":1},s);T(s,L-6,ys(v)+4,(o.yfmt||(x=>x))(v),{"text-anchor":"end"});});
+  if(ymin<0&&ymax>0)E("line",{x1:L,x2:w-R,y1:ys(0),y2:ys(0),stroke:css("--base")},s);
+  if(o.cats){const every=Math.ceil(n/Math.max(1,Math.floor((w-L-R)/(o.catw||46))));o.cats.forEach((c,i)=>{if(i%every===0)T(s,xs(i),h-8,c,{"text-anchor":"middle"});});}
+  else ticks(o.x0,o.x1,6).forEach(v=>T(s,xs(v),h-8,(o.xfmt||(x=>x))(v),{"text-anchor":"middle"}));
+  const bw=o.cats?(w-L-R)/n:0,bars=(o.series||[]).filter(x=>x.type==="bar"),base=new Array(n).fill(0);
+  if(o.stack){for(let i=0;i<n;i++){const segs=bars.map(sr=>sr.values[i]||0);const top=segs.map((v,k)=>v>0?k:-1).filter(k=>k>=0).pop();let acc=0;const wd=Math.min(bw*.56,46),x=xs(i)-wd/2;
+      segs.forEach((v,k)=>{if(!v)return;const y0=ys(acc),y1=ys(acc+v);acc+=v;bar(s,x,wd,y0-(acc-v>0?2:0),y1,bars[k].color,k===top);});}}
+  else{const gw=Math.min(bw*.74,36*bars.length),wd=(gw-2*(bars.length-1))/bars.length;bars.forEach((sr,k)=>sr.values.forEach((v,i)=>{if(v==null)return;bar(s,xs(i)-gw/2+k*(wd+2),wd,ys(0),ys(v),sr.color);}));}
+  (o.refs||[]).forEach(r=>{E("line",{x1:L,x2:w-R,y1:ys(r.y),y2:ys(r.y),stroke:r.color,"stroke-width":1.5},s);T(s,L+4,ys(r.y)-5,r.label,{"text-anchor":"start",style:"fill:"+css("--ink2")});});
+  (o.series||[]).filter(x=>x.type!=="bar").forEach(sr=>{const P=(sr.pts||sr.values.map((v,i)=>[i,v])).filter(p=>p[1]!=null).map(p=>[xs(p[0]),ys(p[1])]);
+    if(sr.type==="line"&&P.length){E("path",{d:"M"+P.map(p=>p.join(",")).join("L"),fill:"none",stroke:sr.color,"stroke-width":sr.w||2,"stroke-dasharray":sr.dash||"","stroke-linejoin":"round","stroke-linecap":"round"},s);
+      if(sr.dots)P.forEach(p=>E("circle",{cx:p[0],cy:p[1],r:4,fill:sr.color,stroke:css("--card"),"stroke-width":2},s));}
+    if(sr.type==="mark")P.forEach(p=>E("path",{d:`M${p[0]-6},${p[1]}L${p[0]},${p[1]-6}L${p[0]+6},${p[1]}L${p[0]},${p[1]+6}Z`,fill:sr.color,stroke:css("--card"),"stroke-width":2},s));});
+  if(o.tip){const ov=E("rect",{x:L,y:Tp,width:w-L-R,height:h-Tp-B,fill:"transparent"},s);let cross=null;
+    ov.addEventListener("mousemove",ev=>{const r=s.getBoundingClientRect(),px=ev.clientX-r.left;let i;
+      if(o.cats)i=Math.max(0,Math.min(n-1,Math.floor((px-L)/(bw||1))));else i=o.x0+(px-L)/(w-L-R)*(o.x1-o.x0);
+      if(!o.cats){if(!cross)cross=E("line",{y1:Tp,y2:h-B,stroke:css("--base"),"pointer-events":"none"},s);cross.setAttribute("x1",px);cross.setAttribute("x2",px);}
+      const html=o.tip(i);html?showTip(ev,html):hideTip();});
+    ov.addEventListener("mouseleave",()=>{hideTip();if(cross){cross.remove();cross=null;}});}
+  if(o.legend)legend(host,o.legend);return{s,xs,ys,L,R,w,h,Tp,B};
+}
+function hbars(host,labels,values,o={}){
+  const rowh=24,h=labels.length*rowh+8;const {s,w}=frame(host,h);const L=o.left||176,R=56;const mx=Math.max(...values.map(Math.abs),1e-9);
+  labels.forEach((lb,i)=>{const y=4+i*rowh,v=values[i],bw=Math.max(0,v)/mx*(w-L-R);
+    T(s,L-8,y+15,lb,{"text-anchor":"end",style:"fill:"+css("--ink2")});
+    if(v>0){const p=E("path",{d:`M${L},${y+4}H${L+bw-Math.min(4,bw)}Q${L+bw},${y+4} ${L+bw},${y+4+Math.min(4,bw)}V${y+rowh-6-Math.min(4,bw)}Q${L+bw},${y+rowh-6} ${L+bw-Math.min(4,bw)},${y+rowh-6}H${L}Z`,fill:o.color||css("--s1")},s);}
+    else E("line",{x1:L,x2:L,y1:y+4,y2:y+rowh-6,stroke:css("--base")},s);
+    T(s,L+bw+6,y+15,(o.fmt||(x=>x))(v));
+    const hit=E("rect",{x:0,y:y,width:w,height:rowh,fill:"transparent"},s);if(o.tip){hit.addEventListener("mousemove",ev=>showTip(ev,o.tip(i)));hit.addEventListener("mouseleave",hideTip);}});
+}
+const stIcon={good:"✓",warn:"≈",bad:"✗",wait:"◷"},stName={good:"有效",warn:"小幅",bad:"不赚钱",wait:"积累中"};
+
+/* ------------------------------------------------ data helpers */
+const EV=(D.live.events||[]).filter(e=>e.kind==="early");
+const judged=e=>e.res==="ok"||e.res==="bad";
+function rate(list){const j=list.filter(judged),k=j.filter(e=>e.res==="ok").length;return{n:j.length,ok:k,r:j.length?k/j.length:null};}
+const S6=D.bt.train6?D.bt.train6.sides:null,B6=D.bt.bt6||null,PLAN=D.bt.plan||null;
+function btPrec(tf,side){try{const X=S6[side];return X[X.selection.chosen][tf]["thr0.55"].precision;}catch(e){return null;}}
+function meanAuc(side,m){try{const X=S6[side][m];return TF.reduce((a,tf)=>a+X[tf].auc_c0,0)/TF.length;}catch(e){return null;}}
+
+/* ------------------------------------------------ 总览 */
+function homeView(){const host=$("home_body");let h=`<div class="grid">`;
+  h+=`<div class="card s12"><p class="headline">${PLAN?PLAN.headline:"还没有 v6 回测结论（model6/plan.json）"}</p></div>`;
+  (PLAN?PLAN.verdicts:[]).forEach(v=>{h+=`<div class="card s3 verd"><div class="ic st-${v.status}" aria-hidden="true">${stIcon[v.status]}</div><div><h4>${v.title}</h4><p>${v.text}</p></div></div>`;});
+  const all=rate(EV),b5=meanAuc("bottom","v5重训"),b6=S6?meanAuc("bottom",S6.bottom.selection.chosen):null;
+  let best=null;if(B6)TF.forEach(tf=>{const x=B6.default[tf+"|v6"];if(x&&(best==null||x.val.net_bp_12>best.v))best={tf,v:x.val.net_bp_12};});
+  const K=[["实盘",`${D.live.days.length}<small> 天 · ${EV.length} 个信号</small>`,`事后证实率 ${pct(all.r)}（${all.ok}/${all.n}）`],
+    ["底的识别能力（AUC）",`${num(b6,3)}`,`v5 重训 ${num(b5,3)}；0.5 = 瞎猜`],
+    ["每笔净收益（最好的周期）",best?`<span class="${cls(best.v)}">${sgn(best.v,1)}</span><small> bp</small>`:"–",best?`${TFN[best.tf]}，扣 OKX 12bp，验证期`:""],
+    ["50 倍下 1 分钟默认规则",B6?`<span class="neg">${num(B6.default["1m|v6"].val.x50.acct_total_pct,1)}%</span>`:"–","账户累计（验证期，1% 保证金/笔）"]];
+  K.forEach(([l,v,d])=>{h+=`<div class="card s3 kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;});
+  h+=`<div class="card s6"><h3>为什么认得准却不赚钱</h3><p class="note">入场时离目标还有多远 vs 离止损多远（bp，v6 默认规则，验证期平均）；横线 = OKX 一来回成本</p><div class="chart" id="h_dist"></div></div>
+      <div class="card s6"><h3>每笔净收益（bp，扣成本后）</h3><p class="note">验证期；灰 = v5，蓝 = v6 追开盘（12bp），绿 = v6 挂单回踩（7bp）。唯一为正的“1 小时挂单”只有 40 笔，保留期又转负</p><div class="chart" id="h_net"></div></div>`;
+  h+=`<div class="card s12"><h3>所有交易方式：验证期 vs 保留期（每笔净收益，bp）</h3><p class="note">每种方式取它在验证期最好的周期/参数，再看从没用过的保留期（2026-04 → 09）。验证期为正、保留期转负 = 挑参数挑出来的运气。验证期少于 40 笔或保留期少于 10 笔的组合不参与</p><div class="chart" id="h_methods"></div></div>`;
+  if(PLAN){const s5=PLAN.sections[PLAN.sections.length-1];h+=`<div class="card s12"><h3>接下来怎么做</h3><ol class="steps">${s5.body.map(b=>`<li>${b.replace(/^[①②③④⑤]\s*/,"")}</li>`).join("")}</ol></div>`;}
+  h+="</div>";host.innerHTML=h;
+  if(!B6){["h_dist","h_net","h_methods"].forEach(i=>empty($(i),"暂无交易回测"));return;}
+  const M=methods();axisChart($("h_methods"),{cats:M.map(m=>m.name),catw:80,yfmt:v=>v.toFixed(0),series:[{type:"bar",values:M.map(m=>m.val),color:css("--s1")},{type:"bar",values:M.map(m=>m.hold),color:css("--s2")}],
+    legend:[["验证期（用来挑参数）",css("--s1")],["保留期（没见过的新数据）",css("--s2")]],
+    tip:i=>{const m=M[i];return `<b>${m.name}</b>（${m.tf}）<br>验证期 ${sgn(m.val,2)}bp · ${m.nv} 笔<br>保留期 ${sgn(m.hold,2)}bp · ${m.nh} 笔<br>成本 ${m.cost}bp`;}});
+  const tg=TF.map(tf=>B6.default[tf+"|v6"].val.avg_tgt_bp),st=TF.map(tf=>B6.default[tf+"|v6"].val.avg_stop_bp),wr=TF.map(tf=>B6.default[tf+"|v6"].val.gross_win);
+  axisChart($("h_dist"),{cats:TF.map(t=>TFN[t]),ymin:0,yfmt:v=>v.toFixed(0),series:[{type:"bar",values:tg,color:css("--s1")},{type:"bar",values:st,color:css("--s2")}],
+    refs:[{y:12,color:css("--warn"),label:"成本 12bp"}],legend:[["离目标（剩余上涨空间）",css("--s1")],["离止损（风险）",css("--s2")],["OKX 一来回成本",css("--warn"),1]],
+    tip:i=>`<b>${TFN[TF[i]]}</b><br>离目标 ${num(tg[i])}bp · 离止损 ${num(st[i])}bp<br>盈亏比 ${num(tg[i]/st[i],2)} : 1，命中率 ${pct(wr[i])}`});
+  const n5=TF.map(tf=>B6.default[tf+"|v5重训"].val.net_bp_12),n6=TF.map(tf=>B6.default[tf+"|v6"].val.net_bp_12),nl=TF.map(tf=>B6.limit&&B6.limit[tf]?B6.limit[tf].val.net_bp_7:null);
+  axisChart($("h_net"),{cats:TF.map(t=>TFN[t]),yfmt:v=>v.toFixed(0),series:[{type:"bar",values:n5,color:css("--v5")},{type:"bar",values:n6,color:css("--s1")},{type:"bar",values:nl,color:css("--s3")}],
+    legend:[["v5 追开盘",css("--v5")],["v6 追开盘",css("--s1")],["v6 挂单回踩",css("--s3")]],
+    tip:i=>{const tf=TF[i],L=B6.limit&&B6.limit[tf];return `<b>${TFN[tf]}</b><br>v5 ${sgn(n5[i])}bp（${B6.default[tf+"|v5重训"].val.trades} 笔）<br>v6 ${sgn(n6[i])}bp（${B6.default[tf+"|v6"].val.trades} 笔）<br>挂单 ${sgn(nl[i])}bp（${L?L.val.trades:0} 笔）`;}});
+}
+
+/* every tested trading approach: its best timeframe/config on validation, then the untouched holdout */
+function methods(){const out=[],pick=(name,rows,cost)=>{rows=rows.filter(r=>r&&r.v&&r.v.trades>=40&&r.h&&(r.h.trades||0)>=10);if(!rows.length)return;const b=rows.reduce((a,c)=>c.vn>a.vn?c:a);
+    out.push({name,tf:b.tf,val:b.vn,hold:b.hn,nv:b.v.trades,nh:(b.h&&b.h.trades)||0,cost});};
+  pick("v5 追开盘",TF.map(tf=>{const x=B6.default[tf+"|v5重训"];return x&&{tf:TFN[tf],v:x.val,h:x.hold,vn:x.val.net_bp_12,hn:x.hold.net_bp_12};}),12);
+  pick("v6 追开盘",TF.map(tf=>{const x=B6.default[tf+"|v6"];return x&&{tf:TFN[tf],v:x.val,h:x.hold,vn:x.val.net_bp_12,hn:x.hold.net_bp_12};}),12);
+  pick("v6 参数搜索",TF.map(tf=>{const x=B6.grid_best[tf];return x&&{tf:TFN[tf],v:x.val,h:x.hold,vn:x.val.net_bp_12,hn:x.hold.net_bp_12};}),12);
+  pick("v6 挂单回踩",TF.map(tf=>{const x=B6.limit&&B6.limit[tf];return x&&{tf:TFN[tf],v:x.val,h:x.hold,vn:x.val.net_bp_7,hn:x.hold.net_bp_7};}),7);
+  const V7=D.bt.v7;if(V7)pick("v7 成本感知",Object.entries(V7.best).map(([tf,x])=>({tf:TFN[tf],v:x.val,h:x.hold,vn:x.val.net_bp_12,hn:x.hold.net_bp_12})),12);
+  const MO=D.bt.momentum;if(MO){const rows=[];Object.entries(MO).forEach(([n,v])=>Object.entries(v).forEach(([ex,s])=>rows.push({tf:n+(ex==="last_55"?"·15:55平":"·收盘平"),v:{trades:s.val.days},h:{trades:s.hold.days},vn:s.val.net12,hn:s.hold.net12})));pick("日内动量",rows,12);}
+  const FS=D.bt.factory_summary;if(FS)pick("策略工厂（13 类）",Object.entries(FS.families).flatMap(([k,v])=>[v.best_net,v.best_gross].map(b=>({tf:k+"："+b.name,v:{trades:b.val.n},h:{trades:b.hold.n},vn:b.val.net12,hn:b.hold.net12}))),12);
+  return out;}
+
+/* ------------------------------------------------ 波段 */
+function swingView(){const host=$("swing_body"),W=D.swing||{},F=W.final;if(!F){host.innerHTML="<div class='card'><div class='empty'>还没有波段研究结果</div></div>";return;}
+  const V=F.variants,main=V["主规则 E5×X3 止损2.5%"],cl=z=>z==null?"":z>0?"pos":"neg",st=W.state||{status:"flat"};
+  let h=`<div class="grid"><div class="card s12"><p class="headline">波段规则：<b>抄底日</b>（昨收日线 RSI2 &lt; 20 且在 200 日线上方）出现第一个 <b>15 分钟或 1 小时“底”</b>就进场，止损 −2.5%；涨满 1 个日线 ATR 之后，第一个 <b>15 分钟“顶”</b>离场；最多拿 10 个交易日。盯盘机器人已按这套规则实时提醒（只提醒、不下单）。</p></div>`;
+  h+=`<div class="card s4 kpi"><div class="l">现在的波段状态</div><div class="v">${st.status==="long"?"持仓中":"空仓等待"}</div><div class="d">${st.status==="long"?`入场 ${num(st.entry,2)}（${st.entry_t}），止损 ${num(st.stop,2)}，最高 ${num(st.peak,2)}${st.hot?"，已进入止盈观察":""}`:"等下一个抄底日"}</div></div>
+  <div class="card s4 kpi"><div class="l">样本外（2024-01 → 2026-10-05）</div><div class="v">${main.oos.n}<small> 笔 · 胜率 ${pct(main.oos.win)}</small></div><div class="d">1 倍每笔扣费后 ${sgn(main.oos.net_pct,2)}%，t = ${num(main.oos.t_net,2)}（还不算显著）</div></div>
+  <div class="card s4 kpi"><div class="l">280 元保证金：50 倍 vs 20 倍</div><div class="v"><span class="neg">${sgn(main.oos.x50.yuan_per_trade,0)}</span><small> 元/笔</small> · <span class="pos">${sgn(main.oos.x20.yuan_per_trade,0)}</span><small> 元/笔</small></div><div class="d">50 倍 ${main.oos.n} 笔里爆仓 ${main.oos.x50.liq} 笔；20 倍 0 笔</div></div>`;
+  h+=`<div class="card s12"><h3>你截图的那一波：2026-09-29 → 10-05（15 分钟 K 线）</h3><p class="note">▲ = 规则进场（10-01 10:45 · 15 分钟底 · 761.42），▼ = 规则离场（10-05 15:45 · 15 分钟顶 · 775.58）；两条横线 = 你画的 759 / 776</p><div class="chart" id="c_case"></div></div>`;
+  h+=`<div class="card s6"><h3>同一波，不同做法赚多少（280 元保证金 × 50 倍）</h3><div class="tw"><table><tr><th>做法</th><th>买</th><th>卖</th><th>净涨幅</th><th>50 倍净赚</th></tr>
+    <tr><td>理想：最低 759 买、776 卖</td><td>759.00</td><td>776.00</td><td>+2.00%</td><td class="pos">≈ +280 元</td></tr>
+    <tr><td><b>波段规则（v6 择时）</b></td><td>761.42</td><td>775.58</td><td>+1.61%</td><td class="pos">+225 元</td></tr>
+    <tr><td>日线 RSI2&lt;20 次日开盘买 + 站上 5 日线卖</td><td>764.36</td><td>769.69</td><td>+0.46%</td><td class="pos">+64 元</td></tr>
+    <tr><td>TradingSPY500 原规则（RSI2&lt;10）</td><td colspan="4" class="dim">没有触发：9/30 收盘 RSI2 = 13.9，不到 10</td></tr></table></div>
+    <p class="note" style="margin-top:8px">净涨幅已扣 OKX 一来回 12bp 和持有约 4 天的资金费（每 8 小时 0.01%）。50 倍的爆仓价在入场价下方 1.0%：759 买 → 751.33，761.42 买 → 753.73。这一波入场后最低只到 758.79，所以没爆。</p></div>`;
+  h+=`<div class="card s6"><h3>为什么 50 倍不行：买进后先逆向走了多少</h3><p class="note">样本外 ${F.n_oos} 笔里，先跌了 ≥ x% 才回头（或止损）的比例。50 倍逐仓跌 1.0% 爆仓、25 倍 3.0%、20 倍 4.0%</p><div class="chart" id="c_mae"></div></div>`;
+  h+=`<div class="card s12"><h3>三种做法 × 三种杠杆（280 元保证金/笔，样本外 2024-01 → 2026-10-05）</h3><div class="tw"><table><tr><th>做法</th><th>笔数</th><th>胜率</th><th>1 倍每笔</th><th>t</th><th>50x 爆仓</th><th>50x 每笔</th><th>50x 合计</th><th>20x 每笔</th><th>20x 合计</th><th>20x 最大回撤</th><th>10x 合计</th></tr>`;
+  Object.entries(V).forEach(([k,v])=>{const o=v.oos;h+=`<tr><td>${k}</td><td>${o.n}</td><td>${pct(o.win)}</td><td class="${cl(o.net_pct)}">${sgn(o.net_pct,2)}%</td><td>${num(o.t_net,2)}</td><td>${o.x50.liq}</td><td class="${cl(o.x50.yuan_per_trade)}">${sgn(o.x50.yuan_per_trade,0)} 元</td><td class="${cl(o.x50.yuan_total)}">${sgn(o.x50.yuan_total,0)} 元</td>
+    <td class="${cl(o.x20.yuan_per_trade)}">${sgn(o.x20.yuan_per_trade,0)} 元</td><td class="${cl(o.x20.yuan_total)}">${sgn(o.x20.yuan_total,0)} 元</td><td>${sgn(o.x20.max_dd_yuan,0)} 元</td><td class="${cl(o.x10.yuan_total)}">${sgn(o.x10.yuan_total,0)} 元</td></tr>`;});
+  h+=`</table></div></div><div class="card s12"><h3>主规则的累计盈亏（元，280 元保证金/笔）</h3><p class="note">同一串交易，只换杠杆。50 倍时一笔逆向 1% 就整笔 280 元归零</p><div class="chart" id="c_seq"></div></div>
+  <div class="card s12"><h3>主规则样本外每一笔</h3><div class="tw" id="t_swing"></div></div></div>`;
+  host.innerHTML=h;
+  const B=W.case_bars||[];
+  if(B.length){const lo=Math.min(...B.map(b=>b[3]),758.5),hi=Math.max(...B.map(b=>b[2]),776.5),pad=(hi-lo)*.06;
+    const g=axisChart($("c_case"),{h:340,x0:-0.5,x1:B.length-0.5,ymin:lo-pad,ymax:hi+pad,left:52,xfmt:()=>"",yfmt:v=>v.toFixed(0),series:[],
+      refs:[{y:759,color:css("--s1"),label:"你的 759"},{y:776,color:css("--s2"),label:"你的 776"}],
+      tip:x=>{const b=B[Math.max(0,Math.min(B.length-1,Math.round(x)))];return `<b>${b[0]}</b> 开 ${b[1]} 高 ${b[2]} 低 ${b[3]} 收 ${b[4]}`;}});
+    const cw=Math.max(1.5,(g.w-g.L-g.R)/B.length*.6);
+    B.forEach((b,i)=>{if(i===0||B[i-1][0].slice(0,5)!==b[0].slice(0,5))T(g.s,g.xs(i),g.h-8,b[0].slice(0,5),{"text-anchor":"start"});});
+    B.forEach((b,i)=>{const x=g.xs(i),c=b[4]>=b[1]?css("--s3"):css("--s8");E("line",{x1:x,x2:x,y1:g.ys(b[2]),y2:g.ys(b[3]),stroke:c,"pointer-events":"none"},g.s);
+      E("rect",{x:x-cw/2,y:g.ys(Math.max(b[1],b[4])),width:cw,height:Math.max(.8,Math.abs(g.ys(b[1])-g.ys(b[4]))),fill:c,"pointer-events":"none"},g.s);});
+    const mk=(lab,px,up)=>{const i=B.findIndex(b=>b[0]===lab);if(i<0)return;const x=g.xs(i),y=up?g.ys(px)+16:g.ys(px)-16,col=up?css("--s1"):css("--s2");
+      E("path",{d:up?`M${x},${y-8}L${x-7},${y+5}L${x+7},${y+5}Z`:`M${x},${y+8}L${x-7},${y-5}L${x+7},${y-5}Z`,fill:col,stroke:css("--card"),"stroke-width":1.5},g.s);
+      T(g.s,up?x+10:x-10,y+4,(up?"进场 ":"离场 ")+px,{"text-anchor":up?"start":"end",style:"fill:"+css("--ink")});};
+    mk("10-01 10:45",761.42,true);mk("10-05 15:45",775.58,false);
+    legend($("c_case"),[["规则进场 ▲",css("--s1")],["规则离场 ▼",css("--s2")],["阳线 / 阴线",css("--s3")]]);}
+  const MH=F.mae_hist||[];
+  axisChart($("c_mae"),{cats:MH.map(m=>"≥"+m[0]+"%"),ymin:0,ymax:1,yfmt:v=>pct(v),series:[{type:"bar",values:MH.map(m=>m[1]/F.n_oos),color:css("--s2")}],
+    tip:i=>`<b>先逆向走 ≥ ${MH[i][0]}%</b><br>${MH[i][1]} / ${F.n_oos} 笔（${pct(MH[i][1]/F.n_oos)}）${MH[i][0]>=1?"<br>50 倍：这些全部爆仓":""}`});
+  const tr=main.trades_oos||[],seq=[50,20,10].map(L=>{let a=0;const liq=1-(1-1/L)/0.99;return tr.map((t,i)=>[i,a+=(t.mae<=-liq?-280:280*L*t.net)]);});
+  axisChart($("c_seq"),{h:260,x0:0,x1:Math.max(1,tr.length-1),xfmt:i=>{const t=tr[Math.round(i)];return t?t.entry_t.slice(0,7):"";},yfmt:v=>v.toFixed(0),
+    series:[{type:"line",pts:seq[0],color:css("--s8")},{type:"line",pts:seq[1],color:css("--s1")},{type:"line",pts:seq[2],color:css("--v5")}],legend:[["50 倍",css("--s8"),1],["20 倍",css("--s1"),1],["10 倍",css("--v5"),1]],
+    tip:x=>{const i=Math.max(0,Math.min(tr.length-1,Math.round(x))),t=tr[i];return `<b>第 ${i+1} 笔 ${t.entry_t.slice(0,16)}</b><br>买 ${num(t.entry,2)} → 卖 ${num(t.exit,2)}（${t.why}）<br>1 倍净 ${sgn(t.net*100,2)}% · 最大逆向 ${num(t.mae*100,2)}%<br>累计：50x ${num(seq[0][i][1],0)} · 20x ${num(seq[1][i][1],0)} · 10x ${num(seq[2][i][1],0)} 元`;}});
+  const why={stop:"止损",top15:"15分钟顶",time:"时间到",daily:"日线规则",trail:"移动止盈",top1h:"1小时顶",open:"持有中"};
+  $("t_swing").innerHTML=`<table><tr><th>进场</th><th>买</th><th>离场</th><th>卖</th><th>原因</th><th>1 倍净</th><th>最大逆向</th><th>50x（元）</th><th>20x（元）</th></tr>`+tr.slice().reverse().map(t=>{const l50=t.mae<=-(1-0.98/0.99),v50=l50?-280:280*50*t.net,v20=280*20*t.net;
+    return `<tr><td>${t.entry_t.slice(0,16)}</td><td>${num(t.entry,2)}</td><td>${t.exit_t.slice(0,16)}</td><td>${num(t.exit,2)}</td><td>${why[t.why]||t.why}</td><td class="${cl(t.net)}">${sgn(t.net*100,2)}%</td><td>${num(t.mae*100,2)}%</td><td class="${cl(v50)}">${l50?"爆仓 ":""}${sgn(v50,0)}</td><td class="${cl(v20)}">${sgn(v20,0)}</td></tr>`;}).join("")+"</table>";}
+
+/* ------------------------------------------------ 实盘复盘 */
+function kpis(){const days=D.live.days.length,all=rate(EV),pu=rate(EV.filter(e=>e.pushed));
+  let bt=[];["bottom","top"].forEach(sd=>TF.forEach(tf=>{const p=btPrec(tf,sd);if(p!=null)bt.push(p);}));const btAvg=bt.length?bt.reduce((a,b)=>a+b,0)/bt.length:null;
+  const m=EV.filter(e=>e.mfe!=null),avg=k=>m.length?m.reduce((a,e)=>a+e[k],0)/m.length:null;
+  const K=[["盯盘天数",days,"天",D.live.days.length?`${D.live.days[0]} 起`:""],["早报信号",EV.length,"个",`已判定 ${all.n} 个`],["事后证实率",pct(all.r),"",`${all.ok}/${all.n}`],
+    ["推送信号证实率",pct(pu.r),"",`${pu.ok}/${pu.n}（只推 5m / 15m）`],["回测同门槛准确率",pct(btAvg),"","v6 验证集 10 个周期×方向平均"],["平均顺向 / 逆向",`${num(avg("mfe"),0)} / ${num(avg("mae"),0)}`,"bp","信号后 30 根 K 线"]];
+  $("kpis").innerHTML=K.map(([l,v,u,d])=>`<div class="card kpi" style="grid-column:span ${innerWidth<900?6:2}"><div class="l">${l}</div><div class="v">${v}<small> ${u}</small></div><div class="d">${d}</div></div>`).join("");}
+function cDaily(){const host=$("c_daily");if(!D.live.days.length)return empty(host,"还没有实盘数据");
+  const days=D.live.days,by=d=>EV.filter(e=>e.day===d);const ok=days.map(d=>by(d).filter(e=>e.res==="ok").length),bad=days.map(d=>by(d).filter(e=>e.res==="bad").length),op=days.map(d=>by(d).filter(e=>e.res==="open").length);
+  axisChart(host,{cats:days.map(d=>d.slice(5)),stack:1,ymin:0,yfmt:v=>v.toFixed(0),series:[{type:"bar",values:ok,color:css("--good")},{type:"bar",values:bad,color:css("--bad")},{type:"bar",values:op,color:css("--v5")}],
+    legend:[["✓ 证实",css("--good")],["✗ 失败",css("--bad")],["未判定",css("--v5")]],tip:i=>{const r=rate(by(days[i]));return `<b>${days[i]}</b><br>信号 ${ok[i]+bad[i]+op[i]}：✓ ${ok[i]} · ✗ ${bad[i]} · 未判定 ${op[i]}<br>当天证实率 ${pct(r.r)}`;}});}
+function cTf(){const host=$("c_tf"),cats=[],live=[],bt=[],ns=[];TF.forEach(tf=>["bottom","top"].forEach(sd=>{cats.push(tf+SIDEN[sd]);const r=rate(EV.filter(e=>e.tf===tf&&e.side===sd));live.push(r.n?r.r:null);ns.push(r.n);bt.push(btPrec(tf,sd));}));
+  axisChart(host,{cats,ymin:0,ymax:1,yfmt:v=>pct(v),catw:34,series:[{type:"bar",values:live,color:css("--s1")},{type:"mark",values:bt,color:css("--s2")}],legend:[["实盘",css("--s1")],["回测",css("--s2")]],
+    tip:i=>`<b>${cats[i]}</b><br>实盘 ${pct(live[i])}（n=${ns[i]}）<br>回测 ${pct(bt[i])}`});}
+function cCal(){const host=$("c_cal"),bins=[[50,60],[60,70],[70,80],[80,90],[90,101]],cats=bins.map(b=>b[0]+"–"+Math.min(b[1],100)+"%"),r=bins.map(b=>rate(EV.filter(e=>e.p>=b[0]&&e.p<b[1])));let bt=[];
+  try{const cv=S6.bottom.calibration_val.concat(S6.top.calibration_val);bt=bins.map(b=>{const m=cv.filter(c=>c[0]*100>=b[0]&&c[0]*100<b[1]);const n=m.reduce((a,c)=>a+c[2],0);return n?m.reduce((a,c)=>a+c[1]*c[2],0)/n:null;});}catch(e){}
+  axisChart(host,{cats,ymin:0,ymax:1,yfmt:v=>pct(v),series:[{type:"bar",values:r.map(x=>x.r),color:css("--s1")},{type:"mark",values:bt,color:css("--s2")}],legend:[["实盘",css("--s1")],["回测",css("--s2")]],
+    tip:i=>`<b>概率 ${cats[i]}</b><br>实盘 ${pct(r[i].r)}（${r[i].ok}/${r[i].n}）<br>回测 ${pct(bt[i])}`});}
+function cCtx(){const host=$("c_ctx"),ivs=EV.map(e=>e.iv).filter(x=>x!=null).sort((a,b)=>a-b),ivm=ivs.length?ivs[Math.floor(ivs.length/2)]:null;
+  const G=[["零Gamma上方",e=>e.zg==="above"],["零Gamma下方",e=>e.zg==="below"],["大单净流入",e=>e.big!=null&&e.big>0],["大单净流出",e=>e.big!=null&&e.big<=0],["IV 偏高",e=>ivm!=null&&e.iv!=null&&e.iv>ivm],["IV 偏低",e=>ivm!=null&&e.iv!=null&&e.iv<=ivm]];
+  const cats=[],b=[],t=[],nb=[],nt=[];G.forEach(([n,f])=>{cats.push(n);const rb=rate(EV.filter(e=>e.side==="bottom"&&f(e))),rt=rate(EV.filter(e=>e.side==="top"&&f(e)));b.push(rb.r);t.push(rt.r);nb.push(rb.n);nt.push(rt.n);});
+  axisChart(host,{cats,ymin:0,ymax:1,yfmt:v=>pct(v),catw:62,series:[{type:"bar",values:b,color:css("--s1")},{type:"bar",values:t,color:css("--s2")}],legend:[["底信号",css("--s1")],["顶信号",css("--s2")]],
+    tip:i=>`<b>${cats[i]}</b><br>底 ${pct(b[i])}（n=${nb[i]}）<br>顶 ${pct(t[i])}（n=${nt[i]}）${Math.min(nb[i],nt[i])<30?"<br>样本不足 30，仅供参考":""}`});}
+function cSc(){const host=$("c_sc"),P=EV.filter(e=>e.mfe!=null&&e.mae!=null);if(!P.length)return empty(host,"暂无");
+  const x0=Math.min(...P.map(e=>e.mae),-5)*1.08,x1=Math.max(...P.map(e=>e.mae),0)+2,y1=Math.max(...P.map(e=>e.mfe),5)*1.1;
+  const g=axisChart(host,{x0,x1,ymin:0,ymax:y1,series:[],xfmt:v=>v.toFixed(0),yfmt:v=>v.toFixed(0)});
+  P.forEach(e=>{const c=e.res==="ok"?css("--good"):e.res==="bad"?css("--bad"):css("--v5"),cx=g.xs(e.mae),cy=g.ys(e.mfe);E("circle",{cx,cy,r:5,fill:c,stroke:css("--card"),"stroke-width":2},g.s);
+    const hit=E("circle",{cx,cy,r:12,fill:"transparent"},g.s);hit.addEventListener("mousemove",ev=>showTip(ev,`<b>${e.day} ${e.t} ${TFN[e.tf]}${SIDEN[e.side]} ${e.p}%</b><br>顺向 ${e.mfe}bp · 逆向 ${e.mae}bp`));hit.addEventListener("mouseleave",hideTip);});
+  legend(host,[["✓ 证实",css("--good")],["✗ 失败",css("--bad")],["未判定",css("--v5")]]);}
+function tSum(){const rows=[];TF.forEach(tf=>["bottom","top"].forEach(sd=>{const L=EV.filter(e=>e.tf===tf&&e.side===sd);if(!L.length)return;const r=rate(L);
+  rows.push(`<tr><td>${TFN[tf]} ${SIDEN[sd]}</td><td>${L.length}</td><td>${r.n}</td><td>${pct(r.r)}</td><td>${pct(btPrec(tf,sd))}</td></tr>`);}));
+  $("t_sum").innerHTML=rows.length?`<table><tr><th>周期</th><th>信号</th><th>已判定</th><th>实盘证实率</th><th>回测准确率</th></tr>${rows.join("")}</table>`:"<div class='empty'>暂无</div>";}
+const RES={ok:"<span class='pos'>✓ 证实</span>",bad:"<span class='neg'>✗ 失败</span>",open:"<span class='dim'>未判定</span>"};
+function evRow(e){return `<tr><td>${e.day} ${e.t}</td><td>${TFN[e.tf]}</td><td>${SIDEN[e.side]}</td><td>${num(e.p,0)}%</td><td>${e.model||"v5"}</td><td>${num(e.price,2)}</td><td>${RES[e.res]||""}</td><td>${num(e.mfe)}</td><td>${num(e.mae)}</td>
+  <td>${e.zg==null?"–":e.zg==="above"?"上方":"下方"}</td><td>${num(e.gex,2)}</td><td>${num(e.big,2)}</td><td>${num(e.iv,1)}</td><td>${e.pushed?"是":""}</td></tr>`;}
+const EVH="<tr><th>时间</th><th>周期</th><th>方向</th><th>概率</th><th>模型</th><th>价格</th><th>结果</th><th>顺向bp</th><th>逆向bp</th><th>零Gamma</th><th>净GEX</th><th>大单亿</th><th>IV%</th><th>推送</th></tr>";
+function tEv(){const f=[$("f_tf").value,$("f_side").value,$("f_res").value],L=EV.filter(e=>(!f[0]||e.tf===f[0])&&(!f[1]||e.side===f[1])&&(!f[2]||e.res===f[2])).slice().reverse();
+  $("t_ev").innerHTML=L.length?`<table>${EVH}${L.map(evRow).join("")}</table>`:"<div class='empty'>暂无</div>";}
+
+/* ------------------------------------------------ 单日回看 */
+function dayView(){const d=$("daysel").value,X=D.live.intraday[d],L=EV.filter(e=>e.day===d),r=rate(L);
+  $("daysum").textContent=`${L.length} 个早报信号，证实 ${r.ok}/${r.n}`;$("t_day").innerHTML=L.length?`<table>${EVH}${L.map(evRow).join("")}</table>`:"<div class='empty'>当天没有早报信号</div>";
+  if(!X){["c_intra","c_gex","c_flow"].forEach(i=>empty($(i),"当天没有 1 分钟数据"));return;}
+  const k=X.k,x0=Math.min(k[0][0]-1,570),x1=960,lo=Math.min(...k.map(b=>b[3])),hi=Math.max(...k.map(b=>b[2])),lv=[];
+  X.o.forEach(o=>[o[1],o[2],o[3]].forEach(v=>v!=null&&v>lo-(hi-lo)*.5&&v<hi+(hi-lo)*.5&&lv.push(v)));
+  const ymin=Math.min(lo,...lv),ymax=Math.max(hi,...lv),pad=(ymax-ymin)*.07,tfmt=v=>String(Math.floor(v/60)).padStart(2,"0")+":"+String(Math.round(v%60)).padStart(2,"0");
+  const near=(arr,m)=>arr.reduce((a,c)=>Math.abs(c[0]-m)<Math.abs(a[0]-m)?c:a);
+  const g=axisChart($("c_intra"),{h:360,x0,x1,ymin:ymin-pad,ymax:ymax+pad,xfmt:tfmt,left:52,series:[],yfmt:v=>v.toFixed(1),
+    tip:m=>{const b=near(k,m),o=X.o.filter(q=>q[0]<=b[0]).pop();return `<b>${tfmt(b[0])}</b> 开 ${b[1]} 高 ${b[2]} 低 ${b[3]} 收 ${b[4]}`+(o?`<br>零Gamma ${num(o[1],2)} · 看涨墙 ${num(o[2],0)} · 看跌墙 ${num(o[3],0)}`:"");}});
+  const cw=Math.max(1,(g.w-g.L-g.R)/(x1-x0)*.66),up=css("--s3"),dn=css("--s8");
+  k.forEach(b=>{const x=g.xs(b[0]-.5),c=b[4]>=b[1]?up:dn;E("line",{x1:x,x2:x,y1:g.ys(b[2]),y2:g.ys(b[3]),stroke:c,"stroke-width":1,"pointer-events":"none"},g.s);
+    E("rect",{x:x-cw/2,y:g.ys(Math.max(b[1],b[4])),width:cw,height:Math.max(.8,Math.abs(g.ys(b[1])-g.ys(b[4]))),fill:c,"pointer-events":"none"},g.s);});
+  const step=(idx,color,dash,w)=>{const P=X.o.filter(o=>o[idx]!=null).map(o=>[g.xs(o[0]),g.ys(o[idx])]);if(!P.length)return;let p="M"+P[0].join(",");
+    for(let i=1;i<P.length;i++)p+=`L${P[i][0]},${P[i-1][1]}L${P[i][0]},${P[i][1]}`;p+=`L${g.xs(x1)},${P[P.length-1][1]}`;E("path",{d:p,fill:"none",stroke:color,"stroke-width":w,"stroke-dasharray":dash,"pointer-events":"none"},g.s);};
+  step(1,css("--s7"),"",2);step(2,css("--s2"),"6 4",1.5);step(3,css("--s1"),"6 4",1.5);
+  L.forEach(e=>{const m=parseInt(e.t.slice(0,2))*60+parseInt(e.t.slice(3)),b=k.find(q=>q[0]===m)||near(k,m),isB=e.side==="bottom",y=isB?g.ys(b[3])+13:g.ys(b[2])-13,x=g.xs(m-.5),col=isB?css("--s1"):css("--s2");
+    E("path",{d:isB?`M${x},${y-7}L${x-6},${y+4}L${x+6},${y+4}Z`:`M${x},${y+7}L${x-6},${y-4}L${x+6},${y-4}Z`,fill:e.res==="ok"?col:css("--card"),stroke:col,"stroke-width":1.8},g.s);
+    const hit=E("circle",{cx:x,cy:y,r:12,fill:"transparent"},g.s);hit.addEventListener("mousemove",ev=>{ev.stopPropagation();showTip(ev,`<b>${e.t} ${TFN[e.tf]} ${SIDEN[e.side]} ${e.p}%</b>（${e.model||"v5"}）<br>${{ok:"✓ 证实",bad:"✗ 失败",open:"未判定"}[e.res]}<br>顺向 ${num(e.mfe)}bp · 逆向 ${num(e.mae)}bp`);});hit.addEventListener("mouseleave",hideTip);});
+  legend($("c_intra"),[["底 ▲",css("--s1")],["顶 ▼",css("--s2")],["零 Gamma",css("--s7"),1],["看涨墙（虚线）",css("--s2"),1],["看跌墙（虚线）",css("--s1"),1],["阳线 / 阴线",css("--s3")]]);
+  const gx=X.o.filter(o=>o[4]!=null);gx.length?axisChart($("c_gex"),{h:190,x0,x1,xfmt:tfmt,yfmt:v=>v.toFixed(1),series:[{type:"line",pts:gx.map(o=>[o[0],o[4]]),color:css("--s7")}],
+    tip:m=>{const o=near(gx,m);return `<b>${tfmt(o[0])}</b> 净 GEX ${num(o[4],2)}<br>次近到期 IV ${num(o[5],1)}% · 当日 IV ${num(o[6],1)}%`;}}):empty($("c_gex"),"当天没有期权数据");
+  const fw=X.f.filter(f=>f[1]!=null);fw.length?axisChart($("c_flow"),{h:190,x0,x1,xfmt:tfmt,yfmt:v=>v.toFixed(0),series:[{type:"line",pts:fw.map(f=>[f[0],f[1]]),color:css("--s1")},{type:"line",pts:fw.map(f=>[f[0],f[2]]),color:css("--s2")}],
+    legend:[["特大 + 大单",css("--s1")],["中 + 小单",css("--s2")]],tip:m=>{const f=near(fw,m);return `<b>${tfmt(f[0])}</b><br>特大 + 大单 ${num(f[1],2)} 亿<br>中 + 小单 ${num(f[2],2)} 亿`;}}):empty($("c_flow"),"当天没有资金数据");}
+
+/* ------------------------------------------------ 模型 */
+function modelView(){const host=$("model_body");if(!S6){host.innerHTML="<div class='card'><div class='empty'>还没有 v6 结果（model6/train6.json）</div></div>";return;}
+  let h=`<div class="box">训练 2018-10 → 2023-12；<b>验证</b> 2024-01 → 2026-03-25（所有选择都在这里做）；<b>保留期</b> 2026-03-26 → 2026-09-30（最后只看一次）。数据：moomoo 自己的 K 线（前复权，真实成交量），78 万根 1 分钟线。</div><div class="grid">`;
+  h+=`<div class="card s12"><h3>用到的 moomoo 指标（${(D.bt.families||[]).length} 类）</h3><p class="note">全部按 moomoo / 通达信公式实现，另加日内位置、前一日 VIX 及期限结构、15 分钟 / 1 小时状态</p>${(D.bt.families||[]).map(f=>`<span class="chip">${f}</span>`).join("")}</div>`;
+  ["bottom","top"].forEach(sd=>{const X=S6[sd],ch=X.selection.chosen;h+=`<div class="card s6"><h3>${SIDEN[sd]}：选中 <span class="chip">${ch}</span></h3><p class="note">规则：${X.selection.rule||""}</p><div class="tw"><table><tr><th>候选模型</th><th>同信号数准确率</th><th>平均 AUC</th></tr>`+
+    Object.entries(X.selection.score).sort((a,b)=>b[1][1]-a[1][1]).map(([n,v])=>`<tr><td>${n===ch?"<b>"+n+"</b>":n}</td><td>${pct(v[0],1)}</td><td>${v[1].toFixed(3)}</td></tr>`).join("")+"</table></div></div>";});
+  h+=`<div class="card s6"><h3>逐步加指标：AUC 涨了多少</h3><p class="note">5 个周期平均（验证集）；灰线 = v5 重训。价格类指标几乎不加分</p><div class="chart" id="c_lad"></div></div>
+      <div class="card s6"><h3>逐年稳定性（AUC）</h3><p class="note">验证期每一年；灰 = v5 重训</p><div class="chart" id="c_year"></div></div>
+      <div class="card s6"><h3>底：各类指标的重要性</h3><p class="note">打乱一类后 AUC 掉多少（‰）。最重要的“候选 K 线收在哪里”掉 180‰，未画出以免压扁其他条；指标彼此重复，单类打乱掉得少</p><div class="chart" id="c_imp_b"></div></div>
+      <div class="card s6"><h3>顶：各类指标的重要性</h3><p class="note">同左（“收在哪里”掉 157‰）</p><div class="chart" id="c_imp_t"></div></div>`;
+  ["bottom","top"].forEach(sd=>{const X=S6[sd],ch=X.selection.chosen;h+=`<div class="card s12"><h3>${SIDEN[sd]}：各周期（验证集 → 保留期）</h3><p class="note">同数准确率 = 让 v6 发出和 v5 一样多的信号时的准确率；标出率 = 真${SIDEN[sd]}里被标出来的比例</p><div class="tw"><table>
+    <tr><th>周期</th><th>基准率</th><th>每天候选</th><th>v5 AUC</th><th>v6 AUC</th><th>v5 准确率</th><th>v6 同数准确率</th><th>v5 标出率</th><th>v6 同数标出率</th><th>保留期 v5 AUC</th><th>保留期 v6 AUC</th><th>保留期 v5 准确率</th><th>保留期 v6 同数准确率</th></tr>`+
+    TF.map(tf=>{const a=X["v5重训"][tf],b=X[ch][tf],ha=X["holdout_v5重训"][tf],hb=X.holdout_v6[tf];if(!a||!b)return"";const c=(x,y)=>x!=null&&y!=null?(x>y+.005?"pos":x<y-.005?"neg":""):"";
+      return `<tr><td>${TFN[tf]}</td><td>${pct(a.base_rate)}</td><td>${num(a.cands_per_day,1)}</td><td>${a.auc_c0.toFixed(3)}</td><td class="${c(b.auc_c0,a.auc_c0)}">${b.auc_c0.toFixed(3)}</td><td>${pct(a["thr0.55"].precision,1)}</td><td class="${c(b.matched.precision,a["thr0.55"].precision)}">${pct(b.matched.precision,1)}</td>
+      <td>${pct(a["thr0.55"].recall)}</td><td>${pct(b.matched.recall)}</td><td>${ha?ha.auc_c0.toFixed(3):"–"}</td><td class="${hb&&ha?c(hb.auc_c0,ha.auc_c0):""}">${hb?hb.auc_c0.toFixed(3):"–"}</td>
+      <td>${ha?pct(ha["thr0.55"].precision,1):"–"}</td><td class="${hb&&ha?c(hb.matched.precision,ha["thr0.55"].precision):""}">${hb?pct(hb.matched.precision,1):"–"}</td></tr>`;}).join("")+"</table></div></div>";});
+  h+=`<div class="card s12"><h3>概率校准</h3><p class="note">模型说 60% 的信号，事后是不是真有 60% 成功；对角线 = 完美。实线 = 验证集，虚线 = 保留期</p><div class="chart" id="c_calb"></div></div></div>`;
+  host.innerHTML=h;
+  const sets=["A_v5基础","B_+价格类指标","C_+量能类指标","D_+日内位置/VIX","E_+大周期状态"],cats=["v5 基础","+价格类","+量能类","+日内/VIX","+大周期"];
+  const lb=sets.map(s=>meanAuc("bottom","GBM "+s)),lt=sets.map(s=>meanAuc("top","GBM "+s)),vb=meanAuc("bottom","v5重训"),vt=meanAuc("top","v5重训");
+  axisChart($("c_lad"),{cats,yfmt:v=>v.toFixed(3),series:[{type:"line",values:sets.map(()=>vb),color:css("--v5"),w:1.5},{type:"line",values:sets.map(()=>vt),color:css("--v5"),w:1.5,dash:"4 3"},
+    {type:"line",values:lb,color:css("--s1"),dots:1},{type:"line",values:lt,color:css("--s2"),dots:1}],legend:[["底",css("--s1")],["顶",css("--s2")],["v5 重训（底实线 / 顶虚线）",css("--v5"),1]],
+    tip:i=>`<b>${cats[i]}</b><br>底 ${lb[i].toFixed(4)}（v5 ${vb.toFixed(4)}）<br>顶 ${lt[i].toFixed(4)}（v5 ${vt.toFixed(4)}）`});
+  const yrs=Object.keys(S6.bottom.auc_by_year_val);axisChart($("c_year"),{cats:yrs,yfmt:v=>v.toFixed(3),series:[{type:"line",values:yrs.map(y=>S6.bottom.auc_by_year_val_v5[y]),color:css("--v5"),w:1.5},
+    {type:"line",values:yrs.map(y=>S6.top.auc_by_year_val_v5[y]),color:css("--v5"),w:1.5,dash:"4 3"},{type:"line",values:yrs.map(y=>S6.bottom.auc_by_year_val[y]),color:css("--s1"),dots:1},
+    {type:"line",values:yrs.map(y=>S6.top.auc_by_year_val[y]),color:css("--s2"),dots:1}],legend:[["底 v6",css("--s1")],["顶 v6",css("--s2")],["v5 重训",css("--v5"),1]],
+    tip:i=>`<b>${yrs[i]}</b><br>底 v6 ${S6.bottom.auc_by_year_val[yrs[i]]} / v5 ${S6.bottom.auc_by_year_val_v5[yrs[i]]}<br>顶 v6 ${S6.top.auc_by_year_val[yrs[i]]} / v5 ${S6.top.auc_by_year_val_v5[yrs[i]]}`});
+  [["bottom","c_imp_b","--s1"],["top","c_imp_t","--s2"]].forEach(([sd,id,c])=>{const I=Object.entries(S6[sd].importance).filter(x=>!x[0].startsWith("阶段")).slice(0,14),BT=S6[sd].importance_by_tf||{};
+    hbars($(id),I.map(x=>x[0]),I.map(x=>x[1]*1000),{fmt:v=>v.toFixed(1)+"‰",color:css(c),tip:i=>`<b>${I[i][0]}</b><br>`+TF.map(tf=>`${TFN[tf]} ${BT[I[i][0]]?(BT[I[i][0]][tf]*1000).toFixed(2):"–"}‰`).join("<br>")});});
+  const sr=[{type:"line",pts:[[0,0],[1,1]],color:css("--base"),w:1}];[["bottom","--s1"],["top","--s2"]].forEach(([sd,c])=>{sr.push({type:"line",pts:S6[sd].calibration_val.map(x=>[x[0],x[1]]),color:css(c),dots:1});
+    sr.push({type:"line",pts:S6[sd].calibration_holdout.map(x=>[x[0],x[1]]),color:css(c),dash:"5 4"});});
+  axisChart($("c_calb"),{h:260,x0:0,x1:1,ymin:0,ymax:1,xfmt:v=>pct(v),yfmt:v=>pct(v),series:sr,legend:[["底",css("--s1")],["顶",css("--s2")],["完美校准",css("--base"),1]],
+    tip:x=>{const f=a=>{const p=a.reduce((b,c)=>Math.abs(c[0]-x)<Math.abs(b[0]-x)?c:b);return `说 ${pct(p[0])} → 实际 ${pct(p[1])}（n=${p[2]}）`;};return `<b>底</b> ${f(S6.bottom.calibration_val)}<br><b>顶</b> ${f(S6.top.calibration_val)}`;}});}
+
+/* ------------------------------------------------ 交易回测 */
+function tradeView(){const host=$("trade_body");if(!B6){host.innerHTML="<div class='card'><div class='empty'>还没有交易回测结果（model6/bt6.json）</div></div>";return;}
+  const cl=z=>z==null?"":z>0?"pos":"neg";
+  let h=`<div class="box">只做多（你定的规则）：底信号出现后下一分钟开盘买入；止损 = 候选低点下方 0.05 ATR；目标 = 低点上方 2 ATR；出现顶信号或 15:55 平仓；同一周期同时只持一笔。成本：OKX 吃单 12bp / 挂单 7bp 一来回。账户影响 = 1% 保证金 × 杠杆 × 涨跌；先逆向走 (1/杠杆 − 1%) 再到止损 = 爆仓，亏掉这 1% 保证金。</div><div class="grid">
+  <div class="card s12"><h3>默认规则：v5 vs v6（验证集 → 保留期）</h3><div class="tw"><table><tr><th>周期 · 模型</th><th>笔/天</th><th>命中目标</th><th>盈亏比</th><th>毛利 bp/笔</th><th>净 bp/笔（12）</th><th>净 bp/笔（7）</th><th>净胜率（12）</th><th>50x 爆仓</th><th>50x 账户累计</th><th>保留期净 bp（12）</th><th>保留期 50x</th></tr>`;
+  TF.forEach(tf=>["v5重训","v6"].forEach(m=>{const x=B6.default[tf+"|"+m];if(!x)return;const v=x.val,o=x.hold;
+    h+=`<tr><td>${TFN[tf]} · ${m==="v6"?"<b>v6</b>":"v5"}</td><td>${num(v.per_day,2)}</td><td>${pct(v.why&&v.why.target)}</td><td>${num(v.avg_win_bp/Math.abs(v.avg_loss_bp),2)}</td><td>${sgn(v.gross_bp,2)}</td><td class="${cl(v.net_bp_12)}">${sgn(v.net_bp_12,2)}</td><td class="${cl(v.net_bp_7)}">${sgn(v.net_bp_7,2)}</td><td>${pct(v.win_12)}</td>
+    <td>${v.x50.liquidations}</td><td class="${cl(v.x50.acct_total_pct)}">${num(v.x50.acct_total_pct,1)}%</td><td class="${cl(o.net_bp_12)}">${sgn(o.net_bp_12,2)}</td><td class="${cl(o.x50&&o.x50.acct_total_pct)}">${o.x50?num(o.x50.acct_total_pct,1)+"%":"–"}</td></tr>`;}));
+  h+=`</table></div></div>
+  <div class="card s6"><h3>单子是怎么结束的</h3><p class="note">v6 默认规则，验证期。目标打得最多，但每笔赚得少</p><div class="chart" id="c_why"></div></div>
+  <div class="card s6"><h3>平均每笔：赚的时候 vs 亏的时候（bp，毛利）</h3><p class="note">v6 默认规则，验证期；亏的一笔约等于赚的两笔</p><div class="chart" id="c_wl"></div></div>
+  <div class="card s12"><h3>账户曲线（50 倍，1% 保证金/笔）</h3><div class="row"><select id="eqtf">${TF.map(t=>`<option value="${t}"${t==="15m"?" selected":""}>${TFN[t]}</option>`).join("")}</select><span class="sub">竖线 = 保留期开始</span></div><div class="chart" id="c_eq"></div></div>
+  <div class="card s6"><h3>优化 ①：在验证集上搜索交易参数（v6，追开盘 12bp）</h3><p class="note">门槛 × 目标 × 见顶是否平仓 × 最小目标距离，共 72 组；保留期的数字才是真实预期</p><div class="tw"><table><tr><th>周期</th><th>选中的参数</th><th>验证 净bp</th><th>保留期 笔数</th><th>保留期 净bp</th></tr>`;
+  TF.forEach(tf=>{const g=B6.grid_best[tf];if(!g)return;const c=g.config;h+=`<tr><td>${TFN[tf]}</td><td>门槛 ${c.thr} · 目标 ${c.target_atr?c.target_atr+"ATR":"不设"} · ${c.top_exit?"见顶平":"不见顶平"} · ≥${c.min_target_bp}bp</td><td class="${cl(g.val.net_bp_12)}">${sgn(g.val.net_bp_12,2)}</td><td>${g.hold.trades||0}</td><td class="${cl(g.hold.net_bp_12)}">${sgn(g.hold.net_bp_12,2)}</td></tr>`;});
+  h+=`</table></div></div><div class="card s6"><h3>优化 ②：挂单回踩买入（v6，挂单 7bp）</h3><p class="note">低点上方 0.1–0.5 ATR 挂限价，等 1–3 根 K 线；成交少，且成交的多是正在失败的底</p><div class="tw"><table><tr><th>周期</th><th>选中的参数</th><th>验证 笔数</th><th>验证 净bp</th><th>保留期 笔数</th><th>保留期 净bp</th></tr>`;
+  TF.forEach(tf=>{const g=B6.limit&&B6.limit[tf];if(!g)return;const c=g.config;h+=`<tr><td>${TFN[tf]}</td><td>门槛 ${c.thr} · 低点+${c.x_atr}ATR · 等 ${c.wait_bars} 根 · 目标 ${c.target_atr}ATR</td><td>${g.val.trades}</td><td class="${cl(g.val.net_bp_7)}">${sgn(g.val.net_bp_7,2)}</td><td>${g.hold.trades||0}</td><td class="${cl(g.hold.net_bp_7)}">${sgn(g.hold.net_bp_7,2)}</td></tr>`;});
+  h+="</table></div></div>";
+  const V7=D.bt.v7;if(V7){h+=`<div class="card s6"><h3>优化 ③：v7 成本感知模型</h3><p class="note">直接学“按真实入场价、扣 12bp 后这笔赚不赚”；目标 1/1.5/2/3 倍止损距离 × 分类/回归 × 6 档门槛，验证集挑最优</p><div class="tw"><table><tr><th>周期</th><th>选中</th><th>验证 笔数</th><th>验证 净bp</th><th>t 值</th><th>保留期 笔数</th><th>保留期 净bp</th></tr>`;
+    Object.entries(V7.best).forEach(([tf,g])=>{const c=g.config;h+=`<tr><td>${TFN[tf]}</td><td>${c.model==="clf"?"分类":"回归"} · 目标 ${c.k}R · 前 ${Math.round((1-c.quantile)*100)}%</td><td>${g.val.trades}</td><td class="${cl(g.val.net_bp_12)}">${sgn(g.val.net_bp_12,2)}</td><td>${num(g.val.t_stat,2)}</td><td>${g.hold.trades||0}</td><td class="${cl(g.hold.net_bp_12)}">${sgn(g.hold.net_bp_12,2)}</td></tr>`;});
+    h+="</table></div></div>";}
+  const MO=D.bt.momentum;if(MO){h+=`<div class="card s6"><h3>优化 ④：日内动量（Gao 等 2018）</h3><p class="note">按条件在 15:30 买入、15:55 或收盘平仓；最后半小时毛收益几乎为 0，效应已消失</p><div class="tw"><table><tr><th>条件</th><th>平仓</th><th>验证 天数</th><th>验证 毛bp</th><th>验证 净bp</th><th>保留期 毛bp</th><th>保留期 净bp</th></tr>`;
+    Object.entries(MO).forEach(([n,v])=>Object.entries(v).forEach(([ex,s])=>{h+=`<tr><td>${n}</td><td>${ex==="last_55"?"15:55":"收盘"}</td><td>${s.val.days}</td><td>${sgn(s.val.gross_bp,2)}</td><td class="${cl(s.val.net12)}">${sgn(s.val.net12,2)}</td><td>${sgn(s.hold.gross_bp,2)}</td><td class="${cl(s.hold.net12)}">${sgn(s.hold.net12,2)}</td></tr>`;}));
+    h+="</table></div></div>";}
+  h+="</div>";host.innerHTML=h;
+  const W=["target","stop","top","time"],WN={target:"打到目标",stop:"止损",top:"见顶平仓",time:"15:55 平仓"},WC={target:"--s1",stop:"--s2",top:"--s3",time:"--v5"};
+  axisChart($("c_why"),{cats:TF.map(t=>TFN[t]),stack:1,ymin:0,ymax:1,yfmt:v=>pct(v),series:W.map(k=>({type:"bar",color:css(WC[k]),values:TF.map(tf=>(B6.default[tf+"|v6"].val.why||{})[k]||0)})),
+    legend:W.map(k=>[WN[k],css(WC[k])]),tip:i=>{const y=B6.default[TF[i]+"|v6"].val.why||{};return `<b>${TFN[TF[i]]}</b><br>`+W.map(k=>`${WN[k]} ${pct(y[k]||0)}`).join("<br>");}});
+  const aw=TF.map(tf=>B6.default[tf+"|v6"].val.avg_win_bp),al=TF.map(tf=>B6.default[tf+"|v6"].val.avg_loss_bp);
+  axisChart($("c_wl"),{cats:TF.map(t=>TFN[t]),yfmt:v=>v.toFixed(0),series:[{type:"bar",values:aw,color:css("--s1")},{type:"bar",values:al,color:css("--s2")}],legend:[["赚的单子平均",css("--s1")],["亏的单子平均",css("--s2")]],
+    tip:i=>`<b>${TFN[TF[i]]}</b><br>赚 ${sgn(aw[i])}bp · 亏 ${sgn(al[i])}bp<br>毛胜率 ${pct(B6.default[TF[i]+"|v6"].val.gross_win)}`});
+  $("eqtf").onchange=eq;eq();}
+function eq(){const tf=$("eqtf").value,C=B6.curves;const sr=[["v5重训|default","--v5","v5 追开盘"],["v6|default","--s1","v6 追开盘"],["v6|best","--s2","v6 参数搜索最优"],["v6|limit","--s3","v6 挂单回踩"]].map(([k,c,n])=>({c:C[tf+"|"+k]||[],col:css(c),n})).filter(x=>x.c.length);
+  if(!sr.length)return empty($("c_eq"),"没有交易");const days=[...new Set(sr.flatMap(x=>x.c.map(p=>p[0])))].sort(),ix=Object.fromEntries(days.map((d,i)=>[d,i])),hs=days.findIndex(d=>d>"2026-03-25");
+  const g=axisChart($("c_eq"),{h:280,x0:0,x1:Math.max(1,days.length-1),xfmt:i=>(days[Math.round(i)]||"").slice(0,7),yfmt:v=>v.toFixed(0)+"%",
+    series:sr.map(x=>({type:"line",pts:x.c.map(p=>[ix[p[0]],p[1]]),color:x.col,w:1.8})),legend:sr.map(x=>[x.n,x.col,1]),
+    tip:i=>{const d=days[Math.max(0,Math.min(days.length-1,Math.round(i)))];return `<b>${d}</b><br>`+sr.map(x=>{const p=x.c.filter(q=>q[0]<=d).pop();return `${x.n}：${p?p[1].toFixed(2)+"%":"–"}`;}).join("<br>");}});
+  if(hs>0){E("line",{x1:g.xs(hs),x2:g.xs(hs),y1:g.Tp,y2:g.h-g.B,stroke:css("--base"),"stroke-width":1.5},g.s);T(g.s,g.xs(hs)+4,g.Tp+10,"保留期",{style:"fill:"+css("--ink2")});}}
+
+
+/* ------------------------------------------------ 策略工厂 */
+function labView(){const host=$("lab_body"),FS=D.bt.factory_summary;if(!FS){host.innerHTML="<div class='card'><div class='empty'>还没有策略工厂结果</div></div>";return;}
+  const fam=Object.entries(FS.families),cl=z=>z==null?"":z>0?"pos":"neg",s1=fam.reduce((a,[k,v])=>a+v.s1,0),s3=fam.reduce((a,[k,v])=>a+v.s3,0);
+  let h=`<div class="box">同一个引擎、同一套规则测完所有常见日内做多策略：信号收盘后下一分钟开盘买，止损 / 目标 / 信号平仓 / 移动止损 / 15:55 强平，同时只持一笔；OKX 12bp（吃单）/ 7bp（挂单），持仓跨过美东 12:00 再扣 1bp 资金费。
+  <b>事先定好的过关规则</b>：① 2018-10 → 2023 年扣费后为正且 t ≥ 2、至少 60 笔；② 2024 → 2026-03 仍为正；③ 2026-04 → 10-02 保留期为正。多重检验下更严的门槛是 t ≥ ${FS.bonferroni_t}。</div><div class="grid">`;
+  [["测试的策略配置",FS.n_configs,"个",`${fam.length+1} 个策略家族，几百组参数`],["通过第 ① 关",s1,"个","扣费后在 2018–2023 年显著赚钱"],["三关全过",s3,"个","扣费后三段都赚钱"],
+   ["最有“真信号”的",`<span class="pos">+${num(FS.star.oos_gross,1)}</span><small> bp/笔 毛利</small>`,"",`15 分钟唐奇安突破，样本外 ${FS.star.oos_n} 笔，t=${num(FS.star.oos_t,2)}`]]
+   .forEach(([l,v,u,d])=>{h+=`<div class="card s3 kpi"><div class="l">${l}</div><div class="v">${v}<small> ${u}</small></div><div class="d">${d}</div></div>`;});
+  h+=`<div class="card s12"><h3>每个策略家族里最好的那一组：扣 12bp 后每笔净收益（bp）</h3><p class="note">“最好”按 2018–2023 年挑；蓝 = 2018–2023（挑的那段），橙 = 2024–2026-03，灰 = 保留期。全部在 0 附近或以下</p><div class="chart" id="c_lab"></div></div>
+  <div class="card s6"><h3>最强的信号：15 分钟唐奇安突破，成本降到多少才赚钱</h3><p class="note">${FS.star.name}；横轴 = 一来回成本（bp），纵轴 = 每笔净收益。蓝 = 全部年份，橙 = 只看样本外</p><div class="chart" id="c_cost"></div></div>
+  <div class="card s6"><h3>唐奇安突破：每年每笔毛利（bp，扣成本前）</h3><p class="note">8 个完整年份里 7 个为正，但幅度只有 0–10bp；平均每天 ${num(FS.star.per_day,2)} 笔，平均持有 ${FS.star.hold_min} 分钟</p><div class="chart" id="c_year2"></div></div>
+  <div class="card s12"><h3>各家族明细</h3><div class="tw"><table><tr><th>策略家族</th><th>配置数</th><th>过第①关</th><th>净收益最好的一组</th><th>2018–23 净bp</th><th>t</th><th>2024–26 净bp</th><th>保留期 净bp</th><th>毛利最高的一组 2018–23 / 2024–26 / 保留期（bp）</th></tr>`;
+  fam.sort((a,b)=>b[1].best_net.train.net12-a[1].best_net.train.net12).forEach(([k,v])=>{const b=v.best_net,g=v.best_gross;
+    h+=`<tr><td>${k}</td><td>${v.configs}</td><td>${v.s1}</td><td style="text-align:left;white-space:normal;min-width:260px">${b.name}</td><td class="${cl(b.train.net12)}">${sgn(b.train.net12,2)}</td><td>${num(b.train.t,2)}</td><td class="${cl(b.val.net12)}">${sgn(b.val.net12,2)}</td><td class="${cl(b.hold.net12)}">${sgn(b.hold.net12,2)}</td>
+    <td>${sgn(g.train.gross,1)} / ${sgn(g.val.gross,1)} / ${sgn(g.hold.gross,1)}</td></tr>`;});
+  h+=`</table></div></div></div>`;host.innerHTML=h;
+  const F=fam.map(([k,v])=>[k,v.best_net]);
+  axisChart($("c_lab"),{cats:F.map(x=>x[0]),catw:74,yfmt:v=>v.toFixed(0),series:[{type:"bar",values:F.map(x=>x[1].train.net12),color:css("--s1")},{type:"bar",values:F.map(x=>x[1].val.net12),color:css("--s2")},
+    {type:"bar",values:F.map(x=>x[1].hold.n>=5?x[1].hold.net12:null),color:css("--v5")}],legend:[["2018–2023",css("--s1")],["2024–2026-03",css("--s2")],["保留期",css("--v5")]],
+    tip:i=>{const b=F[i][1];return `<b>${F[i][0]}</b><br>${b.name}<br>2018–23：${sgn(b.train.net12,2)}bp（${b.train.n} 笔，t=${num(b.train.t,2)}）<br>2024–26：${sgn(b.val.net12,2)}bp（${b.val.n} 笔）<br>保留期：${sgn(b.hold.net12,2)}bp（${b.hold.n} 笔）`;}});
+  const C=FS.star.cost_sens;axisChart($("c_cost"),{x0:0,x1:12,xfmt:v=>v+"bp",yfmt:v=>v.toFixed(0),series:[{type:"line",pts:C.map(c=>[c[0],c[1]]),color:css("--s1"),dots:1},{type:"line",pts:C.map(c=>[c[0],c[2]]),color:css("--s2"),dots:1}],
+    refs:[{y:0,color:css("--base"),label:""}],legend:[["全部年份",css("--s1")],["样本外 2024 起",css("--s2")]],
+    tip:x=>{const c=C.reduce((a,b)=>Math.abs(b[0]-x)<Math.abs(a[0]-x)?b:a);return `<b>成本 ${c[0]}bp</b><br>全部年份 ${sgn(c[1],2)}bp/笔<br>样本外 ${sgn(c[2],2)}bp/笔${c[0]===12?"<br>= OKX 吃单":c[0]===7?"<br>= OKX 挂单":""}`;}});
+  const Y=FS.star.yearly;axisChart($("c_year2"),{cats:Y.map(y=>y[0]),yfmt:v=>v.toFixed(0),series:[{type:"bar",values:Y.map(y=>y[2]),color:css("--s1")}],
+    tip:i=>`<b>${Y[i][0]}</b><br>${Y[i][1]} 笔，平均毛利 ${sgn(Y[i][2],2)}bp`});}
+
+/* ------------------------------------------------ 优化路线 */
+function planView(){const host=$("plan_body");if(!PLAN){host.innerHTML="<div class='card'><div class='empty'>暂无</div></div>";return;}
+  host.innerHTML=`<div class="grid"><div class="card s12"><p class="headline">${PLAN.headline}</p></div>${PLAN.verdicts.map(v=>`<div class="card s3 verd"><div class="ic st-${v.status}" aria-hidden="true">${stIcon[v.status]}</div><div><h4>${v.title}</h4><p>${v.text}</p></div></div>`).join("")}
+  <div class="card s12 plan">${PLAN.sections.map(s=>`<h4>${s.title}${s.tag?`<span class="tag">${s.tag}</span>`:""}</h4>${(s.body||[]).map(p=>`<p>${p}</p>`).join("")}${s.ev?`<p class="ev">依据：${s.ev}</p>`:""}`).join("")}</div></div>`;}
+
+/* ------------------------------------------------ boot */
+$("sub").textContent=`更新于 ${D.built} · 实盘 ${D.live.days.length} 天 / ${EV.length} 个早报信号 · 双击 watch\\打开看板.bat 可随时重建`;
+TF.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=TFN[t];$("f_tf").appendChild(o);});
+["f_tf","f_side","f_res"].forEach(i=>$(i).onchange=tEv);
+const dsel=$("daysel");D.live.days.slice().reverse().forEach(d=>{const o=document.createElement("option");o.value=d;o.textContent=d;dsel.appendChild(o);});dsel.onchange=dayView;
+const R={home:homeView,swing:swingView,live:()=>{kpis();cDaily();cTf();cCal();cCtx();cSc();tSum();tEv();},day:()=>D.live.days.length?dayView():["c_intra","c_gex","c_flow"].forEach(i=>empty($(i),"还没有实盘数据")),model:modelView,trade:tradeView,lab:labView,plan:planView};
+let cur="home";function show(t){cur=t;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));document.querySelectorAll("main section").forEach(s=>s.classList.toggle("on",s.id===t));
+  try{R[t]();}catch(e){console.error(e);}try{localStorage.setItem("tab",t);}catch(e){}}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
+let st="home";try{st=localStorage.getItem("tab")||"home";}catch(e){}show(R[st]?st:"home");
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>show(cur),150);});
+</script>
+</body>
+</html>

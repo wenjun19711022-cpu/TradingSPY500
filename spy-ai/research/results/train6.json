@@ -1,0 +1,4505 @@
+{
+ "feature_sets": {
+  "A_v5基础": 19,
+  "B_+价格类指标": 76,
+  "C_+量能类指标": 86,
+  "D_+日内位置/VIX": 98,
+  "E_+大周期状态": 110
+ },
+ "sides": {
+  "bottom": {
+   "n_train": 226393,
+   "v5重训": {
+    "1m": {
+     "auc_c0": 0.7548,
+     "auc_all": 0.7757,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.613,
+      "recall": 0.826,
+      "per_day": 33.42,
+      "n": 18682
+     },
+     "thr0.55": {
+      "precision": 0.678,
+      "recall": 0.728,
+      "per_day": 26.65,
+      "n": 14895
+     },
+     "thr0.65": {
+      "precision": 0.747,
+      "recall": 0.587,
+      "per_day": 19.51,
+      "n": 10906
+     },
+     "matched": {
+      "precision": 0.678,
+      "recall": 0.728
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7681,
+     "auc_all": 0.7796,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.605,
+      "recall": 0.826,
+      "per_day": 10.74,
+      "n": 6002
+     },
+     "thr0.55": {
+      "precision": 0.668,
+      "recall": 0.73,
+      "per_day": 8.59,
+      "n": 4800
+     },
+     "thr0.65": {
+      "precision": 0.739,
+      "recall": 0.589,
+      "per_day": 6.27,
+      "n": 3504
+     },
+     "matched": {
+      "precision": 0.668,
+      "recall": 0.73
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7655,
+     "auc_all": 0.7838,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.588,
+      "recall": 0.819,
+      "per_day": 6.48,
+      "n": 3620
+     },
+     "thr0.55": {
+      "precision": 0.66,
+      "recall": 0.734,
+      "per_day": 5.17,
+      "n": 2890
+     },
+     "thr0.65": {
+      "precision": 0.745,
+      "recall": 0.614,
+      "per_day": 3.83,
+      "n": 2142
+     },
+     "matched": {
+      "precision": 0.66,
+      "recall": 0.734
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7717,
+     "auc_all": 0.7882,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.615,
+      "recall": 0.788,
+      "per_day": 2.11,
+      "n": 1134
+     },
+     "thr0.55": {
+      "precision": 0.689,
+      "recall": 0.71,
+      "per_day": 1.7,
+      "n": 912
+     },
+     "thr0.65": {
+      "precision": 0.762,
+      "recall": 0.578,
+      "per_day": 1.25,
+      "n": 671
+     },
+     "matched": {
+      "precision": 0.689,
+      "recall": 0.71
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7321,
+     "auc_all": 0.7515,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.615,
+      "recall": 0.768,
+      "per_day": 0.83,
+      "n": 312
+     },
+     "thr0.55": {
+      "precision": 0.679,
+      "recall": 0.684,
+      "per_day": 0.67,
+      "n": 252
+     },
+     "thr0.65": {
+      "precision": 0.759,
+      "recall": 0.568,
+      "per_day": 0.5,
+      "n": 187
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.684
+     }
+    }
+   },
+   "GBM A_v5基础": {
+    "1m": {
+     "auc_c0": 0.7545,
+     "auc_all": 0.7753,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.836,
+      "per_day": 34.53,
+      "n": 19304
+     },
+     "thr0.55": {
+      "precision": 0.68,
+      "recall": 0.721,
+      "per_day": 26.35,
+      "n": 14728
+     },
+     "thr0.65": {
+      "precision": 0.754,
+      "recall": 0.562,
+      "per_day": 18.51,
+      "n": 10346
+     },
+     "matched": {
+      "precision": 0.677,
+      "recall": 0.727
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7685,
+     "auc_all": 0.7802,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.827,
+      "per_day": 10.78,
+      "n": 6027
+     },
+     "thr0.55": {
+      "precision": 0.679,
+      "recall": 0.719,
+      "per_day": 8.32,
+      "n": 4649
+     },
+     "thr0.65": {
+      "precision": 0.751,
+      "recall": 0.554,
+      "per_day": 5.8,
+      "n": 3244
+     },
+     "matched": {
+      "precision": 0.669,
+      "recall": 0.73
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7657,
+     "auc_all": 0.7836,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.59,
+      "recall": 0.823,
+      "per_day": 6.49,
+      "n": 3627
+     },
+     "thr0.55": {
+      "precision": 0.669,
+      "recall": 0.72,
+      "per_day": 5.0,
+      "n": 2796
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.577,
+      "per_day": 3.55,
+      "n": 1984
+     },
+     "matched": {
+      "precision": 0.66,
+      "recall": 0.734
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7732,
+     "auc_all": 0.7879,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.618,
+      "recall": 0.8,
+      "per_day": 2.13,
+      "n": 1144
+     },
+     "thr0.55": {
+      "precision": 0.697,
+      "recall": 0.69,
+      "per_day": 1.63,
+      "n": 875
+     },
+     "thr0.65": {
+      "precision": 0.782,
+      "recall": 0.553,
+      "per_day": 1.16,
+      "n": 625
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.705
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7323,
+     "auc_all": 0.7527,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.598,
+      "recall": 0.804,
+      "per_day": 0.89,
+      "n": 336
+     },
+     "thr0.55": {
+      "precision": 0.677,
+      "recall": 0.696,
+      "per_day": 0.68,
+      "n": 257
+     },
+     "thr0.65": {
+      "precision": 0.746,
+      "recall": 0.552,
+      "per_day": 0.49,
+      "n": 185
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.688
+     }
+    }
+   },
+   "GBM B_+价格类指标": {
+    "1m": {
+     "auc_c0": 0.7552,
+     "auc_all": 0.776,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.838,
+      "per_day": 34.62,
+      "n": 19352
+     },
+     "thr0.55": {
+      "precision": 0.681,
+      "recall": 0.723,
+      "per_day": 26.37,
+      "n": 14740
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.567,
+      "per_day": 18.63,
+      "n": 10416
+     },
+     "matched": {
+      "precision": 0.678,
+      "recall": 0.728
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7684,
+     "auc_all": 0.7799,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.831,
+      "per_day": 10.87,
+      "n": 6075
+     },
+     "thr0.55": {
+      "precision": 0.679,
+      "recall": 0.717,
+      "per_day": 8.3,
+      "n": 4639
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.559,
+      "per_day": 5.86,
+      "n": 3277
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.732
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7655,
+     "auc_all": 0.7835,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.586,
+      "recall": 0.823,
+      "per_day": 6.52,
+      "n": 3645
+     },
+     "thr0.55": {
+      "precision": 0.666,
+      "recall": 0.719,
+      "per_day": 5.01,
+      "n": 2803
+     },
+     "thr0.65": {
+      "precision": 0.75,
+      "recall": 0.573,
+      "per_day": 3.55,
+      "n": 1986
+     },
+     "matched": {
+      "precision": 0.658,
+      "recall": 0.732
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7743,
+     "auc_all": 0.7895,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.614,
+      "recall": 0.799,
+      "per_day": 2.14,
+      "n": 1150
+     },
+     "thr0.55": {
+      "precision": 0.699,
+      "recall": 0.69,
+      "per_day": 1.62,
+      "n": 873
+     },
+     "thr0.65": {
+      "precision": 0.775,
+      "recall": 0.552,
+      "per_day": 1.17,
+      "n": 630
+     },
+     "matched": {
+      "precision": 0.684,
+      "recall": 0.706
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7323,
+     "auc_all": 0.7523,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.609,
+      "recall": 0.792,
+      "per_day": 0.86,
+      "n": 325
+     },
+     "thr0.55": {
+      "precision": 0.673,
+      "recall": 0.676,
+      "per_day": 0.67,
+      "n": 251
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.544,
+      "per_day": 0.48,
+      "n": 180
+     },
+     "matched": {
+      "precision": 0.675,
+      "recall": 0.68
+     }
+    }
+   },
+   "GBM C_+量能类指标": {
+    "1m": {
+     "auc_c0": 0.756,
+     "auc_all": 0.7761,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.602,
+      "recall": 0.839,
+      "per_day": 34.59,
+      "n": 19336
+     },
+     "thr0.55": {
+      "precision": 0.683,
+      "recall": 0.721,
+      "per_day": 26.2,
+      "n": 14644
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.566,
+      "per_day": 18.6,
+      "n": 10396
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.729
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7734,
+     "auc_all": 0.782,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.602,
+      "recall": 0.839,
+      "per_day": 10.95,
+      "n": 6123
+     },
+     "thr0.55": {
+      "precision": 0.678,
+      "recall": 0.716,
+      "per_day": 8.3,
+      "n": 4638
+     },
+     "thr0.65": {
+      "precision": 0.748,
+      "recall": 0.563,
+      "per_day": 5.92,
+      "n": 3307
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.732
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7743,
+     "auc_all": 0.7871,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.588,
+      "recall": 0.833,
+      "per_day": 6.58,
+      "n": 3680
+     },
+     "thr0.55": {
+      "precision": 0.67,
+      "recall": 0.721,
+      "per_day": 5.0,
+      "n": 2795
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.578,
+      "per_day": 3.57,
+      "n": 1997
+     },
+     "matched": {
+      "precision": 0.66,
+      "recall": 0.734
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7917,
+     "auc_all": 0.7953,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.613,
+      "recall": 0.798,
+      "per_day": 2.14,
+      "n": 1151
+     },
+     "thr0.55": {
+      "precision": 0.697,
+      "recall": 0.689,
+      "per_day": 1.62,
+      "n": 874
+     },
+     "thr0.65": {
+      "precision": 0.775,
+      "recall": 0.562,
+      "per_day": 1.19,
+      "n": 641
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.705
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7376,
+     "auc_all": 0.7553,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.617,
+      "recall": 0.8,
+      "per_day": 0.86,
+      "n": 324
+     },
+     "thr0.55": {
+      "precision": 0.681,
+      "recall": 0.684,
+      "per_day": 0.67,
+      "n": 251
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.548,
+      "per_day": 0.49,
+      "n": 183
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.684
+     }
+    }
+   },
+   "GBM D_+日内位置/VIX": {
+    "1m": {
+     "auc_c0": 0.756,
+     "auc_all": 0.7761,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.84,
+      "per_day": 34.56,
+      "n": 19319
+     },
+     "thr0.55": {
+      "precision": 0.682,
+      "recall": 0.719,
+      "per_day": 26.17,
+      "n": 14629
+     },
+     "thr0.65": {
+      "precision": 0.757,
+      "recall": 0.567,
+      "per_day": 18.59,
+      "n": 10392
+     },
+     "matched": {
+      "precision": 0.678,
+      "recall": 0.728
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7743,
+     "auc_all": 0.7823,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.6,
+      "recall": 0.839,
+      "per_day": 11.0,
+      "n": 6151
+     },
+     "thr0.55": {
+      "precision": 0.677,
+      "recall": 0.719,
+      "per_day": 8.35,
+      "n": 4670
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.556,
+      "per_day": 5.84,
+      "n": 3266
+     },
+     "matched": {
+      "precision": 0.669,
+      "recall": 0.731
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7764,
+     "auc_all": 0.7879,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.588,
+      "recall": 0.843,
+      "per_day": 6.67,
+      "n": 3726
+     },
+     "thr0.55": {
+      "precision": 0.669,
+      "recall": 0.722,
+      "per_day": 5.01,
+      "n": 2802
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.581,
+      "per_day": 3.57,
+      "n": 1997
+     },
+     "matched": {
+      "precision": 0.658,
+      "recall": 0.732
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7987,
+     "auc_all": 0.7984,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.616,
+      "recall": 0.822,
+      "per_day": 2.2,
+      "n": 1181
+     },
+     "thr0.55": {
+      "precision": 0.695,
+      "recall": 0.675,
+      "per_day": 1.6,
+      "n": 859
+     },
+     "thr0.65": {
+      "precision": 0.777,
+      "recall": 0.543,
+      "per_day": 1.15,
+      "n": 618
+     },
+     "matched": {
+      "precision": 0.681,
+      "recall": 0.702
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7555,
+     "auc_all": 0.7605,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.611,
+      "recall": 0.792,
+      "per_day": 0.86,
+      "n": 324
+     },
+     "thr0.55": {
+      "precision": 0.678,
+      "recall": 0.664,
+      "per_day": 0.65,
+      "n": 245
+     },
+     "thr0.65": {
+      "precision": 0.757,
+      "recall": 0.536,
+      "per_day": 0.47,
+      "n": 177
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.676
+     }
+    }
+   },
+   "GBM E_+大周期状态": {
+    "1m": {
+     "auc_c0": 0.7558,
+     "auc_all": 0.7758,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.605,
+      "recall": 0.839,
+      "per_day": 34.45,
+      "n": 19256
+     },
+     "thr0.55": {
+      "precision": 0.681,
+      "recall": 0.717,
+      "per_day": 26.14,
+      "n": 14612
+     },
+     "thr0.65": {
+      "precision": 0.758,
+      "recall": 0.565,
+      "per_day": 18.49,
+      "n": 10335
+     },
+     "matched": {
+      "precision": 0.676,
+      "recall": 0.725
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7737,
+     "auc_all": 0.782,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.837,
+      "per_day": 10.95,
+      "n": 6123
+     },
+     "thr0.55": {
+      "precision": 0.678,
+      "recall": 0.716,
+      "per_day": 8.31,
+      "n": 4643
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.551,
+      "per_day": 5.79,
+      "n": 3234
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.733
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7761,
+     "auc_all": 0.788,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.592,
+      "recall": 0.84,
+      "per_day": 6.6,
+      "n": 3689
+     },
+     "thr0.55": {
+      "precision": 0.667,
+      "recall": 0.716,
+      "per_day": 4.99,
+      "n": 2790
+     },
+     "thr0.65": {
+      "precision": 0.757,
+      "recall": 0.578,
+      "per_day": 3.55,
+      "n": 1984
+     },
+     "matched": {
+      "precision": 0.658,
+      "recall": 0.732
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7982,
+     "auc_all": 0.7978,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.612,
+      "recall": 0.816,
+      "per_day": 2.19,
+      "n": 1178
+     },
+     "thr0.55": {
+      "precision": 0.696,
+      "recall": 0.679,
+      "per_day": 1.6,
+      "n": 862
+     },
+     "thr0.65": {
+      "precision": 0.783,
+      "recall": 0.548,
+      "per_day": 1.15,
+      "n": 618
+     },
+     "matched": {
+      "precision": 0.68,
+      "recall": 0.701
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7541,
+     "auc_all": 0.7595,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.768,
+      "per_day": 0.85,
+      "n": 318
+     },
+     "thr0.55": {
+      "precision": 0.696,
+      "recall": 0.66,
+      "per_day": 0.63,
+      "n": 237
+     },
+     "thr0.65": {
+      "precision": 0.767,
+      "recall": 0.528,
+      "per_day": 0.46,
+      "n": 172
+     },
+     "matched": {
+      "precision": 0.687,
+      "recall": 0.692
+     }
+    }
+   },
+   "v6-LR(全特征)": {
+    "1m": {
+     "auc_c0": 0.7541,
+     "auc_all": 0.7748,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.606,
+      "recall": 0.833,
+      "per_day": 34.1,
+      "n": 19062
+     },
+     "thr0.55": {
+      "precision": 0.671,
+      "recall": 0.735,
+      "per_day": 27.2,
+      "n": 15206
+     },
+     "thr0.65": {
+      "precision": 0.74,
+      "recall": 0.596,
+      "per_day": 20.0,
+      "n": 11178
+     },
+     "matched": {
+      "precision": 0.676,
+      "recall": 0.725
+     }
+    },
+    "3m": {
+     "auc_c0": 0.77,
+     "auc_all": 0.7804,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.608,
+      "recall": 0.828,
+      "per_day": 10.72,
+      "n": 5990
+     },
+     "thr0.55": {
+      "precision": 0.674,
+      "recall": 0.73,
+      "per_day": 8.51,
+      "n": 4756
+     },
+     "thr0.65": {
+      "precision": 0.739,
+      "recall": 0.582,
+      "per_day": 6.19,
+      "n": 3463
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.733
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7686,
+     "auc_all": 0.7849,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.594,
+      "recall": 0.818,
+      "per_day": 6.4,
+      "n": 3580
+     },
+     "thr0.55": {
+      "precision": 0.666,
+      "recall": 0.727,
+      "per_day": 5.08,
+      "n": 2839
+     },
+     "thr0.65": {
+      "precision": 0.743,
+      "recall": 0.599,
+      "per_day": 3.75,
+      "n": 2096
+     },
+     "matched": {
+      "precision": 0.659,
+      "recall": 0.733
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7772,
+     "auc_all": 0.7893,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.625,
+      "recall": 0.792,
+      "per_day": 2.08,
+      "n": 1120
+     },
+     "thr0.55": {
+      "precision": 0.686,
+      "recall": 0.696,
+      "per_day": 1.67,
+      "n": 896
+     },
+     "thr0.65": {
+      "precision": 0.763,
+      "recall": 0.568,
+      "per_day": 1.22,
+      "n": 658
+     },
+     "matched": {
+      "precision": 0.684,
+      "recall": 0.706
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7348,
+     "auc_all": 0.7539,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.623,
+      "recall": 0.752,
+      "per_day": 0.8,
+      "n": 302
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.676,
+      "per_day": 0.66,
+      "n": 250
+     },
+     "thr0.65": {
+      "precision": 0.738,
+      "recall": 0.552,
+      "per_day": 0.5,
+      "n": 187
+     },
+     "matched": {
+      "precision": 0.675,
+      "recall": 0.68
+     }
+    }
+   },
+   "GBM-默认参数(全特征)": {
+    "1m": {
+     "auc_c0": 0.7542,
+     "auc_all": 0.7747,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.837,
+      "per_day": 34.39,
+      "n": 19222
+     },
+     "thr0.55": {
+      "precision": 0.679,
+      "recall": 0.722,
+      "per_day": 26.38,
+      "n": 14749
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.563,
+      "per_day": 18.49,
+      "n": 10334
+     },
+     "matched": {
+      "precision": 0.676,
+      "recall": 0.726
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7722,
+     "auc_all": 0.7804,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.602,
+      "recall": 0.834,
+      "per_day": 10.9,
+      "n": 6091
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.718,
+      "per_day": 8.35,
+      "n": 4667
+     },
+     "thr0.65": {
+      "precision": 0.745,
+      "recall": 0.552,
+      "per_day": 5.82,
+      "n": 3255
+     },
+     "matched": {
+      "precision": 0.667,
+      "recall": 0.729
+     }
+    },
+    "5m": {
+     "auc_c0": 0.774,
+     "auc_all": 0.786,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.589,
+      "recall": 0.833,
+      "per_day": 6.57,
+      "n": 3675
+     },
+     "thr0.55": {
+      "precision": 0.666,
+      "recall": 0.708,
+      "per_day": 4.94,
+      "n": 2764
+     },
+     "thr0.65": {
+      "precision": 0.753,
+      "recall": 0.567,
+      "per_day": 3.5,
+      "n": 1955
+     },
+     "matched": {
+      "precision": 0.654,
+      "recall": 0.727
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7972,
+     "auc_all": 0.7975,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.611,
+      "recall": 0.816,
+      "per_day": 2.19,
+      "n": 1180
+     },
+     "thr0.55": {
+      "precision": 0.693,
+      "recall": 0.68,
+      "per_day": 1.61,
+      "n": 867
+     },
+     "thr0.65": {
+      "precision": 0.766,
+      "recall": 0.551,
+      "per_day": 1.18,
+      "n": 636
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.7
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7513,
+     "auc_all": 0.7547,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.622,
+      "recall": 0.764,
+      "per_day": 0.82,
+      "n": 307
+     },
+     "thr0.55": {
+      "precision": 0.692,
+      "recall": 0.664,
+      "per_day": 0.64,
+      "n": 240
+     },
+     "thr0.65": {
+      "precision": 0.761,
+      "recall": 0.548,
+      "per_day": 0.48,
+      "n": 180
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.688
+     }
+    }
+   },
+   "集成LR+GBM(全特征)": {
+    "1m": {
+     "auc_c0": 0.7559,
+     "auc_all": 0.776,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.606,
+      "recall": 0.837,
+      "per_day": 34.28,
+      "n": 19163
+     },
+     "thr0.55": {
+      "precision": 0.675,
+      "recall": 0.729,
+      "per_day": 26.77,
+      "n": 14966
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.581,
+      "per_day": 19.25,
+      "n": 10761
+     },
+     "matched": {
+      "precision": 0.677,
+      "recall": 0.726
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7734,
+     "auc_all": 0.782,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.605,
+      "recall": 0.831,
+      "per_day": 10.8,
+      "n": 6038
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.723,
+      "per_day": 8.41,
+      "n": 4702
+     },
+     "thr0.65": {
+      "precision": 0.744,
+      "recall": 0.569,
+      "per_day": 6.01,
+      "n": 3359
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.734
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7747,
+     "auc_all": 0.7875,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.593,
+      "recall": 0.822,
+      "per_day": 6.44,
+      "n": 3599
+     },
+     "thr0.55": {
+      "precision": 0.668,
+      "recall": 0.724,
+      "per_day": 5.04,
+      "n": 2816
+     },
+     "thr0.65": {
+      "precision": 0.747,
+      "recall": 0.586,
+      "per_day": 3.65,
+      "n": 2038
+     },
+     "matched": {
+      "precision": 0.659,
+      "recall": 0.733
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7938,
+     "auc_all": 0.796,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.62,
+      "recall": 0.795,
+      "per_day": 2.11,
+      "n": 1133
+     },
+     "thr0.55": {
+      "precision": 0.701,
+      "recall": 0.691,
+      "per_day": 1.62,
+      "n": 871
+     },
+     "thr0.65": {
+      "precision": 0.768,
+      "recall": 0.557,
+      "per_day": 1.19,
+      "n": 641
+     },
+     "matched": {
+      "precision": 0.684,
+      "recall": 0.706
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7516,
+     "auc_all": 0.7598,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.608,
+      "recall": 0.764,
+      "per_day": 0.84,
+      "n": 314
+     },
+     "thr0.55": {
+      "precision": 0.691,
+      "recall": 0.672,
+      "per_day": 0.65,
+      "n": 243
+     },
+     "thr0.65": {
+      "precision": 0.758,
+      "recall": 0.54,
+      "per_day": 0.47,
+      "n": 178
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.684
+     }
+    }
+   },
+   "集成LR+GBM(量价+日内)": {
+    "1m": {
+     "auc_c0": 0.756,
+     "auc_all": 0.7761,
+     "base_rate": 0.245,
+     "cands_per_day": 101.36,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.605,
+      "recall": 0.837,
+      "per_day": 34.32,
+      "n": 19186
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.73,
+      "per_day": 26.82,
+      "n": 14994
+     },
+     "thr0.65": {
+      "precision": 0.749,
+      "recall": 0.582,
+      "per_day": 19.29,
+      "n": 10783
+     },
+     "matched": {
+      "precision": 0.677,
+      "recall": 0.727
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7736,
+     "auc_all": 0.782,
+     "base_rate": 0.24,
+     "cands_per_day": 32.75,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.832,
+      "per_day": 10.83,
+      "n": 6055
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.727,
+      "per_day": 8.44,
+      "n": 4720
+     },
+     "thr0.65": {
+      "precision": 0.744,
+      "recall": 0.573,
+      "per_day": 6.05,
+      "n": 3383
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.734
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7748,
+     "auc_all": 0.7873,
+     "base_rate": 0.24,
+     "cands_per_day": 19.37,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.59,
+      "recall": 0.823,
+      "per_day": 6.48,
+      "n": 3625
+     },
+     "thr0.55": {
+      "precision": 0.667,
+      "recall": 0.724,
+      "per_day": 5.05,
+      "n": 2821
+     },
+     "thr0.65": {
+      "precision": 0.747,
+      "recall": 0.591,
+      "per_day": 3.68,
+      "n": 2055
+     },
+     "matched": {
+      "precision": 0.66,
+      "recall": 0.734
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7943,
+     "auc_all": 0.7964,
+     "base_rate": 0.255,
+     "cands_per_day": 6.44,
+     "days": 538,
+     "thr0.45": {
+      "precision": 0.622,
+      "recall": 0.798,
+      "per_day": 2.11,
+      "n": 1134
+     },
+     "thr0.55": {
+      "precision": 0.698,
+      "recall": 0.69,
+      "per_day": 1.62,
+      "n": 874
+     },
+     "thr0.65": {
+      "precision": 0.768,
+      "recall": 0.559,
+      "per_day": 1.2,
+      "n": 643
+     },
+     "matched": {
+      "precision": 0.685,
+      "recall": 0.707
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7509,
+     "auc_all": 0.7601,
+     "base_rate": 0.294,
+     "cands_per_day": 2.26,
+     "days": 376,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.768,
+      "per_day": 0.85,
+      "n": 318
+     },
+     "thr0.55": {
+      "precision": 0.681,
+      "recall": 0.684,
+      "per_day": 0.67,
+      "n": 251
+     },
+     "thr0.65": {
+      "precision": 0.755,
+      "recall": 0.556,
+      "per_day": 0.49,
+      "n": 184
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.684
+     }
+    }
+   },
+   "selection": {
+    "score": {
+     "v5重训": [
+      0.6748,
+      0.7584
+     ],
+     "GBM E_+大周期状态": [
+      0.6744,
+      0.7716
+     ],
+     "v6-LR(全特征)": [
+      0.673,
+      0.7609
+     ],
+     "GBM-默认参数(全特征)": [
+      0.6718,
+      0.7698
+     ],
+     "集成LR+GBM(全特征)": [
+      0.6742,
+      0.7699
+     ],
+     "集成LR+GBM(量价+日内)": [
+      0.6746,
+      0.7699
+     ]
+    },
+    "chosen": "GBM E_+大周期状态",
+    "rule": "AUC最高、且同等信号数下准确率不低于v5重训0.5个百分点以上"
+   },
+   "importance": {
+    "阶段(反弹/收复)": 0.18023,
+    "日内位置(开盘/昨高低/时段)": 0.01437,
+    "WR": 0.00227,
+    "VOL": 0.0015,
+    "v5 形态(跌幅/影线/RSI/均线距)": 0.00105,
+    "MA": 0.00041,
+    "15分钟大周期": 0.00034,
+    "ATR": 0.0002,
+    "TRIX": 0.00016,
+    "KDJ": 0.0001,
+    "OBV": 9e-05,
+    "SAR": 7e-05,
+    "EMV": 7e-05,
+    "MACD": 6e-05,
+    "PSY": 5e-05,
+    "DMI": 4e-05,
+    "MTM": 3e-05,
+    "BOLL": 2e-05,
+    "BBI": 1e-05,
+    "RSI": 1e-05,
+    "MFI": 1e-05,
+    "ASI": -1e-05,
+    "StochRSI": -1e-05,
+    "ROC": -2e-05,
+    "ARBR": -3e-05,
+    "CR": -4e-05,
+    "VR": -4e-05,
+    "DMA": -5e-05,
+    "CCI": -6e-05,
+    "VWAP": -7e-05,
+    "BIAS": -7e-05,
+    "EMA": -0.00012,
+    "1小时大周期": -0.00035,
+    "VIX(前收/期限结构)": -0.00046
+   },
+   "importance_base_auc": {
+    "1m": 0.7563,
+    "3m": 0.7737,
+    "5m": 0.7761,
+    "15m": 0.7982,
+    "1h": 0.7541
+   },
+   "calibration_val": [
+    [
+     0.05,
+     0.061,
+     20494
+    ],
+    [
+     0.15,
+     0.142,
+     31331
+    ],
+    [
+     0.25,
+     0.244,
+     28725
+    ],
+    [
+     0.35,
+     0.343,
+     23012
+    ],
+    [
+     0.45,
+     0.448,
+     18560
+    ],
+    [
+     0.55,
+     0.533,
+     15623
+    ],
+    [
+     0.65,
+     0.637,
+     11782
+    ],
+    [
+     0.75,
+     0.746,
+     8514
+    ],
+    [
+     0.85,
+     0.85,
+     4966
+    ],
+    [
+     0.95,
+     0.939,
+     1366
+    ]
+   ],
+   "calibration_val_v5": [
+    [
+     0.05,
+     0.056,
+     14841
+    ],
+    [
+     0.15,
+     0.146,
+     43720
+    ],
+    [
+     0.25,
+     0.264,
+     26998
+    ],
+    [
+     0.35,
+     0.358,
+     20173
+    ],
+    [
+     0.45,
+     0.445,
+     16213
+    ],
+    [
+     0.55,
+     0.527,
+     13624
+    ],
+    [
+     0.65,
+     0.615,
+     11519
+    ],
+    [
+     0.75,
+     0.726,
+     9753
+    ],
+    [
+     0.85,
+     0.848,
+     6776
+    ],
+    [
+     0.95,
+     0.944,
+     756
+    ]
+   ],
+   "auc_by_year_val": {
+    "2024": 0.7713,
+    "2025": 0.786,
+    "2026": 0.784
+   },
+   "auc_by_year_val_v5": {
+    "2024": 0.7697,
+    "2025": 0.7841,
+    "2026": 0.783
+   },
+   "holdout_v6": {
+    "1m": {
+     "auc_c0": 0.771,
+     "auc_all": 0.7853,
+     "base_rate": 0.235,
+     "cands_per_day": 106.88,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.619,
+      "recall": 0.829,
+      "per_day": 33.66,
+      "n": 4376
+     },
+     "thr0.55": {
+      "precision": 0.7,
+      "recall": 0.685,
+      "per_day": 24.58,
+      "n": 3195
+     },
+     "thr0.65": {
+      "precision": 0.772,
+      "recall": 0.532,
+      "per_day": 17.31,
+      "n": 2250
+     },
+     "matched": {
+      "precision": 0.696,
+      "recall": 0.703
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7898,
+     "auc_all": 0.794,
+     "base_rate": 0.225,
+     "cands_per_day": 34.05,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.586,
+      "recall": 0.827,
+      "per_day": 10.82,
+      "n": 1407
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.717,
+      "per_day": 8.12,
+      "n": 1056
+     },
+     "thr0.65": {
+      "precision": 0.729,
+      "recall": 0.544,
+      "per_day": 5.72,
+      "n": 743
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.724
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7855,
+     "auc_all": 0.7848,
+     "base_rate": 0.225,
+     "cands_per_day": 19.97,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.587,
+      "recall": 0.835,
+      "per_day": 6.38,
+      "n": 829
+     },
+     "thr0.55": {
+      "precision": 0.684,
+      "recall": 0.715,
+      "per_day": 4.69,
+      "n": 610
+     },
+     "thr0.65": {
+      "precision": 0.746,
+      "recall": 0.544,
+      "per_day": 3.27,
+      "n": 425
+     },
+     "matched": {
+      "precision": 0.674,
+      "recall": 0.724
+     }
+    },
+    "15m": {
+     "auc_c0": 0.764,
+     "auc_all": 0.7695,
+     "base_rate": 0.247,
+     "cands_per_day": 6.32,
+     "days": 124,
+     "thr0.45": {
+      "precision": 0.565,
+      "recall": 0.825,
+      "per_day": 2.28,
+      "n": 283
+     },
+     "thr0.55": {
+      "precision": 0.629,
+      "recall": 0.655,
+      "per_day": 1.63,
+      "n": 202
+     },
+     "thr0.65": {
+      "precision": 0.703,
+      "recall": 0.5,
+      "per_day": 1.11,
+      "n": 138
+     },
+     "matched": {
+      "precision": 0.623,
+      "recall": 0.665
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7608,
+     "auc_all": 0.7776,
+     "base_rate": 0.31,
+     "cands_per_day": 2.45,
+     "days": 83,
+     "thr0.45": {
+      "precision": 0.651,
+      "recall": 0.651,
+      "per_day": 0.76,
+      "n": 63
+     },
+     "thr0.55": {
+      "precision": 0.761,
+      "recall": 0.556,
+      "per_day": 0.55,
+      "n": 46
+     },
+     "thr0.65": {
+      "precision": 0.794,
+      "recall": 0.429,
+      "per_day": 0.41,
+      "n": 34
+     },
+     "matched": {
+      "precision": 0.75,
+      "recall": 0.571
+     }
+    }
+   },
+   "holdout_v5重训": {
+    "1m": {
+     "auc_c0": 0.7708,
+     "auc_all": 0.7853,
+     "base_rate": 0.235,
+     "cands_per_day": 106.88,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.628,
+      "recall": 0.813,
+      "per_day": 32.52,
+      "n": 4227
+     },
+     "thr0.55": {
+      "precision": 0.696,
+      "recall": 0.703,
+      "per_day": 25.37,
+      "n": 3298
+     },
+     "thr0.65": {
+      "precision": 0.764,
+      "recall": 0.559,
+      "per_day": 18.39,
+      "n": 2391
+     },
+     "matched": {
+      "precision": 0.696,
+      "recall": 0.703
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7874,
+     "auc_all": 0.7939,
+     "base_rate": 0.225,
+     "cands_per_day": 34.05,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.599,
+      "recall": 0.812,
+      "per_day": 10.39,
+      "n": 1351
+     },
+     "thr0.55": {
+      "precision": 0.665,
+      "recall": 0.717,
+      "per_day": 8.25,
+      "n": 1073
+     },
+     "thr0.65": {
+      "precision": 0.737,
+      "recall": 0.572,
+      "per_day": 5.95,
+      "n": 773
+     },
+     "matched": {
+      "precision": 0.665,
+      "recall": 0.717
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7781,
+     "auc_all": 0.7827,
+     "base_rate": 0.225,
+     "cands_per_day": 19.97,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.82,
+      "per_day": 6.12,
+      "n": 796
+     },
+     "thr0.55": {
+      "precision": 0.671,
+      "recall": 0.72,
+      "per_day": 4.82,
+      "n": 626
+     },
+     "thr0.65": {
+      "precision": 0.738,
+      "recall": 0.576,
+      "per_day": 3.5,
+      "n": 455
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.72
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7584,
+     "auc_all": 0.768,
+     "base_rate": 0.247,
+     "cands_per_day": 6.32,
+     "days": 124,
+     "thr0.45": {
+      "precision": 0.571,
+      "recall": 0.763,
+      "per_day": 2.09,
+      "n": 259
+     },
+     "thr0.55": {
+      "precision": 0.638,
+      "recall": 0.68,
+      "per_day": 1.67,
+      "n": 207
+     },
+     "thr0.65": {
+      "precision": 0.707,
+      "recall": 0.546,
+      "per_day": 1.21,
+      "n": 150
+     },
+     "matched": {
+      "precision": 0.638,
+      "recall": 0.68
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7345,
+     "auc_all": 0.7548,
+     "base_rate": 0.31,
+     "cands_per_day": 2.45,
+     "days": 83,
+     "thr0.45": {
+      "precision": 0.684,
+      "recall": 0.619,
+      "per_day": 0.69,
+      "n": 57
+     },
+     "thr0.55": {
+      "precision": 0.75,
+      "recall": 0.571,
+      "per_day": 0.58,
+      "n": 48
+     },
+     "thr0.65": {
+      "precision": 0.788,
+      "recall": 0.413,
+      "per_day": 0.4,
+      "n": 33
+     },
+     "matched": {
+      "precision": 0.75,
+      "recall": 0.571
+     }
+    }
+   },
+   "calibration_holdout": [
+    [
+     0.05,
+     0.05,
+     5195
+    ],
+    [
+     0.15,
+     0.137,
+     7939
+    ],
+    [
+     0.25,
+     0.25,
+     6947
+    ],
+    [
+     0.35,
+     0.348,
+     5222
+    ],
+    [
+     0.45,
+     0.462,
+     4607
+    ],
+    [
+     0.55,
+     0.546,
+     3448
+    ],
+    [
+     0.65,
+     0.652,
+     2768
+    ],
+    [
+     0.75,
+     0.755,
+     1634
+    ],
+    [
+     0.85,
+     0.854,
+     1156
+    ],
+    [
+     0.95,
+     0.94,
+     265
+    ]
+   ],
+   "importance_by_tf": {
+    "v5 形态(跌幅/影线/RSI/均线距)": {
+     "1m": 0.00121,
+     "3m": 0.00112,
+     "5m": 0.00078,
+     "15m": 0.00187,
+     "1h": 0.00029
+    },
+    "阶段(反弹/收复)": {
+     "1m": 0.18205,
+     "3m": 0.18334,
+     "5m": 0.18831,
+     "15m": 0.19808,
+     "1h": 0.1494
+    },
+    "ATR": {
+     "1m": 0.00014,
+     "3m": 7e-05,
+     "5m": -0.00013,
+     "15m": -1e-05,
+     "1h": 0.00095
+    },
+    "MA": {
+     "1m": 0.00016,
+     "3m": 0.00047,
+     "5m": 0.00062,
+     "15m": -0.00038,
+     "1h": 0.00116
+    },
+    "EMA": {
+     "1m": 2e-05,
+     "3m": 3e-05,
+     "5m": -7e-05,
+     "15m": 2e-05,
+     "1h": -0.00061
+    },
+    "BOLL": {
+     "1m": 9e-05,
+     "3m": -4e-05,
+     "5m": -0.0001,
+     "15m": 0.00011,
+     "1h": 6e-05
+    },
+    "SAR": {
+     "1m": 3e-05,
+     "3m": -0.0,
+     "5m": 6e-05,
+     "15m": -6e-05,
+     "1h": 0.00032
+    },
+    "BBI": {
+     "1m": 0.0,
+     "3m": 0.0,
+     "5m": 2e-05,
+     "15m": -2e-05,
+     "1h": 3e-05
+    },
+    "VWAP": {
+     "1m": -2e-05,
+     "3m": 2e-05,
+     "5m": 5e-05,
+     "15m": -9e-05,
+     "1h": -0.0003
+    },
+    "VOL": {
+     "1m": 0.00031,
+     "3m": 0.00071,
+     "5m": 0.00193,
+     "15m": 0.00302,
+     "1h": 0.0015
+    },
+    "MACD": {
+     "1m": 8e-05,
+     "3m": -5e-05,
+     "5m": -2e-05,
+     "15m": 0.00021,
+     "1h": 8e-05
+    },
+    "KDJ": {
+     "1m": 8e-05,
+     "3m": 0.0,
+     "5m": 6e-05,
+     "15m": 8e-05,
+     "1h": 0.00025
+    },
+    "RSI": {
+     "1m": 5e-05,
+     "3m": 0.0,
+     "5m": 2e-05,
+     "15m": 0.0,
+     "1h": -1e-05
+    },
+    "WR": {
+     "1m": 0.00328,
+     "3m": 0.00357,
+     "5m": 0.00248,
+     "15m": 0.00085,
+     "1h": 0.00117
+    },
+    "BIAS": {
+     "1m": 2e-05,
+     "3m": 0.0,
+     "5m": -0.00015,
+     "15m": -0.00018,
+     "1h": -5e-05
+    },
+    "CCI": {
+     "1m": 1e-05,
+     "3m": -1e-05,
+     "5m": -2e-05,
+     "15m": -7e-05,
+     "1h": -0.00023
+    },
+    "DMI": {
+     "1m": 0.00013,
+     "3m": 0.00015,
+     "5m": 0.0001,
+     "15m": -4e-05,
+     "1h": -0.00015
+    },
+    "TRIX": {
+     "1m": -1e-05,
+     "3m": 0.0,
+     "5m": 4e-05,
+     "15m": 0.00015,
+     "1h": 0.00064
+    },
+    "ARBR": {
+     "1m": 2e-05,
+     "3m": 2e-05,
+     "5m": 2e-05,
+     "15m": -4e-05,
+     "1h": -0.00019
+    },
+    "CR": {
+     "1m": 3e-05,
+     "3m": -3e-05,
+     "5m": -6e-05,
+     "15m": -0.0,
+     "1h": -0.00012
+    },
+    "VR": {
+     "1m": -4e-05,
+     "3m": 7e-05,
+     "5m": 2e-05,
+     "15m": 0.0,
+     "1h": -0.00024
+    },
+    "OBV": {
+     "1m": -2e-05,
+     "3m": -3e-05,
+     "5m": 1e-05,
+     "15m": 0.0,
+     "1h": 0.00049
+    },
+    "PSY": {
+     "1m": 2e-05,
+     "3m": 8e-05,
+     "5m": 0.00019,
+     "15m": 0.00017,
+     "1h": -0.00024
+    },
+    "DMA": {
+     "1m": 1e-05,
+     "3m": 2e-05,
+     "5m": -3e-05,
+     "15m": -1e-05,
+     "1h": -0.00023
+    },
+    "EMV": {
+     "1m": 1e-05,
+     "3m": -1e-05,
+     "5m": 4e-05,
+     "15m": 1e-05,
+     "1h": 0.00031
+    },
+    "MTM": {
+     "1m": 5e-05,
+     "3m": 5e-05,
+     "5m": -3e-05,
+     "15m": 8e-05,
+     "1h": -0.0
+    },
+    "ROC": {
+     "1m": 1e-05,
+     "3m": 0.0,
+     "5m": -2e-05,
+     "15m": -0.00011,
+     "1h": 0.0
+    },
+    "ASI": {
+     "1m": -1e-05,
+     "3m": -1e-05,
+     "5m": 0.0,
+     "15m": 8e-05,
+     "1h": -0.00013
+    },
+    "MFI": {
+     "1m": -2e-05,
+     "3m": 4e-05,
+     "5m": 2e-05,
+     "15m": -4e-05,
+     "1h": 3e-05
+    },
+    "StochRSI": {
+     "1m": 0.0,
+     "3m": 0.0,
+     "5m": 2e-05,
+     "15m": 0.0,
+     "1h": -7e-05
+    },
+    "日内位置(开盘/昨高低/时段)": {
+     "1m": 0.00252,
+     "3m": 0.00681,
+     "5m": 0.01316,
+     "15m": 0.02802,
+     "1h": 0.02131
+    },
+    "VIX(前收/期限结构)": {
+     "1m": 3e-05,
+     "3m": -0.00052,
+     "5m": 0.00027,
+     "15m": 0.00035,
+     "1h": -0.00242
+    },
+    "15分钟大周期": {
+     "1m": 0.00018,
+     "3m": 1e-05,
+     "5m": 0.00097,
+     "15m": 0.0,
+     "1h": 0.00053
+    },
+    "1小时大周期": {
+     "1m": 0.0003,
+     "3m": 0.0003,
+     "5m": -9e-05,
+     "15m": -0.00035,
+     "1h": -0.0019
+    }
+   },
+   "importance_note": "训练期模型；验证集；只看候选第一根（c=0）；5 个周期等权平均的 AUC 下降"
+  },
+  "top": {
+   "n_train": 239131,
+   "v5重训": {
+    "1m": {
+     "auc_c0": 0.7536,
+     "auc_all": 0.7754,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.606,
+      "recall": 0.769,
+      "per_day": 30.51,
+      "n": 17057
+     },
+     "thr0.55": {
+      "precision": 0.669,
+      "recall": 0.655,
+      "per_day": 23.55,
+      "n": 13162
+     },
+     "thr0.65": {
+      "precision": 0.738,
+      "recall": 0.509,
+      "per_day": 16.58,
+      "n": 9266
+     },
+     "matched": {
+      "precision": 0.669,
+      "recall": 0.655
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7638,
+     "auc_all": 0.7824,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.612,
+      "recall": 0.758,
+      "per_day": 9.36,
+      "n": 5235
+     },
+     "thr0.55": {
+      "precision": 0.683,
+      "recall": 0.64,
+      "per_day": 7.08,
+      "n": 3960
+     },
+     "thr0.65": {
+      "precision": 0.748,
+      "recall": 0.5,
+      "per_day": 5.06,
+      "n": 2828
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.64
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7646,
+     "auc_all": 0.7842,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.74,
+      "per_day": 5.42,
+      "n": 3032
+     },
+     "thr0.55": {
+      "precision": 0.661,
+      "recall": 0.615,
+      "per_day": 4.1,
+      "n": 2290
+     },
+     "thr0.65": {
+      "precision": 0.732,
+      "recall": 0.469,
+      "per_day": 2.82,
+      "n": 1577
+     },
+     "matched": {
+      "precision": 0.661,
+      "recall": 0.615
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7697,
+     "auc_all": 0.777,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.573,
+      "recall": 0.673,
+      "per_day": 1.7,
+      "n": 943
+     },
+     "thr0.55": {
+      "precision": 0.624,
+      "recall": 0.554,
+      "per_day": 1.28,
+      "n": 711
+     },
+     "thr0.65": {
+      "precision": 0.712,
+      "recall": 0.423,
+      "per_day": 0.86,
+      "n": 476
+     },
+     "matched": {
+      "precision": 0.624,
+      "recall": 0.554
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7849,
+     "auc_all": 0.789,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.66,
+      "recall": 0.635,
+      "per_day": 0.49,
+      "n": 235
+     },
+     "thr0.55": {
+      "precision": 0.75,
+      "recall": 0.516,
+      "per_day": 0.35,
+      "n": 168
+     },
+     "thr0.65": {
+      "precision": 0.784,
+      "recall": 0.43,
+      "per_day": 0.28,
+      "n": 134
+     },
+     "matched": {
+      "precision": 0.75,
+      "recall": 0.516
+     }
+    }
+   },
+   "GBM A_v5基础": {
+    "1m": {
+     "auc_c0": 0.7536,
+     "auc_all": 0.7757,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.774,
+      "per_day": 30.83,
+      "n": 17236
+     },
+     "thr0.55": {
+      "precision": 0.673,
+      "recall": 0.651,
+      "per_day": 23.27,
+      "n": 13006
+     },
+     "thr0.65": {
+      "precision": 0.756,
+      "recall": 0.465,
+      "per_day": 14.81,
+      "n": 8278
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.656
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7631,
+     "auc_all": 0.7816,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.613,
+      "recall": 0.752,
+      "per_day": 9.28,
+      "n": 5187
+     },
+     "thr0.55": {
+      "precision": 0.687,
+      "recall": 0.619,
+      "per_day": 6.82,
+      "n": 3812
+     },
+     "thr0.65": {
+      "precision": 0.762,
+      "recall": 0.446,
+      "per_day": 4.43,
+      "n": 2474
+     },
+     "matched": {
+      "precision": 0.679,
+      "recall": 0.636
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7656,
+     "auc_all": 0.7849,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.604,
+      "recall": 0.738,
+      "per_day": 5.38,
+      "n": 3009
+     },
+     "thr0.55": {
+      "precision": 0.675,
+      "recall": 0.6,
+      "per_day": 3.91,
+      "n": 2188
+     },
+     "thr0.65": {
+      "precision": 0.753,
+      "recall": 0.416,
+      "per_day": 2.43,
+      "n": 1360
+     },
+     "matched": {
+      "precision": 0.666,
+      "recall": 0.62
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7698,
+     "auc_all": 0.7778,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.584,
+      "recall": 0.671,
+      "per_day": 1.66,
+      "n": 922
+     },
+     "thr0.55": {
+      "precision": 0.632,
+      "recall": 0.535,
+      "per_day": 1.23,
+      "n": 679
+     },
+     "thr0.65": {
+      "precision": 0.751,
+      "recall": 0.373,
+      "per_day": 0.72,
+      "n": 398
+     },
+     "matched": {
+      "precision": 0.626,
+      "recall": 0.555
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7898,
+     "auc_all": 0.7918,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.668,
+      "recall": 0.635,
+      "per_day": 0.49,
+      "n": 232
+     },
+     "thr0.55": {
+      "precision": 0.741,
+      "recall": 0.516,
+      "per_day": 0.36,
+      "n": 170
+     },
+     "thr0.65": {
+      "precision": 0.832,
+      "recall": 0.406,
+      "per_day": 0.25,
+      "n": 119
+     },
+     "matched": {
+      "precision": 0.744,
+      "recall": 0.512
+     }
+    }
+   },
+   "GBM B_+价格类指标": {
+    "1m": {
+     "auc_c0": 0.7534,
+     "auc_all": 0.7757,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.777,
+      "per_day": 30.95,
+      "n": 17299
+     },
+     "thr0.55": {
+      "precision": 0.672,
+      "recall": 0.658,
+      "per_day": 23.55,
+      "n": 13165
+     },
+     "thr0.65": {
+      "precision": 0.753,
+      "recall": 0.461,
+      "per_day": 14.74,
+      "n": 8237
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.658
+     }
+    },
+    "3m": {
+     "auc_c0": 0.763,
+     "auc_all": 0.7819,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.61,
+      "recall": 0.754,
+      "per_day": 9.35,
+      "n": 5228
+     },
+     "thr0.55": {
+      "precision": 0.688,
+      "recall": 0.627,
+      "per_day": 6.9,
+      "n": 3856
+     },
+     "thr0.65": {
+      "precision": 0.763,
+      "recall": 0.449,
+      "per_day": 4.45,
+      "n": 2489
+     },
+     "matched": {
+      "precision": 0.684,
+      "recall": 0.64
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7657,
+     "auc_all": 0.785,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.602,
+      "recall": 0.741,
+      "per_day": 5.42,
+      "n": 3028
+     },
+     "thr0.55": {
+      "precision": 0.681,
+      "recall": 0.604,
+      "per_day": 3.91,
+      "n": 2183
+     },
+     "thr0.65": {
+      "precision": 0.761,
+      "recall": 0.425,
+      "per_day": 2.46,
+      "n": 1376
+     },
+     "matched": {
+      "precision": 0.668,
+      "recall": 0.621
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7694,
+     "auc_all": 0.7778,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.577,
+      "recall": 0.665,
+      "per_day": 1.67,
+      "n": 923
+     },
+     "thr0.55": {
+      "precision": 0.636,
+      "recall": 0.537,
+      "per_day": 1.22,
+      "n": 678
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.385,
+      "per_day": 0.74,
+      "n": 411
+     },
+     "matched": {
+      "precision": 0.633,
+      "recall": 0.561
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7876,
+     "auc_all": 0.7896,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.659,
+      "recall": 0.627,
+      "per_day": 0.49,
+      "n": 232
+     },
+     "thr0.55": {
+      "precision": 0.765,
+      "recall": 0.508,
+      "per_day": 0.34,
+      "n": 162
+     },
+     "thr0.65": {
+      "precision": 0.829,
+      "recall": 0.398,
+      "per_day": 0.25,
+      "n": 117
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "GBM C_+量能类指标": {
+    "1m": {
+     "auc_c0": 0.7535,
+     "auc_all": 0.7758,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.777,
+      "per_day": 30.95,
+      "n": 17300
+     },
+     "thr0.55": {
+      "precision": 0.673,
+      "recall": 0.653,
+      "per_day": 23.31,
+      "n": 13029
+     },
+     "thr0.65": {
+      "precision": 0.755,
+      "recall": 0.46,
+      "per_day": 14.66,
+      "n": 8197
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.657
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7652,
+     "auc_all": 0.7826,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.612,
+      "recall": 0.759,
+      "per_day": 9.37,
+      "n": 5240
+     },
+     "thr0.55": {
+      "precision": 0.69,
+      "recall": 0.628,
+      "per_day": 6.89,
+      "n": 3851
+     },
+     "thr0.65": {
+      "precision": 0.762,
+      "recall": 0.444,
+      "per_day": 4.41,
+      "n": 2464
+     },
+     "matched": {
+      "precision": 0.684,
+      "recall": 0.641
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7693,
+     "auc_all": 0.7861,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.74,
+      "per_day": 5.4,
+      "n": 3016
+     },
+     "thr0.55": {
+      "precision": 0.676,
+      "recall": 0.6,
+      "per_day": 3.91,
+      "n": 2184
+     },
+     "thr0.65": {
+      "precision": 0.754,
+      "recall": 0.427,
+      "per_day": 2.5,
+      "n": 1395
+     },
+     "matched": {
+      "precision": 0.664,
+      "recall": 0.618
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7761,
+     "auc_all": 0.7798,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.582,
+      "recall": 0.666,
+      "per_day": 1.66,
+      "n": 917
+     },
+     "thr0.55": {
+      "precision": 0.643,
+      "recall": 0.536,
+      "per_day": 1.21,
+      "n": 669
+     },
+     "thr0.65": {
+      "precision": 0.746,
+      "recall": 0.385,
+      "per_day": 0.75,
+      "n": 414
+     },
+     "matched": {
+      "precision": 0.63,
+      "recall": 0.559
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7902,
+     "auc_all": 0.7908,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.667,
+      "recall": 0.639,
+      "per_day": 0.49,
+      "n": 234
+     },
+     "thr0.55": {
+      "precision": 0.753,
+      "recall": 0.512,
+      "per_day": 0.35,
+      "n": 166
+     },
+     "thr0.65": {
+      "precision": 0.829,
+      "recall": 0.398,
+      "per_day": 0.25,
+      "n": 117
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "GBM D_+日内位置/VIX": {
+    "1m": {
+     "auc_c0": 0.7534,
+     "auc_all": 0.7756,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.776,
+      "per_day": 30.94,
+      "n": 17297
+     },
+     "thr0.55": {
+      "precision": 0.673,
+      "recall": 0.654,
+      "per_day": 23.39,
+      "n": 13073
+     },
+     "thr0.65": {
+      "precision": 0.753,
+      "recall": 0.464,
+      "per_day": 14.81,
+      "n": 8277
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.657
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7662,
+     "auc_all": 0.7828,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.613,
+      "recall": 0.758,
+      "per_day": 9.36,
+      "n": 5233
+     },
+     "thr0.55": {
+      "precision": 0.691,
+      "recall": 0.628,
+      "per_day": 6.87,
+      "n": 3840
+     },
+     "thr0.65": {
+      "precision": 0.762,
+      "recall": 0.444,
+      "per_day": 4.4,
+      "n": 2462
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.64
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7699,
+     "auc_all": 0.7856,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.598,
+      "recall": 0.739,
+      "per_day": 5.44,
+      "n": 3040
+     },
+     "thr0.55": {
+      "precision": 0.672,
+      "recall": 0.601,
+      "per_day": 3.94,
+      "n": 2200
+     },
+     "thr0.65": {
+      "precision": 0.748,
+      "recall": 0.421,
+      "per_day": 2.47,
+      "n": 1383
+     },
+     "matched": {
+      "precision": 0.665,
+      "recall": 0.619
+     }
+    },
+    "15m": {
+     "auc_c0": 0.777,
+     "auc_all": 0.7802,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.578,
+      "recall": 0.671,
+      "per_day": 1.68,
+      "n": 930
+     },
+     "thr0.55": {
+      "precision": 0.64,
+      "recall": 0.537,
+      "per_day": 1.21,
+      "n": 673
+     },
+     "thr0.65": {
+      "precision": 0.757,
+      "recall": 0.389,
+      "per_day": 0.74,
+      "n": 412
+     },
+     "matched": {
+      "precision": 0.632,
+      "recall": 0.56
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7893,
+     "auc_all": 0.7914,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.65,
+      "recall": 0.631,
+      "per_day": 0.5,
+      "n": 237
+     },
+     "thr0.55": {
+      "precision": 0.762,
+      "recall": 0.512,
+      "per_day": 0.35,
+      "n": 164
+     },
+     "thr0.65": {
+      "precision": 0.821,
+      "recall": 0.393,
+      "per_day": 0.25,
+      "n": 117
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "GBM E_+大周期状态": {
+    "1m": {
+     "auc_c0": 0.7531,
+     "auc_all": 0.7754,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.778,
+      "per_day": 31.03,
+      "n": 17345
+     },
+     "thr0.55": {
+      "precision": 0.673,
+      "recall": 0.655,
+      "per_day": 23.4,
+      "n": 13079
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.462,
+      "per_day": 14.78,
+      "n": 8262
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.658
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7657,
+     "auc_all": 0.7824,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.609,
+      "recall": 0.757,
+      "per_day": 9.41,
+      "n": 5258
+     },
+     "thr0.55": {
+      "precision": 0.692,
+      "recall": 0.631,
+      "per_day": 6.89,
+      "n": 3852
+     },
+     "thr0.65": {
+      "precision": 0.76,
+      "recall": 0.447,
+      "per_day": 4.45,
+      "n": 2487
+     },
+     "matched": {
+      "precision": 0.686,
+      "recall": 0.642
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7698,
+     "auc_all": 0.7855,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.597,
+      "recall": 0.742,
+      "per_day": 5.47,
+      "n": 3058
+     },
+     "thr0.55": {
+      "precision": 0.672,
+      "recall": 0.603,
+      "per_day": 3.95,
+      "n": 2207
+     },
+     "thr0.65": {
+      "precision": 0.748,
+      "recall": 0.42,
+      "per_day": 2.47,
+      "n": 1383
+     },
+     "matched": {
+      "precision": 0.666,
+      "recall": 0.62
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7762,
+     "auc_all": 0.779,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.572,
+      "recall": 0.675,
+      "per_day": 1.71,
+      "n": 946
+     },
+     "thr0.55": {
+      "precision": 0.634,
+      "recall": 0.532,
+      "per_day": 1.21,
+      "n": 673
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.389,
+      "per_day": 0.75,
+      "n": 415
+     },
+     "matched": {
+      "precision": 0.617,
+      "recall": 0.547
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7891,
+     "auc_all": 0.7905,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.647,
+      "recall": 0.639,
+      "per_day": 0.51,
+      "n": 241
+     },
+     "thr0.55": {
+      "precision": 0.768,
+      "recall": 0.529,
+      "per_day": 0.35,
+      "n": 168
+     },
+     "thr0.65": {
+      "precision": 0.829,
+      "recall": 0.398,
+      "per_day": 0.25,
+      "n": 117
+     },
+     "matched": {
+      "precision": 0.768,
+      "recall": 0.529
+     }
+    }
+   },
+   "v6-LR(全特征)": {
+    "1m": {
+     "auc_c0": 0.7533,
+     "auc_all": 0.7753,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.593,
+      "recall": 0.786,
+      "per_day": 31.83,
+      "n": 17794
+     },
+     "thr0.55": {
+      "precision": 0.658,
+      "recall": 0.675,
+      "per_day": 24.66,
+      "n": 13784
+     },
+     "thr0.65": {
+      "precision": 0.729,
+      "recall": 0.531,
+      "per_day": 17.51,
+      "n": 9787
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.656
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7646,
+     "auc_all": 0.7828,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.612,
+      "recall": 0.763,
+      "per_day": 9.43,
+      "n": 5272
+     },
+     "thr0.55": {
+      "precision": 0.682,
+      "recall": 0.64,
+      "per_day": 7.1,
+      "n": 3971
+     },
+     "thr0.65": {
+      "precision": 0.747,
+      "recall": 0.498,
+      "per_day": 5.04,
+      "n": 2820
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.639
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7667,
+     "auc_all": 0.7852,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.602,
+      "recall": 0.737,
+      "per_day": 5.39,
+      "n": 3014
+     },
+     "thr0.55": {
+      "precision": 0.667,
+      "recall": 0.607,
+      "per_day": 4.01,
+      "n": 2240
+     },
+     "thr0.65": {
+      "precision": 0.731,
+      "recall": 0.457,
+      "per_day": 2.75,
+      "n": 1539
+     },
+     "matched": {
+      "precision": 0.662,
+      "recall": 0.616
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7723,
+     "auc_all": 0.7776,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.582,
+      "recall": 0.653,
+      "per_day": 1.63,
+      "n": 901
+     },
+     "thr0.55": {
+      "precision": 0.632,
+      "recall": 0.54,
+      "per_day": 1.24,
+      "n": 685
+     },
+     "thr0.65": {
+      "precision": 0.719,
+      "recall": 0.403,
+      "per_day": 0.81,
+      "n": 449
+     },
+     "matched": {
+      "precision": 0.62,
+      "recall": 0.55
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7826,
+     "auc_all": 0.7865,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.68,
+      "recall": 0.611,
+      "per_day": 0.46,
+      "n": 219
+     },
+     "thr0.55": {
+      "precision": 0.761,
+      "recall": 0.496,
+      "per_day": 0.33,
+      "n": 159
+     },
+     "thr0.65": {
+      "precision": 0.821,
+      "recall": 0.414,
+      "per_day": 0.26,
+      "n": 123
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "GBM-默认参数(全特征)": {
+    "1m": {
+     "auc_c0": 0.7523,
+     "auc_all": 0.7744,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.596,
+      "recall": 0.779,
+      "per_day": 31.44,
+      "n": 17577
+     },
+     "thr0.55": {
+      "precision": 0.669,
+      "recall": 0.656,
+      "per_day": 23.56,
+      "n": 13169
+     },
+     "thr0.65": {
+      "precision": 0.747,
+      "recall": 0.468,
+      "per_day": 15.05,
+      "n": 8411
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.656
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7637,
+     "auc_all": 0.7807,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.599,
+      "recall": 0.759,
+      "per_day": 9.58,
+      "n": 5358
+     },
+     "thr0.55": {
+      "precision": 0.685,
+      "recall": 0.633,
+      "per_day": 7.0,
+      "n": 3911
+     },
+     "thr0.65": {
+      "precision": 0.751,
+      "recall": 0.454,
+      "per_day": 4.57,
+      "n": 2557
+     },
+     "matched": {
+      "precision": 0.682,
+      "recall": 0.638
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7673,
+     "auc_all": 0.7828,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.59,
+      "recall": 0.747,
+      "per_day": 5.57,
+      "n": 3116
+     },
+     "thr0.55": {
+      "precision": 0.669,
+      "recall": 0.604,
+      "per_day": 3.97,
+      "n": 2221
+     },
+     "thr0.65": {
+      "precision": 0.74,
+      "recall": 0.422,
+      "per_day": 2.51,
+      "n": 1402
+     },
+     "matched": {
+      "precision": 0.66,
+      "recall": 0.614
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7736,
+     "auc_all": 0.777,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.565,
+      "recall": 0.681,
+      "per_day": 1.75,
+      "n": 967
+     },
+     "thr0.55": {
+      "precision": 0.643,
+      "recall": 0.54,
+      "per_day": 1.21,
+      "n": 673
+     },
+     "thr0.65": {
+      "precision": 0.731,
+      "recall": 0.38,
+      "per_day": 0.75,
+      "n": 417
+     },
+     "matched": {
+      "precision": 0.626,
+      "recall": 0.555
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7902,
+     "auc_all": 0.7889,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.639,
+      "recall": 0.631,
+      "per_day": 0.51,
+      "n": 241
+     },
+     "thr0.55": {
+      "precision": 0.755,
+      "recall": 0.504,
+      "per_day": 0.34,
+      "n": 163
+     },
+     "thr0.65": {
+      "precision": 0.833,
+      "recall": 0.389,
+      "per_day": 0.24,
+      "n": 114
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "集成LR+GBM(全特征)": {
+    "1m": {
+     "auc_c0": 0.7542,
+     "auc_all": 0.776,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.598,
+      "recall": 0.782,
+      "per_day": 31.43,
+      "n": 17570
+     },
+     "thr0.55": {
+      "precision": 0.667,
+      "recall": 0.667,
+      "per_day": 24.07,
+      "n": 13455
+     },
+     "thr0.65": {
+      "precision": 0.739,
+      "recall": 0.504,
+      "per_day": 16.41,
+      "n": 9175
+     },
+     "matched": {
+      "precision": 0.671,
+      "recall": 0.657
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7666,
+     "auc_all": 0.7834,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.611,
+      "recall": 0.761,
+      "per_day": 9.41,
+      "n": 5261
+     },
+     "thr0.55": {
+      "precision": 0.684,
+      "recall": 0.637,
+      "per_day": 7.05,
+      "n": 3940
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.475,
+      "per_day": 4.78,
+      "n": 2671
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.64
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7702,
+     "auc_all": 0.7864,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.601,
+      "recall": 0.74,
+      "per_day": 5.42,
+      "n": 3030
+     },
+     "thr0.55": {
+      "precision": 0.67,
+      "recall": 0.608,
+      "per_day": 3.99,
+      "n": 2233
+     },
+     "thr0.65": {
+      "precision": 0.74,
+      "recall": 0.44,
+      "per_day": 2.62,
+      "n": 1462
+     },
+     "matched": {
+      "precision": 0.666,
+      "recall": 0.619
+     }
+    },
+    "15m": {
+     "auc_c0": 0.777,
+     "auc_all": 0.7797,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.576,
+      "recall": 0.661,
+      "per_day": 1.66,
+      "n": 920
+     },
+     "thr0.55": {
+      "precision": 0.628,
+      "recall": 0.541,
+      "per_day": 1.25,
+      "n": 691
+     },
+     "thr0.65": {
+      "precision": 0.734,
+      "recall": 0.393,
+      "per_day": 0.77,
+      "n": 429
+     },
+     "matched": {
+      "precision": 0.627,
+      "recall": 0.556
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7905,
+     "auc_all": 0.791,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.67,
+      "recall": 0.631,
+      "per_day": 0.48,
+      "n": 230
+     },
+     "thr0.55": {
+      "precision": 0.762,
+      "recall": 0.512,
+      "per_day": 0.35,
+      "n": 164
+     },
+     "thr0.65": {
+      "precision": 0.818,
+      "recall": 0.406,
+      "per_day": 0.25,
+      "n": 121
+     },
+     "matched": {
+      "precision": 0.768,
+      "recall": 0.529
+     }
+    }
+   },
+   "集成LR+GBM(量价+日内)": {
+    "1m": {
+     "auc_c0": 0.7542,
+     "auc_all": 0.776,
+     "base_rate": 0.215,
+     "cands_per_day": 111.96,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.598,
+      "recall": 0.781,
+      "per_day": 31.37,
+      "n": 17538
+     },
+     "thr0.55": {
+      "precision": 0.666,
+      "recall": 0.666,
+      "per_day": 24.06,
+      "n": 13451
+     },
+     "thr0.65": {
+      "precision": 0.739,
+      "recall": 0.506,
+      "per_day": 16.45,
+      "n": 9198
+     },
+     "matched": {
+      "precision": 0.67,
+      "recall": 0.657
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7666,
+     "auc_all": 0.7835,
+     "base_rate": 0.199,
+     "cands_per_day": 37.93,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.612,
+      "recall": 0.76,
+      "per_day": 9.4,
+      "n": 5253
+     },
+     "thr0.55": {
+      "precision": 0.685,
+      "recall": 0.636,
+      "per_day": 7.03,
+      "n": 3928
+     },
+     "thr0.65": {
+      "precision": 0.753,
+      "recall": 0.474,
+      "per_day": 4.76,
+      "n": 2663
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.64
+     }
+    },
+    "5m": {
+     "auc_c0": 0.77,
+     "auc_all": 0.7863,
+     "base_rate": 0.19,
+     "cands_per_day": 23.12,
+     "days": 559,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.74,
+      "per_day": 5.41,
+      "n": 3022
+     },
+     "thr0.55": {
+      "precision": 0.67,
+      "recall": 0.607,
+      "per_day": 3.99,
+      "n": 2231
+     },
+     "thr0.65": {
+      "precision": 0.741,
+      "recall": 0.443,
+      "per_day": 2.63,
+      "n": 1471
+     },
+     "matched": {
+      "precision": 0.663,
+      "recall": 0.617
+     }
+    },
+    "15m": {
+     "auc_c0": 0.7778,
+     "auc_all": 0.7806,
+     "base_rate": 0.179,
+     "cands_per_day": 8.07,
+     "days": 554,
+     "thr0.45": {
+      "precision": 0.582,
+      "recall": 0.667,
+      "per_day": 1.66,
+      "n": 920
+     },
+     "thr0.55": {
+      "precision": 0.637,
+      "recall": 0.545,
+      "per_day": 1.24,
+      "n": 686
+     },
+     "thr0.65": {
+      "precision": 0.745,
+      "recall": 0.394,
+      "per_day": 0.77,
+      "n": 424
+     },
+     "matched": {
+      "precision": 0.63,
+      "recall": 0.559
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7904,
+     "auc_all": 0.7917,
+     "base_rate": 0.196,
+     "cands_per_day": 2.62,
+     "days": 475,
+     "thr0.45": {
+      "precision": 0.672,
+      "recall": 0.639,
+      "per_day": 0.49,
+      "n": 232
+     },
+     "thr0.55": {
+      "precision": 0.764,
+      "recall": 0.516,
+      "per_day": 0.35,
+      "n": 165
+     },
+     "thr0.65": {
+      "precision": 0.815,
+      "recall": 0.398,
+      "per_day": 0.25,
+      "n": 119
+     },
+     "matched": {
+      "precision": 0.756,
+      "recall": 0.52
+     }
+    }
+   },
+   "selection": {
+    "score": {
+     "v5重训": [
+      0.6774,
+      0.7673
+     ],
+     "GBM E_+大周期状态": [
+      0.6818,
+      0.7708
+     ],
+     "v6-LR(全特征)": [
+      0.6782,
+      0.7679
+     ],
+     "GBM-默认参数(全特征)": [
+      0.6788,
+      0.7694
+     ],
+     "集成LR+GBM(全特征)": [
+      0.683,
+      0.7717
+     ],
+     "集成LR+GBM(量价+日内)": [
+      0.6804,
+      0.7718
+     ]
+    },
+    "chosen": "集成LR+GBM(量价+日内)",
+    "rule": "AUC最高、且同等信号数下准确率不低于v5重训0.5个百分点以上"
+   },
+   "importance": {
+    "阶段(反弹/收复)": 0.15684,
+    "WR": 0.00563,
+    "日内位置(开盘/昨高低/时段)": 0.00509,
+    "v5 形态(跌幅/影线/RSI/均线距)": 0.00173,
+    "15分钟大周期": 0.00059,
+    "DMI": 0.00036,
+    "TRIX": 0.0003,
+    "EMA": 0.00027,
+    "EMV": 0.00022,
+    "VOL": 0.00011,
+    "ATR": 0.0001,
+    "ROC": 9e-05,
+    "KDJ": 8e-05,
+    "MACD": 7e-05,
+    "BOLL": 5e-05,
+    "ASI": 5e-05,
+    "MA": 4e-05,
+    "VR": 4e-05,
+    "VWAP": 3e-05,
+    "CR": 2e-05,
+    "DMA": 2e-05,
+    "OBV": 1e-05,
+    "BBI": 0.0,
+    "BIAS": -0.0,
+    "MTM": 0.0,
+    "StochRSI": 0.0,
+    "RSI": -1e-05,
+    "CCI": -1e-05,
+    "PSY": -1e-05,
+    "MFI": -1e-05,
+    "SAR": -2e-05,
+    "ARBR": -2e-05,
+    "VIX(前收/期限结构)": -0.00061,
+    "1小时大周期": -0.00094
+   },
+   "importance_base_auc": {
+    "1m": 0.7521,
+    "3m": 0.7657,
+    "5m": 0.7698,
+    "15m": 0.7762,
+    "1h": 0.7891
+   },
+   "calibration_val": [
+    [
+     0.05,
+     0.057,
+     29910
+    ],
+    [
+     0.15,
+     0.146,
+     46607
+    ],
+    [
+     0.25,
+     0.257,
+     31708
+    ],
+    [
+     0.35,
+     0.357,
+     23760
+    ],
+    [
+     0.45,
+     0.449,
+     16823
+    ],
+    [
+     0.55,
+     0.537,
+     13423
+    ],
+    [
+     0.65,
+     0.633,
+     10329
+    ],
+    [
+     0.75,
+     0.73,
+     7332
+    ],
+    [
+     0.85,
+     0.839,
+     4221
+    ],
+    [
+     0.95,
+     0.943,
+     800
+    ]
+   ],
+   "calibration_val_v5": [
+    [
+     0.05,
+     0.058,
+     28758
+    ],
+    [
+     0.15,
+     0.153,
+     53880
+    ],
+    [
+     0.25,
+     0.275,
+     30518
+    ],
+    [
+     0.35,
+     0.369,
+     21072
+    ],
+    [
+     0.45,
+     0.456,
+     15370
+    ],
+    [
+     0.55,
+     0.537,
+     12296
+    ],
+    [
+     0.65,
+     0.624,
+     9649
+    ],
+    [
+     0.75,
+     0.722,
+     7763
+    ],
+    [
+     0.85,
+     0.837,
+     4993
+    ],
+    [
+     0.95,
+     0.936,
+     614
+    ]
+   ],
+   "auc_by_year_val": {
+    "2024": 0.772,
+    "2025": 0.7873,
+    "2026": 0.7782
+   },
+   "auc_by_year_val_v5": {
+    "2024": 0.7712,
+    "2025": 0.786,
+    "2026": 0.7774
+   },
+   "holdout_v6": {
+    "1m": {
+     "auc_c0": 0.7686,
+     "auc_all": 0.7861,
+     "base_rate": 0.22,
+     "cands_per_day": 112.98,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.61,
+      "recall": 0.81,
+      "per_day": 33.02,
+      "n": 4292
+     },
+     "thr0.55": {
+      "precision": 0.69,
+      "recall": 0.7,
+      "per_day": 25.24,
+      "n": 3281
+     },
+     "thr0.65": {
+      "precision": 0.759,
+      "recall": 0.543,
+      "per_day": 17.81,
+      "n": 2315
+     },
+     "matched": {
+      "precision": 0.691,
+      "recall": 0.7
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7879,
+     "auc_all": 0.7894,
+     "base_rate": 0.207,
+     "cands_per_day": 37.0,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.799,
+      "per_day": 10.16,
+      "n": 1321
+     },
+     "thr0.55": {
+      "precision": 0.675,
+      "recall": 0.674,
+      "per_day": 7.65,
+      "n": 995
+     },
+     "thr0.65": {
+      "precision": 0.774,
+      "recall": 0.513,
+      "per_day": 5.08,
+      "n": 660
+     },
+     "matched": {
+      "precision": 0.672,
+      "recall": 0.687
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7762,
+     "auc_all": 0.7845,
+     "base_rate": 0.186,
+     "cands_per_day": 22.35,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.584,
+      "recall": 0.757,
+      "per_day": 5.38,
+      "n": 700
+     },
+     "thr0.55": {
+      "precision": 0.649,
+      "recall": 0.63,
+      "per_day": 4.03,
+      "n": 524
+     },
+     "thr0.65": {
+      "precision": 0.716,
+      "recall": 0.452,
+      "per_day": 2.62,
+      "n": 341
+     },
+     "matched": {
+      "precision": 0.641,
+      "recall": 0.65
+     }
+    },
+    "15m": {
+     "auc_c0": 0.8094,
+     "auc_all": 0.7926,
+     "base_rate": 0.201,
+     "cands_per_day": 7.58,
+     "days": 129,
+     "thr0.45": {
+      "precision": 0.623,
+      "recall": 0.68,
+      "per_day": 1.67,
+      "n": 215
+     },
+     "thr0.55": {
+      "precision": 0.692,
+      "recall": 0.558,
+      "per_day": 1.23,
+      "n": 159
+     },
+     "thr0.65": {
+      "precision": 0.714,
+      "recall": 0.355,
+      "per_day": 0.76,
+      "n": 98
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.579
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7664,
+     "auc_all": 0.7743,
+     "base_rate": 0.193,
+     "cands_per_day": 2.69,
+     "days": 104,
+     "thr0.45": {
+      "precision": 0.627,
+      "recall": 0.593,
+      "per_day": 0.49,
+      "n": 51
+     },
+     "thr0.55": {
+      "precision": 0.632,
+      "recall": 0.444,
+      "per_day": 0.37,
+      "n": 38
+     },
+     "thr0.65": {
+      "precision": 0.714,
+      "recall": 0.278,
+      "per_day": 0.2,
+      "n": 21
+     },
+     "matched": {
+      "precision": 0.667,
+      "recall": 0.519
+     }
+    }
+   },
+   "holdout_v5重训": {
+    "1m": {
+     "auc_c0": 0.7683,
+     "auc_all": 0.7861,
+     "base_rate": 0.22,
+     "cands_per_day": 112.98,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.619,
+      "recall": 0.802,
+      "per_day": 32.24,
+      "n": 4191
+     },
+     "thr0.55": {
+      "precision": 0.691,
+      "recall": 0.7,
+      "per_day": 25.21,
+      "n": 3277
+     },
+     "thr0.65": {
+      "precision": 0.752,
+      "recall": 0.556,
+      "per_day": 18.39,
+      "n": 2391
+     },
+     "matched": {
+      "precision": 0.691,
+      "recall": 0.7
+     }
+    },
+    "3m": {
+     "auc_c0": 0.7854,
+     "auc_all": 0.789,
+     "base_rate": 0.207,
+     "cands_per_day": 37.0,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.603,
+      "recall": 0.801,
+      "per_day": 10.18,
+      "n": 1324
+     },
+     "thr0.55": {
+      "precision": 0.675,
+      "recall": 0.69,
+      "per_day": 7.85,
+      "n": 1020
+     },
+     "thr0.65": {
+      "precision": 0.758,
+      "recall": 0.54,
+      "per_day": 5.46,
+      "n": 710
+     },
+     "matched": {
+      "precision": 0.675,
+      "recall": 0.69
+     }
+    },
+    "5m": {
+     "auc_c0": 0.7717,
+     "auc_all": 0.7819,
+     "base_rate": 0.186,
+     "cands_per_day": 22.35,
+     "days": 130,
+     "thr0.45": {
+      "precision": 0.583,
+      "recall": 0.767,
+      "per_day": 5.46,
+      "n": 710
+     },
+     "thr0.55": {
+      "precision": 0.639,
+      "recall": 0.648,
+      "per_day": 4.22,
+      "n": 548
+     },
+     "thr0.65": {
+      "precision": 0.701,
+      "recall": 0.487,
+      "per_day": 2.88,
+      "n": 375
+     },
+     "matched": {
+      "precision": 0.639,
+      "recall": 0.648
+     }
+    },
+    "15m": {
+     "auc_c0": 0.8007,
+     "auc_all": 0.7907,
+     "base_rate": 0.201,
+     "cands_per_day": 7.58,
+     "days": 129,
+     "thr0.45": {
+      "precision": 0.615,
+      "recall": 0.68,
+      "per_day": 1.69,
+      "n": 218
+     },
+     "thr0.55": {
+      "precision": 0.683,
+      "recall": 0.579,
+      "per_day": 1.29,
+      "n": 167
+     },
+     "thr0.65": {
+      "precision": 0.703,
+      "recall": 0.396,
+      "per_day": 0.86,
+      "n": 111
+     },
+     "matched": {
+      "precision": 0.683,
+      "recall": 0.579
+     }
+    },
+    "1h": {
+     "auc_c0": 0.7618,
+     "auc_all": 0.7771,
+     "base_rate": 0.193,
+     "cands_per_day": 2.69,
+     "days": 104,
+     "thr0.45": {
+      "precision": 0.627,
+      "recall": 0.593,
+      "per_day": 0.49,
+      "n": 51
+     },
+     "thr0.55": {
+      "precision": 0.714,
+      "recall": 0.556,
+      "per_day": 0.4,
+      "n": 42
+     },
+     "thr0.65": {
+      "precision": 0.739,
+      "recall": 0.315,
+      "per_day": 0.22,
+      "n": 23
+     },
+     "matched": {
+      "precision": 0.714,
+      "recall": 0.556
+     }
+    }
+   },
+   "calibration_holdout": [
+    [
+     0.05,
+     0.056,
+     7293
+    ],
+    [
+     0.15,
+     0.148,
+     10167
+    ],
+    [
+     0.25,
+     0.258,
+     7018
+    ],
+    [
+     0.35,
+     0.362,
+     5496
+    ],
+    [
+     0.45,
+     0.448,
+     3987
+    ],
+    [
+     0.55,
+     0.557,
+     3146
+    ],
+    [
+     0.65,
+     0.624,
+     2545
+    ],
+    [
+     0.75,
+     0.738,
+     1838
+    ],
+    [
+     0.85,
+     0.859,
+     1146
+    ],
+    [
+     0.95,
+     0.938,
+     211
+    ]
+   ],
+   "importance_by_tf": {
+    "v5 形态(跌幅/影线/RSI/均线距)": {
+     "1m": 0.00098,
+     "3m": 0.00127,
+     "5m": 0.00039,
+     "15m": -0.00048,
+     "1h": 0.00648
+    },
+    "阶段(反弹/收复)": {
+     "1m": 0.16033,
+     "3m": 0.15294,
+     "5m": 0.15916,
+     "15m": 0.14027,
+     "1h": 0.1715
+    },
+    "ATR": {
+     "1m": 0.00053,
+     "3m": -3e-05,
+     "5m": -0.00011,
+     "15m": 5e-05,
+     "1h": 8e-05
+    },
+    "MA": {
+     "1m": 0.00014,
+     "3m": 5e-05,
+     "5m": 0.00014,
+     "15m": 0.00013,
+     "1h": -0.00025
+    },
+    "EMA": {
+     "1m": 5e-05,
+     "3m": 0.00026,
+     "5m": 0.00015,
+     "15m": 0.00098,
+     "1h": -9e-05
+    },
+    "BOLL": {
+     "1m": -6e-05,
+     "3m": -1e-05,
+     "5m": 4e-05,
+     "15m": 3e-05,
+     "1h": 0.00024
+    },
+    "SAR": {
+     "1m": 0.0,
+     "3m": -2e-05,
+     "5m": 2e-05,
+     "15m": -8e-05,
+     "1h": -5e-05
+    },
+    "BBI": {
+     "1m": 0.0,
+     "3m": 0.0,
+     "5m": 0.0,
+     "15m": 0.0,
+     "1h": 0.0
+    },
+    "VWAP": {
+     "1m": 8e-05,
+     "3m": 0.0001,
+     "5m": 9e-05,
+     "15m": 1e-05,
+     "1h": -0.00014
+    },
+    "VOL": {
+     "1m": -0.00018,
+     "3m": 0.00064,
+     "5m": 0.00111,
+     "15m": -0.00025,
+     "1h": -0.00077
+    },
+    "MACD": {
+     "1m": -6e-05,
+     "3m": 2e-05,
+     "5m": -1e-05,
+     "15m": 9e-05,
+     "1h": 0.00034
+    },
+    "KDJ": {
+     "1m": 2e-05,
+     "3m": 4e-05,
+     "5m": -0.00012,
+     "15m": -5e-05,
+     "1h": 0.0005
+    },
+    "RSI": {
+     "1m": -0.0,
+     "3m": 1e-05,
+     "5m": 3e-05,
+     "15m": 1e-05,
+     "1h": -8e-05
+    },
+    "WR": {
+     "1m": 0.00478,
+     "3m": 0.00837,
+     "5m": 0.00791,
+     "15m": 0.00286,
+     "1h": 0.00424
+    },
+    "BIAS": {
+     "1m": 1e-05,
+     "3m": -4e-05,
+     "5m": 6e-05,
+     "15m": 0.0,
+     "1h": -5e-05
+    },
+    "CCI": {
+     "1m": -1e-05,
+     "3m": 1e-05,
+     "5m": 0.0,
+     "15m": -3e-05,
+     "1h": -4e-05
+    },
+    "DMI": {
+     "1m": 0.00011,
+     "3m": -8e-05,
+     "5m": 0.00011,
+     "15m": 0.00029,
+     "1h": 0.00137
+    },
+    "TRIX": {
+     "1m": 3e-05,
+     "3m": -0.0,
+     "5m": 0.00012,
+     "15m": -9e-05,
+     "1h": 0.00142
+    },
+    "ARBR": {
+     "1m": 3e-05,
+     "3m": 8e-05,
+     "5m": -4e-05,
+     "15m": -0.00019,
+     "1h": -0.0
+    },
+    "CR": {
+     "1m": 1e-05,
+     "3m": 1e-05,
+     "5m": 2e-05,
+     "15m": 3e-05,
+     "1h": 2e-05
+    },
+    "VR": {
+     "1m": 1e-05,
+     "3m": -9e-05,
+     "5m": 4e-05,
+     "15m": -9e-05,
+     "1h": 0.00032
+    },
+    "OBV": {
+     "1m": -0.0,
+     "3m": -2e-05,
+     "5m": 0.0,
+     "15m": 7e-05,
+     "1h": -1e-05
+    },
+    "PSY": {
+     "1m": 1e-05,
+     "3m": 1e-05,
+     "5m": 6e-05,
+     "15m": 2e-05,
+     "1h": -0.00018
+    },
+    "DMA": {
+     "1m": 0.0,
+     "3m": -1e-05,
+     "5m": 1e-05,
+     "15m": 7e-05,
+     "1h": 0.0
+    },
+    "EMV": {
+     "1m": 4e-05,
+     "3m": -0.00013,
+     "5m": -1e-05,
+     "15m": 0.00023,
+     "1h": 0.00097
+    },
+    "MTM": {
+     "1m": 0.0,
+     "3m": 0.0,
+     "5m": -0.0,
+     "15m": 2e-05,
+     "1h": -1e-05
+    },
+    "ROC": {
+     "1m": 6e-05,
+     "3m": -2e-05,
+     "5m": 1e-05,
+     "15m": 0.00012,
+     "1h": 0.00025
+    },
+    "ASI": {
+     "1m": 3e-05,
+     "3m": -5e-05,
+     "5m": 1e-05,
+     "15m": 0.00014,
+     "1h": 0.00011
+    },
+    "MFI": {
+     "1m": 1e-05,
+     "3m": -1e-05,
+     "5m": -3e-05,
+     "15m": 0.0,
+     "1h": -5e-05
+    },
+    "StochRSI": {
+     "1m": 0.0,
+     "3m": -0.0,
+     "5m": 2e-05,
+     "15m": -2e-05,
+     "1h": 2e-05
+    },
+    "日内位置(开盘/昨高低/时段)": {
+     "1m": 0.0003,
+     "3m": 0.0037,
+     "5m": 0.00565,
+     "15m": 0.00751,
+     "1h": 0.00829
+    },
+    "VIX(前收/期限结构)": {
+     "1m": -0.00019,
+     "3m": -0.00012,
+     "5m": 0.00041,
+     "15m": -0.00133,
+     "1h": -0.00183
+    },
+    "15分钟大周期": {
+     "1m": -3e-05,
+     "3m": 0.00012,
+     "5m": 0.00019,
+     "15m": 0.00095,
+     "1h": 0.00174
+    },
+    "1小时大周期": {
+     "1m": 0.00024,
+     "3m": -7e-05,
+     "5m": -0.00091,
+     "15m": -0.001,
+     "1h": -0.00296
+    }
+   },
+   "importance_note": "训练期模型；验证集；只看候选第一根（c=0）；5 个周期等权平均的 AUC 下降"
+  }
+ }
+}

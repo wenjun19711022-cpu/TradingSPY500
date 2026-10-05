@@ -1,0 +1,218 @@
+{
+ "A 前半小时涨": {
+  "last_55": {
+   "train": {
+    "days": 729,
+    "gross_bp": 0.01,
+    "net12": -11.99,
+    "net7": -6.99,
+    "win_gross": 0.501,
+    "t_gross": 0.01
+   },
+   "val": {
+    "days": 319,
+    "gross_bp": 0.93,
+    "net12": -11.07,
+    "net7": -6.07,
+    "win_gross": 0.555,
+    "t_gross": 1.0
+   },
+   "hold": {
+    "days": 73,
+    "gross_bp": 1.83,
+    "net12": -10.17,
+    "net7": -5.17,
+    "win_gross": 0.466,
+    "t_gross": 1.04
+   }
+  },
+  "last_close": {
+   "train": {
+    "days": 729,
+    "gross_bp": -0.76,
+    "net12": -12.76,
+    "net7": -7.76,
+    "win_gross": 0.48,
+    "t_gross": -0.62
+   },
+   "val": {
+    "days": 319,
+    "gross_bp": 0.61,
+    "net12": -11.39,
+    "net7": -6.39,
+    "win_gross": 0.517,
+    "t_gross": 0.5
+   },
+   "hold": {
+    "days": 73,
+    "gross_bp": 2.13,
+    "net12": -9.87,
+    "net7": -4.87,
+    "win_gross": 0.507,
+    "t_gross": 1.09
+   }
+  }
+ },
+ "B 15:00-15:30 涨": {
+  "last_55": {
+   "train": {
+    "days": 672,
+    "gross_bp": 0.21,
+    "net12": -11.79,
+    "net7": -6.79,
+    "win_gross": 0.49,
+    "t_gross": 0.17
+   },
+   "val": {
+    "days": 262,
+    "gross_bp": 0.39,
+    "net12": -11.61,
+    "net7": -6.61,
+    "win_gross": 0.527,
+    "t_gross": 0.3
+   },
+   "hold": {
+    "days": 72,
+    "gross_bp": -0.98,
+    "net12": -12.98,
+    "net7": -7.98,
+    "win_gross": 0.417,
+    "t_gross": -0.61
+   }
+  },
+  "last_close": {
+   "train": {
+    "days": 672,
+    "gross_bp": 0.81,
+    "net12": -11.19,
+    "net7": -6.19,
+    "win_gross": 0.485,
+    "t_gross": 0.56
+   },
+   "val": {
+    "days": 262,
+    "gross_bp": 0.96,
+    "net12": -11.04,
+    "net7": -6.04,
+    "win_gross": 0.531,
+    "t_gross": 0.62
+   },
+   "hold": {
+    "days": 72,
+    "gross_bp": -1.41,
+    "net12": -13.41,
+    "net7": -8.41,
+    "win_gross": 0.417,
+    "t_gross": -0.77
+   }
+  }
+ },
+ "C 两者都涨": {
+  "last_55": {
+   "train": {
+    "days": 376,
+    "gross_bp": 1.19,
+    "net12": -10.81,
+    "net7": -5.81,
+    "win_gross": 0.487,
+    "t_gross": 0.7
+   },
+   "val": {
+    "days": 163,
+    "gross_bp": 0.64,
+    "net12": -11.36,
+    "net7": -6.36,
+    "win_gross": 0.546,
+    "t_gross": 0.48
+   },
+   "hold": {
+    "days": 45,
+    "gross_bp": -0.45,
+    "net12": -12.45,
+    "net7": -7.45,
+    "win_gross": 0.422,
+    "t_gross": -0.21
+   }
+  },
+  "last_close": {
+   "train": {
+    "days": 376,
+    "gross_bp": 1.26,
+    "net12": -10.74,
+    "net7": -5.74,
+    "win_gross": 0.479,
+    "t_gross": 0.65
+   },
+   "val": {
+    "days": 163,
+    "gross_bp": 0.59,
+    "net12": -11.41,
+    "net7": -6.41,
+    "win_gross": 0.503,
+    "t_gross": 0.33
+   },
+   "hold": {
+    "days": 45,
+    "gross_bp": -0.12,
+    "net12": -12.12,
+    "net7": -7.12,
+    "win_gross": 0.4,
+    "t_gross": -0.05
+   }
+  }
+ },
+ "基准 每天都买": {
+  "last_55": {
+   "train": {
+    "days": 1313,
+    "gross_bp": -0.4,
+    "net12": -12.4,
+    "net7": -7.4,
+    "win_gross": 0.49,
+    "t_gross": -0.45
+   },
+   "val": {
+    "days": 553,
+    "gross_bp": 0.56,
+    "net12": -11.44,
+    "net7": -6.44,
+    "win_gross": 0.523,
+    "t_gross": 0.66
+   },
+   "hold": {
+    "days": 130,
+    "gross_bp": 0.19,
+    "net12": -11.81,
+    "net7": -6.81,
+    "win_gross": 0.469,
+    "t_gross": 0.15
+   }
+  },
+  "last_close": {
+   "train": {
+    "days": 1313,
+    "gross_bp": -0.69,
+    "net12": -12.69,
+    "net7": -7.69,
+    "win_gross": 0.482,
+    "t_gross": -0.66
+   },
+   "val": {
+    "days": 553,
+    "gross_bp": 0.8,
+    "net12": -11.2,
+    "net7": -6.2,
+    "win_gross": 0.523,
+    "t_gross": 0.79
+   },
+   "hold": {
+    "days": 130,
+    "gross_bp": -0.05,
+    "net12": -12.05,
+    "net7": -7.05,
+    "win_gross": 0.485,
+    "t_gross": -0.04
+   }
+  }
+ }
+}

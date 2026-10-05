@@ -163,12 +163,12 @@ def main():
                            for rg in REGIMES)
               + f" | kelly(mes)={m['kelly']['kelly']:.1f}x sharpe={m['kelly']['sharpe_1x']:.2f}")
     # the validated daily rule from the dip study, for the playbook
-    dip = json.loads((OUT / "dip_study.json").read_text())
+    dip = json.loads((OUT / "dip_study.json").read_text(encoding="utf-8"))
     s = next((x for x in dip.get("streams", []) if x["key"] == "1d|rsi2|stop2.5"), None)
     if s:
         out["daily_rsi2"] = {"ALL": s["ALL"], "IS": s["IS"], "VAL": s["VAL"], "TEST": s["TEST"], "leverage": s["leverage"], "oos": s["oos"]}
     out["portfolio"] = portfolio(panels, all_days, spy, s)
-    (OUT / "edge_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None))
+    (OUT / "edge_study.json").write_text(json.dumps(out, ensure_ascii=False, default=lambda v: None), encoding="utf-8")
     print("wrote", OUT / "edge_study.json")
 
 

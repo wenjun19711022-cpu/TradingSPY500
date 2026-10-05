@@ -151,11 +151,11 @@ class RangeModel:
         return m
 
     def save(self, path: Path):
-        Path(path).write_text(json.dumps(asdict(self), indent=1))
+        Path(path).write_text(json.dumps(asdict(self), indent=1), encoding="utf-8")
 
     @classmethod
     def load(cls, path: Path) -> "RangeModel":
-        return cls(**json.loads(Path(path).read_text()))
+        return cls(**json.loads(Path(path).read_text(encoding="utf-8")))
 
 
 def forecast_table(model: RangeModel, table: pd.DataFrame) -> pd.DataFrame:

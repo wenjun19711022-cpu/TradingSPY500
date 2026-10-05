@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def review(bars: pd.DataFrame, since: str, study: dict | None = None, min_trades: int = 50) -> dict:
-    study = study or json.loads((ROOT / "results" / "edge_study.json").read_text())
+    study = study or json.loads((ROOT / "results" / "edge_study.json").read_text(encoding="utf-8"))
     start = pd.Timestamp(since)
     # keep 40 calendar days before `since` so the 14-day noise band exists on day one
     p = panel(bars[bars.index.tz_localize(None) >= start - pd.Timedelta(days=40)])
@@ -66,7 +66,7 @@ def main(argv=None):
         return
     r = review(bars, a.since)
     print(json.dumps(r, ensure_ascii=False, indent=1))
-    (ROOT / "results" / "review_live.json").write_text(json.dumps(r, ensure_ascii=False))
+    (ROOT / "results" / "review_live.json").write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":
