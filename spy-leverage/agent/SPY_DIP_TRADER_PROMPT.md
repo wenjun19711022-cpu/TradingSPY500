@@ -103,6 +103,6 @@ cd spy-leverage
 python -m spylev.data.history                        # 长历史日线 + VIX（每周）
 python -m spylev.data.crawl --source futu --years 5  # 本地：5 年 1 分钟，用来验证 3m–4h
 python scripts/run_dip_study.py                    # 重新跑抄底研究，更新 results/dip_study.json
-                                    # 期权看板在 spy-options 仓库
+                                    # 期权看板在 ../spy-options/
 ```
 跑完后先读 `dip_study.json` 里各信号流的 `G1/G2/G3` 和 `leverage`，再按本文件的规则行事。新加入的日内周期必须在样本内、验证期、留出期都通过才能获得杠杆。

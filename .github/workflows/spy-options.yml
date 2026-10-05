@@ -27,10 +27,10 @@ jobs:
           name: spy-dashboard
           path: spy-options/dashboard/index.html
 
-  # Publishes the dashboard to GitHub Pages after merging to main. Requires
-  # Settings -> Pages -> Source: "GitHub Actions". The repo is public, so the page will be too.
+  # Publishes the dashboard to GitHub Pages on pushes to main. Turn it on with
+  # Settings -> Pages -> Source: "GitHub Actions" and the repository variable ENABLE_PAGES=true.
   pages:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.ENABLE_PAGES == 'true'
     needs: test
     runs-on: ubuntu-latest
     permissions:
