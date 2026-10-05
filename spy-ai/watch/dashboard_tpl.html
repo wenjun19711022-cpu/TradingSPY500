@@ -62,13 +62,14 @@ ol.steps{margin:0;padding-left:20px}ol.steps li{margin:4px 0}
   <h1>SPY 底顶 AI · 复盘看板</h1>
   <div class="sub" id="sub"></div>
   <nav id="nav">
-    <button data-t="home" class="on">总览</button><button data-t="swing">波段（抄底到顶）</button><button data-t="live">实盘复盘</button><button data-t="day">单日回看</button>
+    <button data-t="home" class="on">总览</button><button data-t="swing">波段（抄底到顶）</button><button data-t="zz">你的折线</button><button data-t="live">实盘复盘</button><button data-t="day">单日回看</button>
     <button data-t="model">模型：v6 vs v5</button><button data-t="trade">交易回测</button><button data-t="lab">策略工厂</button><button data-t="plan">优化路线</button>
   </nav>
 </div></header>
 <main>
 <section id="home" class="on"><div id="home_body"></div></section>
 <section id="swing"><div id="swing_body"></div></section>
+<section id="zz"><div id="zz_body"></div></section>
 <section id="live">
   <div class="grid" id="kpis"></div>
   <div class="grid" style="margin-top:12px">
@@ -261,6 +262,38 @@ function swingView(){const host=$("swing_body"),W=D.swing||{},F=W.final;if(!F){h
   $("t_swing").innerHTML=`<table><tr><th>进场</th><th>买</th><th>离场</th><th>卖</th><th>原因</th><th>1 倍净</th><th>最大逆向</th><th>50x（元）</th><th>20x（元）</th></tr>`+tr.slice().reverse().map(t=>{const l50=t.mae<=-(1-0.98/0.99),v50=l50?-280:280*50*t.net,v20=280*20*t.net;
     return `<tr><td>${t.entry_t.slice(0,16)}</td><td>${num(t.entry,2)}</td><td>${t.exit_t.slice(0,16)}</td><td>${num(t.exit,2)}</td><td>${why[t.why]||t.why}</td><td class="${cl(t.net)}">${sgn(t.net*100,2)}%</td><td>${num(t.mae*100,2)}%</td><td class="${cl(v50)}">${l50?"爆仓 ":""}${sgn(v50,0)}</td><td class="${cl(v20)}">${sgn(v20,0)}</td></tr>`;}).join("")+"</table>";}
 
+/* ------------------------------------------------ 你的折线 */
+function zzView(){const host=$("zz_body"),Z=D.bt.zigzag_review;if(!Z){host.innerHTML="<div class='card'><div class='empty'>还没有折线复盘数据</div></div>";return;}
+  const F15=Z.formula["15m"],F1h=Z.formula["1h"],cl=z=>z==null?"":z>0?"pos":"neg";
+  let h=`<div class="grid"><div class="card s12"><p class="headline">你在 moomoo 1 小时图上画的折线（2026-08-05 → 10-05，${Z.drawn_vertices} 个拐点），最接近“价格反向走 ${Z.theta}% 就转向”的折线。按这个规则还原出 ${Z.pivots.length} 个拐点，蓝线就是它。绿色“买”和红色“卖”是 moomoo 主图指标 <b>SPY折线AI（15 分钟版）</b>的实时标记，盯盘机器人推送的“折线买点 / 卖点”与它一致。</p></div>`;
+  h+=`<div class="card s3 kpi"><div class="l">你画的底被标出</div><div class="v">${pct(F15.overlap[0]["召回率"])}</div><div class="d">15 分钟版；买点离你的底中位 ${num(F15.overlap[0]["离你的点(中位%)"],2)}%</div></div>
+  <div class="card s3 kpi"><div class="l">你画的顶被标出</div><div class="v">${pct(F15.overlap[1]["召回率"])}</div><div class="d">卖点离你的顶中位 ${num(F15.overlap[1]["离你的点(中位%)"],2)}%</div></div>
+  <div class="card s3 kpi"><div class="l">标记的准确率</div><div class="v">${pct(F15.overlap[0]["准确率(靠近你的点)"])}</div><div class="d">买点里落在你画的底附近的比例</div></div>
+  <div class="card s3 kpi"><div class="l">照着每个标记 50 倍做</div><div class="v"><span class="neg">${sgn(F15["2024+"].x50.yuan_per_trade,0)}</span><small> 元/笔</small></div><div class="d">2024 年后 ${F15["2024+"].n} 笔，爆仓 ${F15["2024+"].x50.liq} 笔（280 元保证金）</div></div>`;
+  h+=`<div class="card s12"><h3>你的折线 vs 实时标记（1 小时 K 线，不复权，和你 moomoo 图上的价格一致）</h3><p class="note">蓝线 = 你的折线（${Z.theta}% 转向还原）；绿 ▲“买” / 红 ▼“卖” = 15 分钟 SPY折线AI 的实时标记（画在所在的那根 1 小时 K 线上）。最后一段折线要等价格反向 ${Z.theta}% 才能确定，所以折线本身只能事后看</p><div class="chart" id="c_zz"></div></div>`;
+  h+=`<div class="card s7"><h3>谁的标记和你画的点最贴</h3><p class="note">在你画的每个点前 2 小时到后 4 小时内，有没有同方向的标记；“距离”= 标记价离你的点的中位百分比；“准确率”= 标记里落在你画的点附近的比例</p><div class="tw"><table><tr><th>来源</th><th>方向</th><th>你画的点</th><th>被标出</th><th>召回率</th><th>距离(中位%)</th><th>标记数</th><th>准确率</th></tr>`+
+    Z.overlap.map(r=>`<tr><td>${r["源"]}</td><td>${r["方向"]}</td><td>${r["你画的点"]}</td><td>${r["被提示到"]}</td><td>${pct(r["召回率"])}</td><td>${num(r["离你的点(中位%)"],2)}</td><td>${r["信号数"]}</td><td>${pct(r["准确率(靠近你的点)"])}</td></tr>`).join("")+`</table></div></div>`;
+  const rows=[["15 分钟版 SPY折线AI（每个买点买、下一个卖点卖）",F15["2024+"]],["1 小时版 SPY折线AI",F1h["2024+"]],["等折线确认再买卖（0.45%）",Z.s1["S1 确认折线 0.45%"].val],["v6 提前信号 + 折线状态（最好的一组）",Z.s2_best.hold]];
+  h+=`<div class="card s5"><h3>照着做能赚多少（2024 年后，280 元保证金/笔）</h3><div class="tw"><table><tr><th>做法</th><th>笔数</th><th>1 倍每笔</th><th>50x 每笔</th><th>50x 爆仓</th><th>20x 每笔</th></tr>`+
+    rows.map(([n,s])=>`<tr><td style="white-space:normal">${n}</td><td>${s.n}</td><td class="${cl(s.net_pct)}">${sgn(s.net_pct,2)}%</td><td class="${cl(s.x50.yuan_per_trade)}">${sgn(s.x50.yuan_per_trade,0)}</td><td>${s.x50.liq}</td><td class="${cl(s.x20.yuan_per_trade)}">${sgn(s.x20.yuan_per_trade,0)}</td></tr>`).join("")+
+    `</table></div><p class="note" style="margin-top:8px">你画的每一段平均只有约 1%，而确认一个拐点本身就要 0.45% 以上，买卖两头再扣 OKX 成本，小波段吃不到。能赚钱的是大一级的波段：见“波段（抄底到顶）”页。</p></div></div>`;
+  host.innerHTML=h;
+  const B=Z.bars,idx={};B.forEach((b,i)=>idx[b[0]]=i);
+  const near=lab=>{for(let i=0;i<B.length;i++)if(B[i][0]>=lab&&B[i][0].slice(0,5)===lab.slice(0,5))return i;let j=-1;B.forEach((b,i)=>{if(b[0]<=lab)j=i;});return j;};
+  const lo=Math.min(...B.map(b=>b[3])),hi=Math.max(...B.map(b=>b[2])),pad=(hi-lo)*.06;
+  const g=axisChart($("c_zz"),{h:380,x0:-0.5,x1:B.length-0.5,ymin:lo-pad,ymax:hi+pad,left:52,xfmt:()=>"",yfmt:v=>v.toFixed(0),series:[],
+    tip:x=>{const b=B[Math.max(0,Math.min(B.length-1,Math.round(x)))];return `<b>${b[0]}</b> 开 ${b[1]} 高 ${b[2]} 低 ${b[3]} 收 ${b[4]}`;}});
+  B.forEach((b,i)=>{if(i===0||B[i-1][0].slice(0,5)!==b[0].slice(0,5)){if(b[0].slice(3,5)%5===0||i===0)T(g.s,g.xs(i),g.h-8,b[0].slice(0,5),{"text-anchor":"start"});}});
+  const cw=Math.max(1,(g.w-g.L-g.R)/B.length*.6);
+  B.forEach((b,i)=>{const x=g.xs(i),c=b[4]>=b[1]?css("--s3"):css("--s8");E("line",{x1:x,x2:x,y1:g.ys(b[2]),y2:g.ys(b[3]),stroke:c,"stroke-opacity":.7,"pointer-events":"none"},g.s);
+    E("rect",{x:x-cw/2,y:g.ys(Math.max(b[1],b[4])),width:cw,height:Math.max(.8,Math.abs(g.ys(b[1])-g.ys(b[4]))),fill:c,"fill-opacity":.7,"pointer-events":"none"},g.s);});
+  const pts=Z.pivots.map(p=>[idx[p[0]],p[2]]).filter(p=>p[0]!=null);
+  E("path",{d:"M"+pts.map(p=>g.xs(p[0])+","+g.ys(p[1])).join("L"),fill:"none",stroke:css("--s1"),"stroke-width":2,"stroke-linejoin":"round","pointer-events":"none"},g.s);
+  Z.marks.forEach(m=>{const i=near(m[0]);if(i<0)return;const x=g.xs(i),isB=m[1]==="买",y=isB?g.ys(m[2])+12:g.ys(m[2])-12,col=isB?css("--good"):css("--bad");
+    const p=E("path",{d:isB?`M${x},${y-7}L${x-6},${y+4}L${x+6},${y+4}Z`:`M${x},${y+7}L${x-6},${y-4}L${x+6},${y-4}Z`,fill:col,stroke:css("--card"),"stroke-width":1.5},g.s);
+    const hit=E("circle",{cx:x,cy:y,r:11,fill:"transparent"},g.s);hit.addEventListener("mousemove",ev=>{ev.stopPropagation();showTip(ev,`<b>${m[0]} 折线${m[1]}点</b><br>${isB?"低点":"高点"} ${m[2]}`);});hit.addEventListener("mouseleave",hideTip);});
+  legend($("c_zz"),[["你的折线（0.45% 还原）",css("--s1"),1],["买（15 分钟 SPY折线AI）",css("--good")],["卖",css("--bad")]]);}
+
 /* ------------------------------------------------ 实盘复盘 */
 function kpis(){const days=D.live.days.length,all=rate(EV),pu=rate(EV.filter(e=>e.pushed));
   let bt=[];["bottom","top"].forEach(sd=>TF.forEach(tf=>{const p=btPrec(tf,sd);if(p!=null)bt.push(p);}));const btAvg=bt.length?bt.reduce((a,b)=>a+b,0)/bt.length:null;
@@ -434,7 +467,7 @@ $("sub").textContent=`更新于 ${D.built} · 实盘 ${D.live.days.length} 天 /
 TF.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=TFN[t];$("f_tf").appendChild(o);});
 ["f_tf","f_side","f_res"].forEach(i=>$(i).onchange=tEv);
 const dsel=$("daysel");D.live.days.slice().reverse().forEach(d=>{const o=document.createElement("option");o.value=d;o.textContent=d;dsel.appendChild(o);});dsel.onchange=dayView;
-const R={home:homeView,swing:swingView,live:()=>{kpis();cDaily();cTf();cCal();cCtx();cSc();tSum();tEv();},day:()=>D.live.days.length?dayView():["c_intra","c_gex","c_flow"].forEach(i=>empty($(i),"还没有实盘数据")),model:modelView,trade:tradeView,lab:labView,plan:planView};
+const R={home:homeView,swing:swingView,zz:zzView,live:()=>{kpis();cDaily();cTf();cCal();cCtx();cSc();tSum();tEv();},day:()=>D.live.days.length?dayView():["c_intra","c_gex","c_flow"].forEach(i=>empty($(i),"还没有实盘数据")),model:modelView,trade:tradeView,lab:labView,plan:planView};
 let cur="home";function show(t){cur=t;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));document.querySelectorAll("main section").forEach(s=>s.classList.toggle("on",s.id===t));
   try{R[t]();}catch(e){console.error(e);}try{localStorage.setItem("tab",t);}catch(e){}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));

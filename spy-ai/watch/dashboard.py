@@ -60,7 +60,7 @@ def live_payload(db_path):
 
 def bt_payload(model_dir):
     out = {}
-    for name in ("train6", "bt6", "plan", "v7", "momentum", "factory_summary"):
+    for name in ("train6", "bt6", "plan", "v7", "momentum", "factory_summary", "zigzag_review"):
         p = os.path.join(model_dir, name + ".json")
         if os.path.exists(p): out[name] = json.load(open(p, encoding="utf-8"))
     if "v7" in out: out["v7"].pop("configs", None)

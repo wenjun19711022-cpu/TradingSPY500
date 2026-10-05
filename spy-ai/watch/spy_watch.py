@@ -12,7 +12,7 @@ import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-import v5core, gex, pushers, report
+import v5core, gex, pushers, report, zigzag_ai
 from store import Store
 
 ET = ZoneInfo("America/New_York")
@@ -263,6 +263,19 @@ def run(cfg, src, store, poll=None, verbose=True, v6=None, swing=None):
                                              p=pe if kind == "early" else None, extra=extra, stats=v6.stats_text(tf, side) if s6 else "")
                                 if swing is not None and kind == "early" and _fresh(d["t"].iloc[j], now):
                                     swing.on_signal(tf, side, float(pe), float(c[j]), d["t"].iloc[j], now)
+                zc = cfg.get("zigzag_push", {})
+                if zc.get("enabled") and tf == zc.get("tf", "15m") and js and tf in first_pass:     # 折线AI = the moomoo main-chart marks
+                    zb, zs, pull, rise = zigzag_ai.marks(h, l, c, sig["bottom"]["fire"], sig["top"]["fire"], int(zc.get("N", 56)), float(zc.get("D", 0.3)))
+                    for j in js:
+                        if not _fresh(d["t"].iloc[j], now) or d["t"].iloc[j][11:16] >= push_until: continue
+                        if zb[j]:
+                            e = float(c[j]); liq = lambda L: e * (1 - 1 / L) / 0.99
+                            pushers.send(cfg, "SPY 折线买点 %.2f（%s）" % (e, TF_NAME[tf]), "%s 收 %.2f，低点 %.2f，比近 %d 根最高价回落 %.2f%%。\n\n爆仓价：50x %.2f · 20x %.2f。"
+                                         "这是和你手画的线最像的买点标记（准确约一半，照着每个都做 50 倍历史上是亏的）；真正的进场以“波段：进场”为准。" % (
+                                         d["t"].iloc[j][11:16], e, float(l[j]), int(zc.get("N", 56)), pull[j], liq(50), liq(20)))
+                        if zs[j]:
+                            pushers.send(cfg, "SPY 折线卖点 %.2f（%s）" % (float(c[j]), TF_NAME[tf]), "%s 收 %.2f，高点 %.2f，比近 %d 根最低价高 %.2f%%。和你手画的顶最像的卖点标记。" % (
+                                         d["t"].iloc[j][11:16], float(c[j]), float(h[j]), int(zc.get("N", 56)), rise[j]))
                 if swing is not None and tf == "1m" and js:            # stop / take-profit watch on every new minute
                     swing.on_bar(float(h[js].max()), float(l[js].min()), float(c[js[-1]]), d["t"].iloc[js[-1]])
                 first_pass.add(tf)

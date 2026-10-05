@@ -14,10 +14,7 @@
     "15m",
     "1h"
   ],
-  "push_timeframes": [
-    "5m",
-    "15m"
-  ],
+  "push_timeframes": [],
   "push_confirm": false,
   "threshold": 55,
   "poll_sec": 5,
@@ -40,5 +37,17 @@
     "stop_pct": 2.5,
     "max_days": 10,
     "说明": "波段模式：抄底日（昨收 RSI2<20 且在 200 日线上）的第一个 15m/1h 底进场，止损 2.5%，涨满 1 个日线 ATR 后第一个 15m 顶离场。只提醒不下单；状态在 data/swing_state.json"
-  }
+  },
+  "zigzag_push": {
+    "enabled": true,
+    "tf": "15m",
+    "N": 56,
+    "D": 0.3,
+    "说明": "折线买点/卖点：和 moomoo 主图指标 SPY折线AI（15分钟版）同一套计算，按你手画的线拟合"
+  },
+  "push_timeframes_old": [
+    "5m",
+    "15m"
+  ],
+  "push_timeframes_说明": "原始 5m/15m 底顶不再弹窗（只记录、看板里看）；弹窗只剩 折线买卖点 + 波段模式。想恢复填 [\"5m\",\"15m\"]"
 }

@@ -12,7 +12,7 @@ PAIRS = [("C:/Users/94868/spybt/watch", os.path.join(HERE, "watch"), {"data", "r
          ("C:/Users/94868/spybt/v6", os.path.join(HERE, "research"), {"cache", "__pycache__", "models"})]
 KEEP_EXT = {".py", ".json", ".md", ".bat", ".html", ".pkl", ".csv"}
 MAX = 3 * 1024 * 1024
-SMALL_DATA = {"events.csv", "okx_spy_funding.csv"}            # research/data files worth versioning
+SMALL_DATA = {"events.csv", "okx_spy_funding.csv", "user_pivots.csv", "user_pivots_zz.csv"}          # research/data files worth versioning
 
 
 def sync(src, dst, skip_dirs):
